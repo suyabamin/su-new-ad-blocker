@@ -29,6 +29,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `src/background/service-worker.js` — service worker entry point wiring install and alarms (TD.2).
 - `src/background/stats.js` — block event counter with debounced storage flush and onRuleMatchedDebug listener (TE.1).
 - `src/background/stats-api.js` — statistics messaging API handling range, summary, tab, top domains, export, and reset (TE.2).
+- `src/content/selectors.js` — 22 generic cosmetic ad-container selectors (TF.1).
+- `src/content/cosmetic.js` — generic cosmetic content script injecting CSS styles and MutationObserver without script tags (TF.1).
 - Full unit test coverage for shared modules (40 tests, 100% coverage).
 - Unit tests for DNR rules builder (4 tests in `tests/unit/background/build-rules.test.js`).
 - Unit tests for background rule-updater and service-worker (6 tests, 100% statement coverage).
