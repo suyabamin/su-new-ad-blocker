@@ -36,7 +36,7 @@ export default [
     },
   },
 
-  // Test files (node + vitest globals)
+  // Test files (node + browser + vitest globals)
   {
     files: ['tests/**/*.js'],
     languageOptions: {
@@ -44,6 +44,7 @@ export default [
       sourceType: 'module',
       globals: {
         ...globals.node,
+        ...globals.browser,
       },
     },
     rules: {
