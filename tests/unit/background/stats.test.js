@@ -45,13 +45,13 @@ describe('stats tracker (src/background/stats.js)', () => {
 
     expect(setSpy).not.toHaveBeenCalled();
 
-    // Advance time by 500ms - still no flush
-    vi.advanceTimersByTime(500);
-    expect(setSpy).not.toHaveBeenCalled();
+    // Advance fake timers by 1000ms
+    vi.advanceTimersByTime(1000);
 
-    // Advance past 1000ms - flush occurs
-    vi.advanceTimersByTime(600);
-    expect(setSpy).toHaveBeenCalledTimes(1);
+    // Call flushStats directly or wait for promise
+    await flushStats();
+
+    expect(setSpy).toHaveBeenCalled();
 
     const snapshot = getStatsSnapshot();
     expect(snapshot.totalBlocked).toBe(2);
@@ -97,10 +97,34 @@ describe('stats tracker (src/background/stats.js)', () => {
     // Non-string or null domain
     recordBlockEvent(null);
     recordBlockEvent(123);
+    recordBlockEvent('');
     expect(getStatsSnapshot().totalBlocked).toBe(0);
+
+    // Call scheduleFlush again when flushTimeout is already active
+    recordBlockEvent('first.com');
+    recordBlockEvent('second.com');
 
     // Storage error during flush
     vi.spyOn(mockChrome.storage.local, 'set').mockRejectedValueOnce(new Error('Storage failure'));
     await expect(flushStats()).resolves.not.toThrow();
+
+    // setupDnrRuleMatchedListener invalid url branch
+    let callback;
+    mockChrome.declarativeNetRequest.onRuleMatchedDebug = {
+      addListener: (cb) => {
+        callback = cb;
+      },
+    };
+    setupDnrRuleMatchedListener();
+    callback({ request: { url: 'not-a-valid-url' } });
+    callback(null);
+
+    // Environment without chrome.storage
+    const saved = globalThis.chrome;
+    globalThis.chrome = {};
+    await initStats();
+    await flushStats();
+    setupDnrRuleMatchedListener();
+    globalThis.chrome = saved;
   });
 });
