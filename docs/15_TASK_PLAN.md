@@ -149,7 +149,7 @@ criteria pass, lint is clean, and CHANGELOG is updated.
 
 ### TE.1 — Block Event Counter (T3.1)
 
-**Status:** `[ ]`
+**Status:** `[x]`
 
 **Deliverables:**
 
