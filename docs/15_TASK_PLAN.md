@@ -230,7 +230,7 @@ criteria pass, lint is clean, and CHANGELOG is updated.
 
 ### TG.1 — Popup (T4.1)
 
-**Status:** `[ ]`
+**Status:** `[x]`
 
 **Deliverables:**
 
