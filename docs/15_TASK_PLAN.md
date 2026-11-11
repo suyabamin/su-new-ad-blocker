@@ -249,7 +249,7 @@ criteria pass, lint is clean, and CHANGELOG is updated.
 
 ### TG.2 — Options Dashboard (T4.2)
 
-**Status:** `[ ]`
+**Status:** `[x]`
 
 **Deliverables:**
 
