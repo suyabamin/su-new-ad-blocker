@@ -1,0 +1,33 @@
+{
+  "name": "su-new-ad-blocker",
+  "version": "0.1.0",
+  "description": "MV3 Chromium browser extension that blocks ads and trackers.",
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "lint": "eslint . && prettier --check .",
+    "lint:fix": "eslint . --fix && prettier --write .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest --passWithNoTests",
+    "test:coverage": "vitest run --coverage --passWithNoTests",
+    "test:e2e": "playwright test --pass-with-no-tests",
+    "test:perf": "node -e \"console.log('Placeholder for test:perf (Phase 5/future)'); process.exit(0);\"",
+    "test:a11y": "node -e \"console.log('Placeholder for test:a11y (Phase 5/future)'); process.exit(0);\"",
+    "build:release": "node -e \"console.log('Placeholder for build:release (T5.2)'); process.exit(0);\"",
+    "package": "node -e \"console.log('Placeholder for package (T5.2)'); process.exit(0);\"",
+    "build-rules": "node scripts/build-rules.js",
+    "build": "node scripts/build.js",
+    "validate-manifest": "node -e \"const m=JSON.parse(require('fs').readFileSync('manifest.json','utf8'));if(m.manifest_version!==3)throw new Error('Not MV3');console.log('manifest.json OK');\""
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@vitest/coverage-v8": "^4.1.0",
+    "eslint": "^8.57.0",
+    "prettier": "^3.3.3",
+    "vitest": "^4.1.0"
+  }
+}
