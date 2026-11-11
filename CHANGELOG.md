@@ -19,9 +19,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ADR-0002: Language — JavaScript ES2022 (Accepted).
 - ADR-0003: ESLint version migration plan (Superseded by TB.1).
 - ADR-0004: Use Vitest and Playwright for testing.
-- `src/shared/logger.js` — structured logger; silent by default; never throws.
-- `src/shared/messages.js` — placeholder (to be rewritten in TC.1 with canonical 16 types).
-- `src/shared/storage.js` — placeholder (to be rewritten in TC.1 with canonical 7 keys).
+- `src/shared/messages.js` — canonical 16 MSG types with `isKnownType` helper (TC.1).
+- `src/shared/storage.js` — canonical 7 STORAGE_KEYS with `dailyStatsKey` and `getListCacheKey` helpers (TC.1).
+- `src/shared/settings.js` — `DEFAULT_SETTINGS` and `validateSettingsPatch` (TC.1).
+- `src/shared/logger.js` — structured logger with `debug`, `info`, `warn`, `error` methods (TC.1).
+- Full unit test coverage for shared modules (40 tests, 100% coverage).
 - `vitest.config.js` with coverage thresholds: 95% for `src/shared/**`, 80% for `src/background/**` and `src/content/**`.
 - `docs/09_MESSAGING_CONTRACT.md` rewritten with canonical 16-message spec.
 - `docs/10_STORAGE_SCHEMA.md` rewritten with canonical 7 storage keys + pattern helpers.
