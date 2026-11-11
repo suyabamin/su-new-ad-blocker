@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Ad Blocker Test Page</title>
+  <style>
+    .content { width: 600px; margin: 0 auto; }
+    .ad-banner { width: 300px; height: 250px; background: red; }
+    .ad-container { width: 728px; height: 90px; background: orange; }
+    .sponsor-post { border: 1px solid blue; padding: 10px; }
+  </style>
+</head>
+<body>
+  <div class="content">
+    <h1>Test Article</h1>
+    <p>This is legitimate editorial content that should remain visible.</p>
+
+    <div id="ad-banner" class="ad-banner" data-ad-unit="true">
+      <p>Advertisement 1 (Banner)</p>
+    </div>
+
+    <div class="ad-container" aria-label="advertisement">
+      <p>Advertisement 2 (Container)</p>
+    </div>
+
+    <div class="sponsor-post sponsored-content">
+      <p>Sponsored Content</p>
+    </div>
+
+    <div id="sidebar-ads">
+      <p>Sidebar Advertisement</p>
+    </div>
+
+    <p>End of legitimate article content.</p>
+  </div>
+</body>
+</html>
