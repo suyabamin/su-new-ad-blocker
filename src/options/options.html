@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SU New Ad Blocker — Options & Dashboard</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <div class="options-container">
+      <header class="options-header">
+        <h1>SU New Ad Blocker — Dashboard & Settings</h1>
+        <p class="subtitle">100% Local Ad & Tracker Protection</p>
+      </header>
+
+      <main class="options-grid">
+        <!-- Allowlist Management -->
+        <section class="card">
+          <h2>Domain Allowlist</h2>
+          <p class="card-desc">Domains listed here will not have ads or trackers blocked.</p>
+          <form id="allowlist-form" class="input-form">
+            <input
+              type="text"
+              id="allowlist-input"
+              placeholder="e.g. example.com"
+              aria-label="Domain to allow"
+              required
+            />
+            <button type="submit" class="btn btn-primary" id="allowlist-add-btn">Add Domain</button>
+          </form>
+          <div id="allowlist-error" class="error-msg" role="alert" aria-live="polite"></div>
+          <ul id="allowlist-items" class="domain-list"></ul>
+        </section>
+
+        <!-- Statistics & Maintenance -->
+        <section class="card">
+          <h2>Statistics & Data</h2>
+          <div class="stats-overview">
+            <div class="stat-box">
+              <span class="stat-val" id="stat-total-blocked">0</span>
+              <span class="stat-lbl">Lifetime Blocked</span>
+            </div>
+          </div>
+          <div class="actions-group">
+            <button type="button" id="export-stats-btn" class="btn btn-secondary">
+              Export Stats (JSON)
+            </button>
+            <button type="button" id="reset-stats-btn" class="btn btn-danger">
+              Reset All Statistics
+            </button>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="options.js" type="module"></script>
+  </body>
+</html>
