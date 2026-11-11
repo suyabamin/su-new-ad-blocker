@@ -7,6 +7,13 @@ import { STORAGE_KEYS } from '../shared/storage.js';
 export const ALARM_NAME = 'FILTER_UPDATE';
 export const ALARM_PERIOD_MINUTES = 24 * 60; // 24 hours
 
+export function handleAlarm(alarm) {
+  if (alarm?.name === ALARM_NAME) {
+    return updateRules();
+  }
+  return Promise.resolve();
+}
+
 /**
  * Initializes the rule updater: sets up the alarm and onAlarm listener.
  */
@@ -19,13 +26,7 @@ export function setupRuleUpdaterAlarm() {
     periodInMinutes: ALARM_PERIOD_MINUTES,
   });
 
-  chrome.alarms.onAlarm.addListener((alarm) => {
-    if (alarm.name === ALARM_NAME) {
-      updateRules().catch((err) => {
-        logger.error('RuleUpdater', 'Periodic update failed:', err);
-      });
-    }
-  });
+  chrome.alarms.onAlarm.addListener(handleAlarm);
 }
 
 /**
@@ -36,8 +37,6 @@ export function setupRuleUpdaterAlarm() {
 export async function updateRules() {
   logger.info('RuleUpdater', 'Starting filter rules update...');
   try {
-    // In production, downloads latest diffs or list updates.
-    // Catches network failures gracefully.
     const now = new Date().toISOString();
 
     if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
