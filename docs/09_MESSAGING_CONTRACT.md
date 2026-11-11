@@ -19,24 +19,24 @@ must use `chrome.runtime.sendMessage` / `chrome.runtime.onMessage` with a messag
 
 ## 2. Message Type Table
 
-| Constant              | Value                   | Direction          | Description                                                |
-| --------------------- | ----------------------- | ------------------ | ---------------------------------------------------------- |
-| `GET_TAB_STATS`       | `GET_TAB_STATS`         | popup → background | Get block count for the active tab's hostname              |
-| `GET_TODAY_SUMMARY`   | `GET_TODAY_SUMMARY`     | popup → background | Get total blocks for today (current calendar day)          |
-| `GET_STATS_RANGE`     | `GET_STATS_RANGE`       | options → background | Get daily stats for a date range (payload: `{ from, to }`) |
-| `GET_TOP_DOMAINS`     | `GET_TOP_DOMAINS`       | options → background | Get top N blocked domains (payload: `{ n }`)               |
-| `TOGGLE_PAUSE_SITE`   | `TOGGLE_PAUSE_SITE`     | popup → background | Pause/resume blocking for the current site                 |
-| `GET_COSMETIC_RULES`  | `GET_COSMETIC_RULES`    | content → background | Fetch cosmetic CSS rules for the current hostname          |
-| `CS_BLOCKED_REPORT`   | `CS_BLOCKED_REPORT`     | content → background | Report a cosmetically-blocked element count                |
-| `ALLOWLIST_ADD`       | `ALLOWLIST_ADD`         | options → background | Add a domain to the allowlist (payload: `{ domain }`)      |
-| `ALLOWLIST_REMOVE`    | `ALLOWLIST_REMOVE`      | options → background | Remove a domain from the allowlist (payload: `{ domain }`) |
-| `LIST_TOGGLE`         | `LIST_TOGGLE`           | options → background | Enable/disable a named filter list (payload: `{ listId, enabled }`) |
-| `LIST_UPDATE_NOW`     | `LIST_UPDATE_NOW`       | options → background | Force an immediate filter list refresh                     |
-| `CUSTOM_RULES_SET`    | `CUSTOM_RULES_SET`      | options → background | Replace custom DNR rules (payload: `{ rules }`)            |
-| `STATS_EXPORT`        | `STATS_EXPORT`          | options → background | Export all stats as a JSON blob                            |
-| `STATS_RESET`         | `STATS_RESET`           | options → background | Reset all statistics to zero                               |
-| `SETTINGS_GET`        | `SETTINGS_GET`          | popup/options → background | Get the current settings object                      |
-| `SETTINGS_SET`        | `SETTINGS_SET`          | popup/options → background | Update settings (payload: partial settings patch)    |
+| Constant             | Value                | Direction                  | Description                                                         |
+| -------------------- | -------------------- | -------------------------- | ------------------------------------------------------------------- |
+| `GET_TAB_STATS`      | `GET_TAB_STATS`      | popup → background         | Get block count for the active tab's hostname                       |
+| `GET_TODAY_SUMMARY`  | `GET_TODAY_SUMMARY`  | popup → background         | Get total blocks for today (current calendar day)                   |
+| `GET_STATS_RANGE`    | `GET_STATS_RANGE`    | options → background       | Get daily stats for a date range (payload: `{ from, to }`)          |
+| `GET_TOP_DOMAINS`    | `GET_TOP_DOMAINS`    | options → background       | Get top N blocked domains (payload: `{ n }`)                        |
+| `TOGGLE_PAUSE_SITE`  | `TOGGLE_PAUSE_SITE`  | popup → background         | Pause/resume blocking for the current site                          |
+| `GET_COSMETIC_RULES` | `GET_COSMETIC_RULES` | content → background       | Fetch cosmetic CSS rules for the current hostname                   |
+| `CS_BLOCKED_REPORT`  | `CS_BLOCKED_REPORT`  | content → background       | Report a cosmetically-blocked element count                         |
+| `ALLOWLIST_ADD`      | `ALLOWLIST_ADD`      | options → background       | Add a domain to the allowlist (payload: `{ domain }`)               |
+| `ALLOWLIST_REMOVE`   | `ALLOWLIST_REMOVE`   | options → background       | Remove a domain from the allowlist (payload: `{ domain }`)          |
+| `LIST_TOGGLE`        | `LIST_TOGGLE`        | options → background       | Enable/disable a named filter list (payload: `{ listId, enabled }`) |
+| `LIST_UPDATE_NOW`    | `LIST_UPDATE_NOW`    | options → background       | Force an immediate filter list refresh                              |
+| `CUSTOM_RULES_SET`   | `CUSTOM_RULES_SET`   | options → background       | Replace custom DNR rules (payload: `{ rules }`)                     |
+| `STATS_EXPORT`       | `STATS_EXPORT`       | options → background       | Export all stats as a JSON blob                                     |
+| `STATS_RESET`        | `STATS_RESET`        | options → background       | Reset all statistics to zero                                        |
+| `SETTINGS_GET`       | `SETTINGS_GET`       | popup/options → background | Get the current settings object                                     |
+| `SETTINGS_SET`       | `SETTINGS_SET`       | popup/options → background | Update settings (payload: partial settings patch)                   |
 
 ---
 
