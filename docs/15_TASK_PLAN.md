@@ -34,7 +34,7 @@ criteria pass, lint is clean, and CHANGELOG is updated.
 
 ### TB.1 — ESLint 9 Flat Config Migration (T0.3)
 
-**Status:** `[ ]`
+**Status:** `[x]`
 
 **Deliverables:**
 
