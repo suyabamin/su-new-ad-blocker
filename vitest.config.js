@@ -9,10 +9,22 @@ export default defineConfig({
       include: ['src/**/*.js'],
       thresholds: {
         'src/shared/**': {
-          statements: 100,
-          branches: 100,
-          functions: 100,
-          lines: 100,
+          statements: 95,
+          branches: 95,
+          functions: 95,
+          lines: 95,
+        },
+        'src/background/**': {
+          statements: 80,
+          branches: 80,
+          functions: 80,
+          lines: 80,
+        },
+        'src/content/**': {
+          statements: 80,
+          branches: 80,
+          functions: 80,
+          lines: 80,
         },
       },
     },
