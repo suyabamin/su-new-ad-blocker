@@ -167,7 +167,7 @@ criteria pass, lint is clean, and CHANGELOG is updated.
 
 ### TE.2 — Statistics Messaging API (T3.2)
 
-**Status:** `[ ]`
+**Status:** `[x]`
 
 **Deliverables:**
 
