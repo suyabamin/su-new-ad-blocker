@@ -1,4 +1,6 @@
-// Popup script: handles popup UI interactions and displays live blocking statistics
+// Popup script: handles popup UI interactions and displays live blocking statistics.
+// hostname detection removed: tabs permission is not in canonical allowed list;
+// activeTab does not expose tab URLs via chrome.tabs.query. Stats are today-only.
 // See docs/15_TASK_PLAN.md TG.1
 
 import { MSG } from '../shared/messages.js';
@@ -28,12 +30,13 @@ export function updatePauseButton(button, isPaused) {
 }
 
 /**
- * Initializes popup UI listeners and queries background for current stats.
+ * Initializes popup UI listeners and queries background for today's global stats.
+ * Per-tab hostname stats require the `tabs` permission which is not in the canonical
+ * allowed list; that feature is deferred. Only today's total is shown.
  */
 export async function initPopup() {
   const siteDisplay = document.getElementById('current-site-display');
   const pauseButton = document.getElementById('pause-site-button');
-  const tabBlockedDisplay = document.getElementById('tab-blocked-count');
   const todayBlockedDisplay = document.getElementById('today-blocked-count');
   const openOptionsButton = document.getElementById('open-options-button');
 
@@ -43,52 +46,28 @@ export async function initPopup() {
     });
   }
 
-  // Query active tab hostname
-  let currentHostname = '';
-  if (typeof chrome !== 'undefined' && chrome.tabs?.query) {
-    try {
-      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-      if (tab?.url) {
-        const url = new URL(tab.url);
-        currentHostname = url.hostname;
-      }
-    } catch {
-      // url parse or tabs query failure
-    }
-  }
-
+  // Show placeholder — per-site hostname requires the tabs permission (not granted).
   if (siteDisplay) {
-    siteDisplay.textContent = currentHostname || UI_STRINGS.NO_ACTIVE_SITE;
+    siteDisplay.textContent = UI_STRINGS.NO_ACTIVE_SITE;
   }
 
-  // Request today summary stats
+  // Request today summary stats from the background service worker.
   if (typeof chrome !== 'undefined' && chrome.runtime?.sendMessage) {
     chrome.runtime.sendMessage({ type: MSG.GET_TODAY_SUMMARY }, (response) => {
       if (response?.ok && todayBlockedDisplay) {
         todayBlockedDisplay.textContent = String(response.data.todayBlocked || 0);
       }
     });
-
-    if (currentHostname) {
-      chrome.runtime.sendMessage(
-        { type: MSG.GET_TAB_STATS, hostname: currentHostname },
-        (response) => {
-          if (response?.ok && tabBlockedDisplay) {
-            tabBlockedDisplay.textContent = String(response.data.count || 0);
-          }
-        }
-      );
-    }
   }
 
-  // Set up pause site button toggle
+  // Set up pause site button toggle — hostname is empty until tabs permission is added.
   if (pauseButton && typeof chrome !== 'undefined' && chrome.runtime?.sendMessage) {
     pauseButton.addEventListener('click', () => {
       const currentlyPaused = pauseButton.getAttribute('aria-checked') === 'true';
       const newPausedState = !currentlyPaused;
 
       chrome.runtime.sendMessage(
-        { type: MSG.TOGGLE_PAUSE_SITE, hostname: currentHostname, paused: newPausedState },
+        { type: MSG.TOGGLE_PAUSE_SITE, hostname: '', paused: newPausedState },
         () => {
           updatePauseButton(pauseButton, newPausedState);
         }
