@@ -9,7 +9,7 @@ criteria pass, lint is clean, and CHANGELOG is updated.
 
 ### TA.1 — Remove premature stubs and reset incorrect files
 
-**Status:** `[ ]`
+**Status:** `[x]`
 
 **Deliverables:**
 
