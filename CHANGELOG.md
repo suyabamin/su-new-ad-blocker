@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `src/content/cosmetic.js` — generic cosmetic content script injecting CSS styles and MutationObserver without script tags (TF.1).
 - `src/content/youtube-selectors.js` — 16 target YouTube ad UI containers and explicit forbidden selectors list (TF.2).
 - `src/content/youtube.js` — YouTube cosmetic content script hiding ad UI containers with zero video playback manipulation (TF.2).
+- `src/popup/popup.html`, `popup.css`, `popup.js` — accessible extension popup UI displaying live tab/today stats and site pause toggle (TG.1).
 - Full unit test coverage for shared modules (40 tests, 100% coverage).
 - Unit tests for DNR rules builder (4 tests in `tests/unit/background/build-rules.test.js`).
 - Unit tests for background rule-updater and service-worker (6 tests, 100% statement coverage).
