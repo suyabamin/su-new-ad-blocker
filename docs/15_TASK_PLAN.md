@@ -36,20 +36,20 @@ Tasks are worked one at a time, in order. Mark a task `[x]` only when **all** it
 **Deliverables:**
 
 - `src/shared/messages.js` — frozen `MSG` object with all message type constants
-- `src/shared/storage.js` — frozen `STORAGE_KEYS` object with all storage key constants
-- `src/shared/logger.js` — structured logger with `log`, `warn`, `error` functions
+- `src/shared/storage.js` — frozen `STORAGE_KEYS` object with all storage key constants and pattern key helpers (`getDailyStatsKey`, `getListCacheKey`)
+- `src/shared/logger.js` — structured logger with `log`, `warn`, `error` functions, zero-noise default (`DEBUG = false`), and `setDebug`
 - `tests/unit/shared/logger.test.js`
 - `tests/unit/shared/messages.test.js`
 - `tests/unit/shared/storage.test.js`
 
 **Acceptance Criteria:**
 
-- AC-T0.2-1: `MSG` is a frozen object; every value is a unique non-empty string. (PASS)
-- AC-T0.2-2: `STORAGE_KEYS` is a frozen object; every value is a unique non-empty string. (PASS)
+- AC-T0.2-1: `MSG` is a frozen object; every value is a unique non-empty string matching `docs/09_MESSAGING_CONTRACT.md` Section 2. (PASS)
+- AC-T0.2-2: `STORAGE_KEYS` is a frozen object; every value is a unique non-empty string matching `docs/10_STORAGE_SCHEMA.md` Section 1, with pattern key helpers tested. (PASS)
 - AC-T0.2-3: `logger.log('tag', 'msg')` does not throw in any mode. (PASS)
 - AC-T0.2-4: Logger produces no output when `DEBUG` is `false`. (PASS)
-- AC-T0.2-5: All constants match the values specified in `docs/09_MESSAGING_CONTRACT.md` and `docs/10_STORAGE_SCHEMA.md`. (PASS)
-- AC-T0.2-6: `npm run lint && npm test` pass. (PASS)
+- AC-T0.2-5: All constants match the values specified in `docs/09_MESSAGING_CONTRACT.md` and `docs/10_STORAGE_SCHEMA.md` via explicit parity tests. (PASS)
+- AC-T0.2-6: `npm run lint && npm test && npm run test:coverage` pass with 100% coverage on `src/shared/**`. (PASS)
 
 ---
 
