@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SU New Ad Blocker</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="popup-container">
+      <header class="popup-header">
+        <h1 class="popup-title">SU New Ad Blocker</h1>
+        <span class="version-tag">v0.1.0</span>
+      </header>
+
+      <section class="site-status-section">
+        <div class="site-info">
+          <span class="site-label">Current Site:</span>
+          <span id="current-site-display" class="site-hostname">Checking...</span>
+        </div>
+        <button
+          id="pause-site-button"
+          class="toggle-btn"
+          type="button"
+          role="switch"
+          aria-checked="false"
+        >
+          <span class="btn-text">Pause on this site</span>
+        </button>
+      </section>
+
+      <section class="stats-card">
+        <div class="stats-item">
+          <span class="stats-number" id="tab-blocked-count">0</span>
+          <span class="stats-label">Blocked on this page</span>
+        </div>
+        <div class="stats-divider"></div>
+        <div class="stats-item">
+          <span class="stats-number" id="today-blocked-count">0</span>
+          <span class="stats-label">Blocked today</span>
+        </div>
+      </section>
+
+      <footer class="popup-footer">
+        <button id="open-options-button" class="link-btn" type="button">
+          Open Settings & Dashboard
+        </button>
+      </footer>
+    </div>
+    <script src="popup.js" type="module"></script>
+  </body>
+</html>
