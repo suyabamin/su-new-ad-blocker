@@ -1,7 +1,8 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeEach } from 'vitest';
 import { GENERIC_SELECTORS } from '../../src/content/selectors.js';
-import { injectCosmeticStyles, hideAdElements } from '../../src/content/youtube.js';
+import { injectCosmeticStyles } from '../../src/content/cosmetic.js';
+import { hideAdElements } from '../../src/content/youtube.js';
 
 describe('cosmetic integration (tests/integration/cosmetic.test.js)', () => {
   beforeEach(() => {
