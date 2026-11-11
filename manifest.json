@@ -7,9 +7,8 @@
     "declarativeNetRequest",
     "declarativeNetRequestFeedback",
     "storage",
-    "tabs",
-    "scripting",
-    "alarms"
+    "alarms",
+    "activeTab"
   ],
   "host_permissions": ["<all_urls>"],
   "background": {
