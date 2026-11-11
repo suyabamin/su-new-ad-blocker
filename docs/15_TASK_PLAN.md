@@ -107,7 +107,7 @@ criteria pass, lint is clean, and CHANGELOG is updated.
 
 ### TD.1 — Static DNR Ruleset (T1.1)
 
-**Status:** `[ ]`
+**Status:** `[x]`
 
 **Deliverables:**
 
