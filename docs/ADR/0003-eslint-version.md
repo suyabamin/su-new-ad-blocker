@@ -1,6 +1,6 @@
 # ADR-0003: ESLint Version and Migration Plan
 
-**Status:** Accepted (temporary)  
+**Status:** Superseded — migration to ESLint v9 flat config completed in task TB.1  
 **Date:** 2026-11-12  
 **Author:** T0.1 Verification
 
