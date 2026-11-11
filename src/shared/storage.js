@@ -1,44 +1,47 @@
-// Canonical storage keys and pattern key helpers for chrome.storage.local
+// Canonical storage key constants and pattern-key helpers for chrome.storage.local.
+// All keys used anywhere in the extension MUST come from this module.
 // See docs/10_STORAGE_SCHEMA.md
 
 export const STORAGE_KEYS = Object.freeze({
-  STATS_GLOBAL: 'stats_global',
-  STATS_BY_DOMAIN: 'stats_by_domain',
-  STATS_LAST_RESET: 'stats_last_reset',
-  ENABLED: 'enabled',
-  WHITELIST: 'whitelist',
-  FILTER_LAST_UPDATED: 'filter_last_updated',
-  SETTINGS: 'settings',
+  schemaVersion: 'schemaVersion',
+  settings: 'settings',
+  lists: 'lists',
+  allowlist: 'allowlist',
+  customRules: 'customRules',
+  'stats:lifetime': 'stats:lifetime',
+  'stats:meta': 'stats:meta',
 });
 
 /**
- * Returns the pattern storage key for daily stats: stats:day:YYYY-MM-DD
- * @param {string|Date} date - YYYY-MM-DD formatted string or Date instance
+ * Returns the daily-stats storage key for a given date string.
+ * Pattern: stats:day:YYYY-MM-DD
+ *
+ * @param {string} dateString - Must match /^\d{4}-\d{2}-\d{2}$/
  * @returns {string}
+ * @throws {TypeError} If dateString is not a valid YYYY-MM-DD string
  */
-export function getDailyStatsKey(date) {
-  if (date instanceof Date && !Number.isNaN(date.getTime())) {
-    const yyyy = date.getFullYear();
-    const mm = String(date.getMonth() + 1).padStart(2, '0');
-    const dd = String(date.getDate()).padStart(2, '0');
-    return `stats:day:${yyyy}-${mm}-${dd}`;
+export function dailyStatsKey(dateString) {
+  if (typeof dateString !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+    throw new TypeError(
+      `dailyStatsKey: expected a YYYY-MM-DD string, got ${JSON.stringify(dateString)}`
+    );
   }
-  if (typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
-    return `stats:day:${date}`;
-  }
-  throw new Error(
-    'Invalid date format for daily stats key. Expected YYYY-MM-DD string or valid Date instance.'
-  );
+  return `stats:day:${dateString}`;
 }
 
 /**
- * Returns the pattern storage key for filter list cache: cache:lists:<listId>
- * @param {string} listId - Non-empty string identifier for the filter list
+ * Returns the cache storage key for a named filter list.
+ * Pattern: cache:lists:<listId>
+ *
+ * @param {string} listId - Non-empty string matching /^[a-z0-9_-]+$/
  * @returns {string}
+ * @throws {TypeError} If listId is empty, not a string, or contains invalid characters
  */
 export function getListCacheKey(listId) {
-  if (typeof listId !== 'string' || listId.trim().length === 0) {
-    throw new Error('Invalid listId for list cache key. Expected non-empty string.');
+  if (typeof listId !== 'string' || !/^[a-z0-9_-]+$/.test(listId)) {
+    throw new TypeError(
+      `getListCacheKey: expected a non-empty [a-z0-9_-] string, got ${JSON.stringify(listId)}`
+    );
   }
-  return `cache:lists:${listId.trim()}`;
+  return `cache:lists:${listId}`;
 }
