@@ -19,13 +19,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Minimal `playwright.config.js` targeting `tests/e2e` with chromium project configuration.
 - Minimal placeholder scripts for `scripts/build-rules.js` and `scripts/build.js`.
 - ADR-0001: Use Manifest V3 and declarativeNetRequest for Network Blocking.
-- ADR-0002: Use Vitest and Playwright for Testing (see [docs/ADR/0002-use-vitest-and-playwright.md](docs/ADR/0002-use-vitest-and-playwright.md)).
+- ADR-0002: Language Selection — JavaScript (ES2022) vs TypeScript (see [docs/ADR/0002-javascript-vs-typescript.md](docs/ADR/0002-javascript-vs-typescript.md)) — Open.
 - ADR-0003: ESLint Version and Migration Plan (see [docs/ADR/0003-eslint-version.md](docs/ADR/0003-eslint-version.md)).
+- ADR-0004: Use Vitest and Playwright for Testing (see [docs/ADR/0004-use-vitest-and-playwright.md](docs/ADR/0004-use-vitest-and-playwright.md)).
 - Placeholder npm scripts: `test:perf`, `test:a11y`, `build:release`, `package`.
 - Task T0.2: Implemented shared constants `MSG` in `src/shared/messages.js` matching `docs/09_MESSAGING_CONTRACT.md`.
-- Task T0.2: Implemented shared storage keys `STORAGE_KEYS` in `src/shared/storage.js` matching `docs/10_STORAGE_SCHEMA.md`.
+- Task T0.2: Implemented shared storage keys `STORAGE_KEYS` and pattern key helpers (`getDailyStatsKey`, `getListCacheKey`) in `src/shared/storage.js` matching `docs/10_STORAGE_SCHEMA.md`.
 - Task T0.2: Implemented structured logger wrapper in `src/shared/logger.js` with zero-noise default (`DEBUG = false`), `log`, `warn`, `error`, `setDebug`, and `DEBUG` property.
-- Task T0.2: Unit test suites in `tests/unit/shared/` covering constants and logger (16 tests, 100% code coverage across `src/shared/`).
+- Task T0.2: Configured Vitest `coverage.thresholds` (100% on `src/shared/**`) in `vitest.config.js` per `docs/11_TESTING.md`.
+- Task T0.2: Unit test suites in `tests/unit/shared/` covering constants, pattern helpers, and logger with explicit spec-parity assertions (21 tests, 100% code coverage across `src/shared/`).
 
 ### Changed
 
