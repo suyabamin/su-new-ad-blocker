@@ -9,32 +9,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Complete project scaffold for Manifest V3 Chromium extension (T0.1).
-- Canonical folder layout matching `docs/02_ARCHITECTURE.md`: `src/background/`, `src/content/`, `src/content/youtube/`, `src/popup/`, `src/options/`, `src/shared/`, `src/assets/icons/`, `src/assets/rules/`, `build/`, `lists/`, `tests/unit/`, `tests/integration/`, `tests/e2e/`, `tests/fixtures/`, `tests/perf/`, `tests/site/`, `docs/`, `docs/ADR/`, `scripts/`.
-- Manifest V3 configuration with declarativeNetRequest, permissions, popup, options, and content scripts.
-- Installed Vitest (`^4.1.0`), `@vitest/coverage-v8`, `@playwright/test`, `eslint`, and `prettier`.
-- Chromium browser for Playwright installed via `npx playwright install chromium` into `D:\.playwright-browsers`.
+- Complete project scaffold for Manifest V3 Chromium extension.
+- Canonical folder layout: `src/background/`, `src/content/`, `src/popup/`, `src/options/`, `src/shared/`, `src/assets/`, `build/`, `lists/`, `tests/`, `docs/`, `docs/ADR/`, `scripts/`.
+- Installed Vitest (`^4.1.0`), `@vitest/coverage-v8`, `@playwright/test`, `eslint@^8`, `prettier`.
+- Chromium browser for Playwright in `D:\.playwright-browsers` (`chromium-1254`).
 - `.env.example` documenting `PLAYWRIGHT_BROWSERS_PATH=D:\.playwright-browsers`.
-- Documentation in `docs/11_TESTING.md` ("Local setup") and `README.md` for configuring `PLAYWRIGHT_BROWSERS_PATH` on alternate drives.
-- Minimal `playwright.config.js` targeting `tests/e2e` with chromium project configuration.
-- Minimal placeholder scripts for `scripts/build-rules.js` and `scripts/build.js`.
-- ADR-0001: Use Manifest V3 and declarativeNetRequest for Network Blocking.
-- ADR-0002: Language Selection — JavaScript (ES2022) vs TypeScript (see [docs/ADR/0002-javascript-vs-typescript.md](docs/ADR/0002-javascript-vs-typescript.md)) — Open.
-- ADR-0003: ESLint Version and Migration Plan (see [docs/ADR/0003-eslint-version.md](docs/ADR/0003-eslint-version.md)).
-- ADR-0004: Use Vitest and Playwright for Testing (see [docs/ADR/0004-use-vitest-and-playwright.md](docs/ADR/0004-use-vitest-and-playwright.md)).
-- Placeholder npm scripts: `test:perf`, `test:a11y`, `build:release`, `package`.
-- Task T0.2: Implemented shared constants `MSG` in `src/shared/messages.js` matching `docs/09_MESSAGING_CONTRACT.md`.
-- Task T0.2: Implemented shared storage keys `STORAGE_KEYS` and pattern key helpers (`getDailyStatsKey`, `getListCacheKey`) in `src/shared/storage.js` matching `docs/10_STORAGE_SCHEMA.md`.
-- Task T0.2: Implemented structured logger wrapper in `src/shared/logger.js` with zero-noise default (`DEBUG = false`), `log`, `warn`, `error`, `setDebug`, and `DEBUG` property.
-- Task T0.2: Configured Vitest `coverage.thresholds` (100% on `src/shared/**`) in `vitest.config.js` per `docs/11_TESTING.md`.
-- Task T0.2: Unit test suites in `tests/unit/shared/` covering constants, pattern helpers, and logger with explicit spec-parity assertions (21 tests, 100% code coverage across `src/shared/`).
+- Minimal `playwright.config.js` targeting `tests/e2e` with Chromium project.
+- ADR-0001: Use Manifest V3 and declarativeNetRequest for network blocking.
+- ADR-0002: Language — JavaScript ES2022 (Accepted).
+- ADR-0003: ESLint version migration plan (Superseded by TB.1).
+- ADR-0004: Use Vitest and Playwright for testing.
+- `src/shared/logger.js` — structured logger; silent by default; never throws.
+- `src/shared/messages.js` — placeholder (to be rewritten in TC.1 with canonical 16 types).
+- `src/shared/storage.js` — placeholder (to be rewritten in TC.1 with canonical 7 keys).
+- `vitest.config.js` with coverage thresholds: 95% for `src/shared/**`, 80% for `src/background/**` and `src/content/**`.
+- `docs/09_MESSAGING_CONTRACT.md` rewritten with canonical 16-message spec.
+- `docs/10_STORAGE_SCHEMA.md` rewritten with canonical 7 storage keys + pattern helpers.
+- `docs/11_TESTING.md` rewritten with canonical testing standards (95%/80%/80% thresholds).
+- `docs/15_TASK_PLAN.md` replaced with canonical Phase A–H task structure.
 
 ### Changed
 
-- Renamed workspace directory from `D:\su_new_ad blocker` to `D:\su_new_ad_blocker` (removing spaces) and verified 0 lingering old path references exist.
-- T0.1 verification complete after folder rename to `su_new_ad_blocker`.
-- Replaced Jest and jest-environment-jsdom with Vitest and Playwright to strictly match `docs/11_TESTING.md`.
-- Updated test runner commands: `vitest run --passWithNoTests` and `test:e2e` now passes with zero tests (`playwright test --pass-with-no-tests`).
-- The full Chromium build (`chromium-1254`) is installed for extension testing in `D:\.playwright-browsers`.
-- Added `.env`, `test-results/`, and `playwright-report/` to `.gitignore`.
-- Open item: T0.5 (ESLint 9 flat config migration) is planned, not started.
+- Renamed workspace from `D:\su_new_ad blocker` to `D:\su_new_ad_blocker`.
+- `test:e2e` script uses `--pass-with-no-tests` flag.
+- `PLAYWRIGHT_BROWSERS_PATH` set persistently via `setx`.
+
+### Removed
+
+- Premature stub files removed: `src/background/{rule-updater,service-worker,stats-api,stats}.js`, `src/content/{cosmetic,selectors,youtube,youtube-selectors}.js`, `src/popup/{popup.html,popup.js,popup.css}`, `src/options/{options.html,options.js,options.css}`, `scripts/{build.js,build-rules.js,generate-icons.cjs}`.
+- Incorrect unit test files removed: `tests/unit/shared/{messages,storage,logger}.test.js` (tested wrong spec; to be rewritten in TC.1).
+- Coverage threshold removed from 100% (fabricated) and reset to canonical 95% for `src/shared/**`.
