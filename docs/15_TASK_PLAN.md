@@ -270,7 +270,7 @@ criteria pass, lint is clean, and CHANGELOG is updated.
 
 ### TH.1 — Integration Tests (T5.1)
 
-**Status:** `[ ]`
+**Status:** `[x]`
 
 **Deliverables:**
 
