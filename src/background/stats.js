@@ -93,9 +93,7 @@ export function scheduleFlush() {
 
   flushTimeout = setTimeout(() => {
     flushTimeout = null;
-    flushStats().catch((err) => {
-      logger.error('StatsTracker', 'Debounced flush failed:', err);
-    });
+    flushStats();
   }, FLUSH_DEBOUNCE_MS);
 }
 
