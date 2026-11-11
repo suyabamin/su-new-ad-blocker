@@ -127,7 +127,7 @@ criteria pass, lint is clean, and CHANGELOG is updated.
 
 ### TD.2 — Dynamic Rule Updater (T1.2)
 
-**Status:** `[ ]`
+**Status:** `[x]`
 
 **Deliverables:**
 
