@@ -54,7 +54,7 @@ criteria pass, lint is clean, and CHANGELOG is updated.
 
 ### TB.2 — CI Workflow (T0.4)
 
-**Status:** `[ ]`
+**Status:** `[x]`
 
 **Deliverables:**
 
