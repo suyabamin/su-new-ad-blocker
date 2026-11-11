@@ -4,11 +4,11 @@
 
 ## 1. Test Stack
 
-| Layer | Tool | Runner command |
-|---|---|---|
-| Unit | Vitest | `npm test` |
-| Coverage | Vitest + V8 | `npm run test:coverage` |
-| E2E (extension in browser) | Playwright | `npm run test:e2e` |
+| Layer                      | Tool        | Runner command          |
+| -------------------------- | ----------- | ----------------------- |
+| Unit                       | Vitest      | `npm test`              |
+| Coverage                   | Vitest + V8 | `npm run test:coverage` |
+| E2E (extension in browser) | Playwright  | `npm run test:e2e`      |
 
 ---
 
@@ -33,11 +33,11 @@ tests/
 
 Coverage is measured with V8 on `src/**/*.js` only. Test files and scripts are excluded.
 
-| Path glob | Statements | Branches | Functions | Lines |
-|---|---|---|---|---|
-| `src/shared/**` | 95% | 95% | 95% | 95% |
-| `src/background/**` | 80% | 80% | 80% | 80% |
-| `src/content/**` | 80% | 80% | 80% | 80% |
+| Path glob           | Statements | Branches | Functions | Lines |
+| ------------------- | ---------- | -------- | --------- | ----- |
+| `src/shared/**`     | 95%        | 95%      | 95%       | 95%   |
+| `src/background/**` | 80%        | 80%      | 80%       | 80%   |
+| `src/content/**`    | 80%        | 80%      | 80%       | 80%   |
 
 Builds MUST NOT be tagged if coverage drops below these thresholds.
 
