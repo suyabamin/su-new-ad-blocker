@@ -25,8 +25,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `src/shared/logger.js` — structured logger with `debug`, `info`, `warn`, `error` methods (TC.1).
 - `scripts/build-rules.js` — converts filter lists and domain lists to declarativeNetRequest JSON (TD.1).
 - `rules/declarative_net_request_rules.json` — 551 bundled static DNR block rules including 10 canonical ad networks (TD.1).
+- `src/background/rule-updater.js` — dynamic rule updater with 24-hour alarm and graceful fallback (TD.2).
+- `src/background/service-worker.js` — service worker entry point wiring install and alarms (TD.2).
 - Full unit test coverage for shared modules (40 tests, 100% coverage).
 - Unit tests for DNR rules builder (4 tests in `tests/unit/background/build-rules.test.js`).
+- Unit tests for background rule-updater and service-worker (6 tests, 100% statement coverage).
 - `vitest.config.js` with coverage thresholds: 95% for `src/shared/**`, 80% for `src/background/**` and `src/content/**`.
 - `docs/09_MESSAGING_CONTRACT.md` rewritten with canonical 16-message spec.
 - `docs/10_STORAGE_SCHEMA.md` rewritten with canonical 7 storage keys + pattern helpers.
