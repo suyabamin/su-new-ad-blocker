@@ -10,7 +10,7 @@ describe('MSG constants (src/shared/messages.js)', () => {
 
   it('contains non-empty strings for all values (AC-T0.2-1)', () => {
     const values = Object.values(MSG);
-    expect(values.length).toBeGreaterThan(0);
+    expect(values.length).toBe(11);
     values.forEach((value) => {
       expect(typeof value).toBe('string');
       expect(value.trim().length).toBeGreaterThan(0);
@@ -23,8 +23,9 @@ describe('MSG constants (src/shared/messages.js)', () => {
     expect(uniqueValues.size).toBe(values.length);
   });
 
-  it('matches all specified constants in docs/09_MESSAGING_CONTRACT.md (AC-T0.2-5)', () => {
-    const expected = {
+  it('matches all specified constants in docs/09_MESSAGING_CONTRACT.md Section 2 explicitly (AC-T0.2-5)', () => {
+    // Explicitly typed from docs/09_MESSAGING_CONTRACT.md Section 2 table
+    const EXPECTED_MESSAGES = {
       GET_GLOBAL_STATS: 'GET_GLOBAL_STATS',
       GET_DOMAIN_STATS: 'GET_DOMAIN_STATS',
       GET_TOP_DOMAINS: 'GET_TOP_DOMAINS',
@@ -38,7 +39,8 @@ describe('MSG constants (src/shared/messages.js)', () => {
       GET_FILTER_STATUS: 'GET_FILTER_STATUS',
     };
 
-    expect(MSG).toEqual(expected);
+    expect(MSG).toEqual(EXPECTED_MESSAGES);
+    expect(Object.keys(MSG).sort()).toEqual(Object.keys(EXPECTED_MESSAGES).sort());
   });
 
   it('prevents modification or addition of properties', () => {
