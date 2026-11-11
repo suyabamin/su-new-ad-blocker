@@ -188,7 +188,7 @@ criteria pass, lint is clean, and CHANGELOG is updated.
 
 ### TF.1 — Generic Cosmetic Content Script (T2.1)
 
-**Status:** `[ ]`
+**Status:** `[x]`
 
 **Deliverables:**
 
