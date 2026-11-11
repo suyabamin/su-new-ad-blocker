@@ -1,63 +1,76 @@
 # 09 — Messaging Contract
 
-All `chrome.runtime` messages must use types defined in `src/shared/messages.js`. No magic strings anywhere in the codebase.
+All communication between extension components (popup, options, content scripts, service worker)
+must use `chrome.runtime.sendMessage` / `chrome.runtime.onMessage` with a message object whose
+`type` field is one of the constants defined in `src/shared/messages.js`.
 
-## 1. Message Format
+---
+
+## 1. Rules
+
+- Every `type` value MUST come from `MSG` in `src/shared/messages.js`. No magic strings.
+- Every message handler MUST return an explicit response object `{ ok: boolean, ... }`.
+- Unknown message types MUST return `{ ok: false, error: 'unknown message type' }`.
+- Handlers that perform async work MUST `return true` from `onMessage` to keep the channel open,
+  then call `sendResponse` when resolved.
+- No sensitive data (PII, auth tokens) may appear in any message payload.
+
+---
+
+## 2. Message Type Table
+
+| Constant              | Value                   | Direction          | Description                                                |
+| --------------------- | ----------------------- | ------------------ | ---------------------------------------------------------- |
+| `GET_TAB_STATS`       | `GET_TAB_STATS`         | popup → background | Get block count for the active tab's hostname              |
+| `GET_TODAY_SUMMARY`   | `GET_TODAY_SUMMARY`     | popup → background | Get total blocks for today (current calendar day)          |
+| `GET_STATS_RANGE`     | `GET_STATS_RANGE`       | options → background | Get daily stats for a date range (payload: `{ from, to }`) |
+| `GET_TOP_DOMAINS`     | `GET_TOP_DOMAINS`       | options → background | Get top N blocked domains (payload: `{ n }`)               |
+| `TOGGLE_PAUSE_SITE`   | `TOGGLE_PAUSE_SITE`     | popup → background | Pause/resume blocking for the current site                 |
+| `GET_COSMETIC_RULES`  | `GET_COSMETIC_RULES`    | content → background | Fetch cosmetic CSS rules for the current hostname          |
+| `CS_BLOCKED_REPORT`   | `CS_BLOCKED_REPORT`     | content → background | Report a cosmetically-blocked element count                |
+| `ALLOWLIST_ADD`       | `ALLOWLIST_ADD`         | options → background | Add a domain to the allowlist (payload: `{ domain }`)      |
+| `ALLOWLIST_REMOVE`    | `ALLOWLIST_REMOVE`      | options → background | Remove a domain from the allowlist (payload: `{ domain }`) |
+| `LIST_TOGGLE`         | `LIST_TOGGLE`           | options → background | Enable/disable a named filter list (payload: `{ listId, enabled }`) |
+| `LIST_UPDATE_NOW`     | `LIST_UPDATE_NOW`       | options → background | Force an immediate filter list refresh                     |
+| `CUSTOM_RULES_SET`    | `CUSTOM_RULES_SET`      | options → background | Replace custom DNR rules (payload: `{ rules }`)            |
+| `STATS_EXPORT`        | `STATS_EXPORT`          | options → background | Export all stats as a JSON blob                            |
+| `STATS_RESET`         | `STATS_RESET`           | options → background | Reset all statistics to zero                               |
+| `SETTINGS_GET`        | `SETTINGS_GET`          | popup/options → background | Get the current settings object                      |
+| `SETTINGS_SET`        | `SETTINGS_SET`          | popup/options → background | Update settings (payload: partial settings patch)    |
+
+---
+
+## 3. Response Envelope
+
+Every handler returns a plain object:
 
 ```js
-// Request (sent by popup / options)
-{ type: MSG.<TYPE>, payload: { /* type-specific */ } }
+// Success
+{ ok: true, data: <payload> }
 
-// Response (returned by service worker)
-{ ok: true, data: { /* type-specific */ } }
-// or
-{ ok: false, error: 'reason string' }
+// Failure
+{ ok: false, error: '<human-readable reason>' }
 ```
 
-## 2. Message Types
+---
 
-| Constant (`MSG.*`)       | Direction | Payload                           | Response data                                       |
-| ------------------------ | --------- | --------------------------------- | --------------------------------------------------- |
-| `GET_GLOBAL_STATS`       | UI → SW   | `{}`                              | `{ global: number, lastReset: number }`             |
-| `GET_DOMAIN_STATS`       | UI → SW   | `{ domain: string }`              | `{ domain: string, count: number }`                 |
-| `GET_TOP_DOMAINS`        | UI → SW   | `{ limit?: number }` (default 10) | `{ domains: Array<{domain:string, count:number}> }` |
-| `RESET_STATS`            | UI → SW   | `{}`                              | `{ ok: true }`                                      |
-| `SET_ENABLED`            | UI → SW   | `{ enabled: boolean }`            | `{ ok: true }`                                      |
-| `GET_ENABLED`            | UI → SW   | `{}`                              | `{ enabled: boolean }`                              |
-| `ADD_WHITELIST_ENTRY`    | UI → SW   | `{ domain: string }`              | `{ ok: true }`                                      |
-| `REMOVE_WHITELIST_ENTRY` | UI → SW   | `{ domain: string }`              | `{ ok: true }`                                      |
-| `GET_WHITELIST`          | UI → SW   | `{}`                              | `{ domains: string[] }`                             |
-| `TRIGGER_FILTER_UPDATE`  | UI → SW   | `{}`                              | `{ ok: true }`                                      |
-| `GET_FILTER_STATUS`      | UI → SW   | `{}`                              | `{ lastUpdated: number \| null }`                   |
-
-## 3. `src/shared/messages.js` (canonical definition)
+## 4. Example
 
 ```js
-// src/shared/messages.js
-export const MSG = Object.freeze({
-  GET_GLOBAL_STATS: 'GET_GLOBAL_STATS',
-  GET_DOMAIN_STATS: 'GET_DOMAIN_STATS',
-  GET_TOP_DOMAINS: 'GET_TOP_DOMAINS',
-  RESET_STATS: 'RESET_STATS',
-  SET_ENABLED: 'SET_ENABLED',
-  GET_ENABLED: 'GET_ENABLED',
-  ADD_WHITELIST_ENTRY: 'ADD_WHITELIST_ENTRY',
-  REMOVE_WHITELIST_ENTRY: 'REMOVE_WHITELIST_ENTRY',
-  GET_WHITELIST: 'GET_WHITELIST',
-  TRIGGER_FILTER_UPDATE: 'TRIGGER_FILTER_UPDATE',
-  GET_FILTER_STATUS: 'GET_FILTER_STATUS',
+// Sender (popup.js)
+const response = await chrome.runtime.sendMessage({
+  type: MSG.GET_TAB_STATS,
+  hostname: location.hostname,
+});
+if (response.ok) {
+  renderCount(response.data.count);
+}
+
+// Handler (service-worker.js)
+chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  if (message.type === MSG.GET_TAB_STATS) {
+    getTabStats(message.hostname).then((data) => sendResponse({ ok: true, data }));
+    return true; // keep channel open
+  }
 });
 ```
-
-## 4. Error Handling
-
-- If the service worker receives an unknown `type`, it responds with `{ ok: false, error: 'unknown message type' }`.
-- If a payload is malformed, it responds with `{ ok: false, error: 'invalid payload: <reason>' }`.
-- UI code must check `response.ok` before reading `response.data`.
-
-## 5. Adding a New Message Type
-
-1. Add the constant to `MSG` in `src/shared/messages.js`.
-2. Add a handler in the appropriate service worker module.
-3. Update this document.
-4. Write a unit test for the new handler.
