@@ -57,7 +57,7 @@ export default [
     files: ['scripts/**/*.js', 'scripts/**/*.cjs'],
     languageOptions: {
       ecmaVersion: 2022,
-      sourceType: 'commonjs',
+      sourceType: 'module',
       globals: {
         ...globals.node,
       },
