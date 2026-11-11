@@ -1,6 +1,6 @@
 # ADR-0002: Language Selection — JavaScript (ES2022) vs TypeScript
 
-**Status:** Open  
+**Status:** Accepted — JavaScript ES2022  
 **Date:** 2026-11-12  
 **Author:** Architectural Decision
 
