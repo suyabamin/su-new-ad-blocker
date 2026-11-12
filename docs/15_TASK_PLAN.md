@@ -7,10 +7,10 @@ criteria pass, lint is clean, tests pass, and verified in this session.
 
 ## Phase 0: Foundation
 
-- [ ] **T0.1** — Project scaffold and tooling setup
+- [x] **T0.1** — Project scaffold and tooling setup
 - [ ] **T0.2** — Shared constants (`messages.js`), storage helpers (`storage.js`), settings (`settings.js`), and logger (`logger.js`)
-- [ ] **T0.3** — ESLint 9 flat config migration (`eslint.config.js`)
-- [ ] **T0.4** — CI workflow configuration (`.github/workflows/ci.yml`)
+- [x] **T0.3** — ESLint 9 flat config migration (`eslint.config.js`)
+- [x] **T0.4** — CI workflow configuration (`.github/workflows/ci.yml`)
 
 ---
 
