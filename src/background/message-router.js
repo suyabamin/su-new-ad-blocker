@@ -5,6 +5,7 @@ import { logger } from '../shared/logger.js';
 import { MSG, isKnownType } from '../shared/messages.js';
 import { STORAGE_KEYS, dailyStatsKey, getWithDefaults } from '../shared/storage.js';
 import { DEFAULT_SETTINGS, validateSettingsPatch } from '../shared/settings.js';
+import { FILTER_LISTS } from '../shared/filter-lists.js';
 import {
   getStatsSnapshot,
   resetInMemoryStats,
@@ -13,13 +14,7 @@ import {
   recordBlockEvent,
   syncMatchedRules,
 } from './stats-tracker.js';
-import {
-  pauseDomain,
-  resumeDomain,
-  isPaused,
-  enableRuleset,
-  disableRuleset,
-} from './rules-manager.js';
+import { pauseDomain, resumeDomain, isPaused } from './rules-manager.js';
 import { updateBadge } from './badge.js';
 import { updateRules } from './rule-updater.js';
 
@@ -84,19 +79,36 @@ export function handleMessage(message, sender, sendResponse) {
         payload.hostname ||
         payload.domain ||
         (sender?.tab?.url ? new URL(sender.tab.url).hostname : '');
+      const hasHostname = Boolean(hostname);
       if (
         !globalThis.chrome?.declarativeNetRequest?.getMatchedRules ||
         !globalThis.chrome?.tabs?.get
       ) {
         const snapshot = getStatsSnapshot();
-        const count = snapshot.byDomain[hostname?.toLowerCase()] || 0;
-        sendResponse({ ok: true, data: { hostname, count } });
+        sendResponse({
+          ok: true,
+          data: hasHostname
+            ? { hostname, count: null, available: false, scope: 'site-aggregate' }
+            : { lifetime: snapshot.lifetime, available: false, scope: 'global' },
+        });
         return false;
       }
       syncMatchedRules().then(() => {
         const snapshot = getStatsSnapshot();
-        const count = snapshot.byDomain[hostname?.toLowerCase()] || 0;
-        sendResponse({ ok: true, data: { hostname, count } });
+        if (!hasHostname) {
+          sendResponse({
+            ok: true,
+            data: {
+              lifetime: snapshot.lifetime,
+              available: snapshot.networkStatsAvailable,
+              scope: 'global',
+            },
+          });
+          return;
+        }
+        const available = snapshot.networkStatsAvailable;
+        const count = available ? snapshot.byDomain[hostname.toLowerCase()] || 0 : null;
+        sendResponse({ ok: true, data: { hostname, count, available, scope: 'site-aggregate' } });
       });
       return true;
     }
@@ -114,6 +126,7 @@ export function handleMessage(message, sender, sendResponse) {
             totalBlocked: snapshot.totalBlocked,
             date: snapshot.todayDate,
             byType: { ...snapshot.today.byType },
+            networkStatsAvailable: snapshot.networkStatsAvailable,
           },
         });
         return false;
@@ -127,6 +140,7 @@ export function handleMessage(message, sender, sendResponse) {
             totalBlocked: snapshot.totalBlocked,
             date: snapshot.todayDate,
             byType: { ...snapshot.today.byType },
+            networkStatsAvailable: snapshot.networkStatsAvailable,
           },
         });
       });
@@ -136,11 +150,14 @@ export function handleMessage(message, sender, sendResponse) {
     case MSG.GET_TOP_DOMAINS: {
       const n = typeof payload.n === 'number' && payload.n > 0 ? payload.n : 10;
       const snapshot = getStatsSnapshot();
-      const sorted = Object.entries(snapshot.byDomain)
+      const sorted = Object.entries(snapshot.networkStatsAvailable ? snapshot.byDomain : {})
         .sort((a, b) => b[1] - a[1])
         .slice(0, n)
         .map(([domain, count]) => ({ domain, count }));
-      sendResponse({ ok: true, data: { topDomains: sorted } });
+      sendResponse({
+        ok: true,
+        data: { topDomains: sorted, available: snapshot.networkStatsAvailable },
+      });
       return false;
     }
 
@@ -252,17 +269,39 @@ export function handleMessage(message, sender, sendResponse) {
         });
         return false;
       }
+      if (!FILTER_LISTS.some((list) => list.id === listId)) {
+        sendResponse({
+          ok: false,
+          error: { code: 'BAD_PAYLOAD', message: 'Unknown filter list' },
+        });
+        return false;
+      }
       (async () => {
         try {
           const lists = await getWithDefaults(chrome.storage.local, STORAGE_KEYS.lists, {});
+          const previous = lists[listId];
           lists[listId] = { ...(lists[listId] || {}), enabled };
           await chrome.storage.local.set({ [STORAGE_KEYS.lists]: lists });
-          if (enabled) {
-            await enableRuleset(listId).catch(() => {});
-          } else {
-            await disableRuleset(listId).catch(() => {});
+          const update = await updateRules();
+          if (!update.ok) {
+            if (previous) {
+              lists[listId] = previous;
+            } else {
+              delete lists[listId];
+            }
+            await chrome.storage.local.set({ [STORAGE_KEYS.lists]: lists });
+            sendResponse({ ok: false, error: { code: 'INTERNAL', message: update.error } });
+            return;
           }
-          sendResponse({ ok: true, data: { listId, enabled } });
+          sendResponse({
+            ok: true,
+            data: {
+              listId,
+              enabled,
+              ruleCount: update.count,
+              failedSources: update.failedSources,
+            },
+          });
         } catch (err) {
           sendResponse({ ok: false, error: { code: 'INTERNAL', message: err.message } });
         }
@@ -273,8 +312,19 @@ export function handleMessage(message, sender, sendResponse) {
     case MSG.LIST_UPDATE_NOW: {
       (async () => {
         try {
-          const count = await updateRules();
-          sendResponse({ ok: true, data: { updated: true, ruleCount: count } });
+          const result = await updateRules();
+          if (!result.ok) {
+            sendResponse({ ok: false, error: { code: 'INTERNAL', message: result.error } });
+            return;
+          }
+          sendResponse({
+            ok: true,
+            data: {
+              updated: true,
+              ruleCount: result.count,
+              failedSources: result.failedSources,
+            },
+          });
         } catch (err) {
           sendResponse({ ok: false, error: { code: 'INTERNAL', message: err.message } });
         }
@@ -380,12 +430,21 @@ export function handleMessage(message, sender, sendResponse) {
     case MSG.SETTINGS_GET: {
       (async () => {
         try {
-          const settings = await getWithDefaults(
-            chrome.storage.local,
-            STORAGE_KEYS.settings,
-            DEFAULT_SETTINGS
+          const [settings, lists] = await Promise.all([
+            getWithDefaults(chrome.storage.local, STORAGE_KEYS.settings, DEFAULT_SETTINGS),
+            getWithDefaults(chrome.storage.local, STORAGE_KEYS.lists, {}),
+          ]);
+          const configuredLists = Object.fromEntries(
+            FILTER_LISTS.map((list) => [
+              list.id,
+              {
+                name: list.name,
+                enabled: lists[list.id]?.enabled !== false,
+                license: list.license,
+              },
+            ])
           );
-          sendResponse({ ok: true, data: settings });
+          sendResponse({ ok: true, data: { ...settings, lists: configuredLists } });
         } catch (err) {
           sendResponse({ ok: false, error: { code: 'INTERNAL', message: err.message } });
         }
