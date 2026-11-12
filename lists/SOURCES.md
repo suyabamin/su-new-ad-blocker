@@ -1,31 +1,36 @@
-# Filter List Sources
+﻿# Filter List Sources
 
-All sources must be listed here before they are used in the build script or dynamic updater.
+Only the following filter data is downloaded. Requests are made from the extension service worker over HTTPS, without credentials, and the response is compiled locally as declarativeNetRequest data. The extension does not execute list contents.
 
 ## EasyList
 
 - **URL:** https://easylist.to/easylist/easylist.txt
-- **Mirror:** https://raw.githubusercontent.com/easylist/easylist/master/easylist/easylist.txt
-- **License:** GNU General Public License v3.0 (GPL-3.0)
-- **License URL:** https://github.com/easylist/easylist/blob/master/COPYING
-- **Purpose:** Primary ad blocking — blocks advertisement URLs
-- **Update frequency:** Daily
-- **Maintainer:** EasyList Authors (https://easylist.to/)
+- **Maintainer:** EasyList authors — https://easylist.to/
+- **Purpose:** General advertisement network filters
+- **Update cadence:** The source header specifies its current update interval; the extension checks daily.
+- **License:** Dual licensed under GNU GPL v3 or later, or Creative Commons Attribution-ShareAlike 3.0 Unported or later.
+- **License reference:** https://easylist.to/pages/licence.html
+- **Attribution:** EasyList authors (https://easylist.to/)
 
 ## EasyPrivacy
 
 - **URL:** https://easylist.to/easylist/easyprivacy.txt
-- **Mirror:** https://raw.githubusercontent.com/easylist/easylist/master/easylist/easyprivacy.txt
-- **License:** GNU General Public License v3.0 (GPL-3.0)
-- **License URL:** https://github.com/easylist/easylist/blob/master/COPYING
-- **Purpose:** Tracker blocking — blocks analytics, tracking pixels, and telemetry URLs
-- **Update frequency:** Daily
-- **Maintainer:** EasyList Authors (https://easylist.to/)
+- **Maintainer:** EasyList authors — https://easylist.to/
+- **Purpose:** Tracking-system filters
+- **Update cadence:** The source header specifies its current update interval; the extension checks daily.
+- **License:** Dual licensed under GNU GPL v3 or later, or Creative Commons Attribution-ShareAlike 3.0 Unported or later.
+- **License reference:** https://easylist.to/pages/licence.html
+- **Attribution:** EasyList authors (https://easylist.to/)
 
----
+## Conversion and Redistribution
 
-## License Compliance Notes
+The maintainers' license page states that EasyList and EasyPrivacy are dual licensed under GPL-3.0-or-later or CC-BY-SA-3.0-or-later, and requests attribution. The extension downloads the original text for each user's device and locally converts a supported subset into DNR rules. Raw filter-list snapshots are not bundled or redistributed by this repository. Conversion may omit unsupported syntax and is bounded by the browser's DNR rule quota; this is not full filter-list parity.
 
-- EasyList and EasyPrivacy are GPL-3.0 licensed. Bundling a **converted subset** of these lists as a DNR JSON ruleset is permitted under GPL-3.0 (the converted data is a derivative work; this extension is also open-source or the user must comply with GPL-3.0 terms).
-- The raw `.txt` filter list files are **not committed** to this repository. They are downloaded at build time only.
-- If additional filter lists are added in the future, they must be recorded in this file before use, with their license verified.
+Test data in `test-fixture.txt` is solely for tests. The production build compiler reads only files named `production-*.txt`; it excludes the test fixture.
+
+## References
+
+- [EasyList license statement](https://easylist.to/pages/licence.html)
+- [EasyList project](https://github.com/easylist/easylist)
+- [EasyList current list](https://easylist.to/easylist/easylist.txt)
+- [EasyPrivacy current list](https://easylist.to/easylist/easyprivacy.txt)
