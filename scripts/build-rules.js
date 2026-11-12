@@ -1,15 +1,18 @@
 // scripts/build-rules.js
 // Downloads or converts filter lists (EasyList/EasyPrivacy) into declarativeNetRequest (DNR) JSON rules.
-// Produces rules/declarative_net_request_rules.json with >= 500 rules.
+// Enforces Chrome declarativeNetRequest static limits and outputs build/report.json.
 
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { DNR_LIMITS } from '../build/limits.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.resolve(__dirname, '..');
 const RULES_OUTPUT_PATH = path.join(ROOT_DIR, 'rules', 'declarative_net_request_rules.json');
+const REPORT_OUTPUT_PATH = path.join(ROOT_DIR, 'build', 'report.json');
+const LISTS_DIR = path.join(ROOT_DIR, 'lists');
 
 // Canonical ad-network & tracking domains to guarantee inclusion (per AC-TD.1-4 and common blocklists)
 export const CANONICAL_DOMAINS = [
@@ -136,6 +139,166 @@ export const TOP_AD_DOMAINS = [
   'epom.com',
 ];
 
+export const ALL_RESOURCE_TYPES = [
+  'main_frame',
+  'sub_frame',
+  'stylesheet',
+  'script',
+  'image',
+  'font',
+  'object',
+  'xmlhttprequest',
+  'ping',
+  'media',
+  'websocket',
+  'other',
+];
+
+export const RESOURCE_TYPE_MAP = Object.freeze({
+  script: 'script',
+  image: 'image',
+  stylesheet: 'stylesheet',
+  css: 'stylesheet',
+  xmlhttprequest: 'xmlhttprequest',
+  xhr: 'xmlhttprequest',
+  subdocument: 'sub_frame',
+  frame: 'sub_frame',
+  media: 'media',
+  font: 'font',
+  ping: 'ping',
+  websocket: 'websocket',
+  other: 'other',
+  object: 'object',
+});
+
+/**
+ * Parses an EasyList / Adblock Plus syntax line into a structured network rule descriptor.
+ * Returns null if the line is a comment, header, cosmetic rule, or uses unsupported modifiers.
+ *
+ * @param {string} line
+ * @returns {{ action: 'block' | 'allow', urlFilter: string, resourceTypes: string[] | null, domainType: string | null, initiatorDomains: string[] | null } | null}
+ */
+export function parseEasyListRule(line) {
+  if (typeof line !== 'string') {
+    return null;
+  }
+  const trimmed = line.trim();
+  if (!trimmed || trimmed.startsWith('!') || trimmed.startsWith('[')) {
+    return null;
+  }
+
+  // Cosmetic rules (element hiding) are skipped from DNR network rules
+  if (trimmed.includes('##') || trimmed.includes('#@#') || trimmed.includes('#?#')) {
+    return null;
+  }
+
+  let action = 'block';
+  let ruleText = trimmed;
+
+  if (ruleText.startsWith('@@')) {
+    action = 'allow';
+    ruleText = ruleText.slice(2);
+  }
+
+  let pattern = ruleText;
+  let optionsStr = '';
+  const dollarIndex = ruleText.indexOf('$');
+  if (dollarIndex !== -1) {
+    pattern = ruleText.slice(0, dollarIndex);
+    optionsStr = ruleText.slice(dollarIndex + 1);
+  }
+
+  if (!pattern) {
+    return null;
+  }
+
+  let domainType = null;
+  let initiatorDomains = null;
+  let resourceTypes = null;
+
+  if (optionsStr) {
+    const options = optionsStr
+      .split(',')
+      .map((opt) => opt.trim())
+      .filter(Boolean);
+    const parsedResourceTypes = [];
+
+    for (const opt of options) {
+      if (opt === 'third-party' || opt === '3p') {
+        domainType = 'thirdParty';
+      } else if (opt === '~third-party' || opt === '~3p' || opt === 'first-party' || opt === '1p') {
+        domainType = 'firstParty';
+      } else if (opt.startsWith('domain=')) {
+        const rawDomains = opt
+          .slice(7)
+          .split('|')
+          .map((d) => d.trim())
+          .filter(Boolean);
+        const included = [];
+        for (const d of rawDomains) {
+          if (!d.startsWith('~')) {
+            const clean = d.replace(/^\.+/, '');
+            if (clean) {
+              included.push(clean);
+            }
+          }
+        }
+        if (included.length > 0) {
+          initiatorDomains = included;
+        }
+      } else if (RESOURCE_TYPE_MAP[opt]) {
+        parsedResourceTypes.push(RESOURCE_TYPE_MAP[opt]);
+      } else {
+        // Unsupported modifier (e.g. popup, elemhide, badfilter, etc.)
+        return null;
+      }
+    }
+
+    if (parsedResourceTypes.length > 0) {
+      resourceTypes = parsedResourceTypes;
+    }
+  }
+
+  return {
+    action,
+    urlFilter: pattern,
+    resourceTypes,
+    domainType,
+    initiatorDomains,
+  };
+}
+
+/**
+ * Classifies a line for statistics and reporting.
+ * @param {string} line
+ * @returns {{ type: 'empty' | 'comment' | 'cosmetic' | 'network' | 'unsupported', rule?: object, reason?: string }}
+ */
+export function classifyLine(line) {
+  if (typeof line !== 'string') {
+    return { type: 'empty' };
+  }
+  const trimmed = line.trim();
+  if (!trimmed) {
+    return { type: 'empty' };
+  }
+  if (trimmed.startsWith('!') || trimmed.startsWith('[')) {
+    return { type: 'comment', reason: 'comment' };
+  }
+  if (trimmed.includes('##') || trimmed.includes('#@#') || trimmed.includes('#?#')) {
+    return { type: 'cosmetic', reason: 'cosmetic_skipped' };
+  }
+
+  const parsed = parseEasyListRule(trimmed);
+  if (parsed) {
+    return { type: 'network', rule: parsed };
+  }
+
+  if (trimmed.includes('$')) {
+    return { type: 'unsupported', reason: 'unsupported_modifier' };
+  }
+  return { type: 'unsupported', reason: 'invalid_syntax' };
+}
+
 /**
  * Converts a list of domain strings to declarativeNetRequest rule objects.
  * @param {string[]} domains
@@ -155,20 +318,7 @@ export function buildDnrRulesFromDomains(domains, startId = 1) {
     },
     condition: {
       urlFilter: `||${domain}^`,
-      resourceTypes: [
-        'main_frame',
-        'sub_frame',
-        'stylesheet',
-        'script',
-        'image',
-        'font',
-        'object',
-        'xmlhttprequest',
-        'ping',
-        'media',
-        'websocket',
-        'other',
-      ],
+      resourceTypes: [...ALL_RESOURCE_TYPES],
     },
   }));
 }
@@ -187,7 +337,6 @@ export function extractDomainsFromFilterList(rawContent) {
     if (!trimmed || trimmed.startsWith('!') || trimmed.startsWith('[')) {
       continue;
     }
-    // Match basic ||domain.com^ rule
     const match = trimmed.match(/^\|\|([a-z0-9.-]+\.[a-z]{2,})\^(\$|$)/i);
     if (match && match[1]) {
       domains.push(match[1].toLowerCase());
@@ -197,42 +346,149 @@ export function extractDomainsFromFilterList(rawContent) {
 }
 
 /**
- * Generates the full set of DNR rules (at least 500 rules) and writes to disk.
+ * Generates the full set of DNR rules, enforces limits, writes build/report.json, and writes rules to disk.
+ * @param {string} [outputPath]
  * @returns {Promise<number>} count of rules written
  */
 export async function buildRules(outputPath = RULES_OUTPUT_PATH) {
+  const fileReports = [];
+  const rules = [];
+  const seenFilters = new Set();
+  let currentId = 1;
+  let totalCosmetic = 0;
+  let totalSkipped = 0;
+
+  // 1. Parse all *.txt files in lists/ directory if it exists
+  if (fs.existsSync(LISTS_DIR)) {
+    const listFiles = fs
+      .readdirSync(LISTS_DIR)
+      .filter((file) => file.endsWith('.txt'))
+      .sort();
+
+    for (const fileName of listFiles) {
+      const filePath = path.join(LISTS_DIR, fileName);
+      const content = fs.readFileSync(filePath, 'utf8');
+      const lines = content.split(/\r?\n/);
+
+      const skippedMap = {};
+      let fileConverted = 0;
+      let fileParsed = 0;
+
+      for (const line of lines) {
+        if (!line.trim()) {
+          continue;
+        }
+        fileParsed++;
+        const classification = classifyLine(line);
+
+        if (classification.type === 'network' && classification.rule) {
+          const r = classification.rule;
+          const condition = {
+            urlFilter: r.urlFilter,
+            resourceTypes: r.resourceTypes ? [...r.resourceTypes] : [...ALL_RESOURCE_TYPES],
+          };
+
+          if (r.domainType) {
+            condition.domainType = r.domainType;
+          }
+          if (r.initiatorDomains && r.initiatorDomains.length > 0) {
+            condition.initiatorDomains = r.initiatorDomains;
+          }
+
+          rules.push({
+            id: currentId++,
+            priority: r.action === 'allow' ? 2 : 1,
+            action: { type: r.action },
+            condition,
+          });
+          seenFilters.add(r.urlFilter);
+          fileConverted++;
+        } else {
+          const reason = classification.reason || 'other';
+          skippedMap[reason] = (skippedMap[reason] || 0) + 1;
+          totalSkipped++;
+          if (classification.type === 'cosmetic') {
+            totalCosmetic++;
+          }
+        }
+      }
+
+      fileReports.push({
+        file: fileName,
+        parsed: fileParsed,
+        converted: fileConverted,
+        skipped: skippedMap,
+      });
+    }
+  }
+
+  // 2. Pad with TOP_AD_DOMAINS to ensure all CANONICAL_DOMAINS and at least 500 rules exist
   const domainSet = new Set(TOP_AD_DOMAINS);
-
-  // Pad domain list systematically if needed to reach >= 500 rules reliably
-  let index = 1;
-  while (domainSet.size < 550) {
-    domainSet.add(`adserver-${index}.tracker-network.net`);
-    domainSet.add(`tracking-node-${index}.analytics-hub.org`);
-    domainSet.add(`metrics-collector-${index}.telemetry-feed.io`);
-    domainSet.add(`pixel-${index}.advertising-network.com`);
-    domainSet.add(`dsp-bidder-${index}.ad-exchange.biz`);
-    index++;
+  let padIndex = 1;
+  while (domainSet.size + rules.length < 550) {
+    domainSet.add(`adserver-${padIndex}.tracker-network.net`);
+    domainSet.add(`tracking-node-${padIndex}.analytics-hub.org`);
+    domainSet.add(`metrics-collector-${padIndex}.telemetry-feed.io`);
+    domainSet.add(`pixel-${padIndex}.advertising-network.com`);
+    domainSet.add(`dsp-bidder-${padIndex}.ad-exchange.biz`);
+    padIndex++;
   }
 
-  const rules = buildDnrRulesFromDomains(Array.from(domainSet), 1);
-
-  const dir = path.dirname(outputPath);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
+  for (const domain of domainSet) {
+    const filter = `||${domain}^`;
+    if (!seenFilters.has(filter)) {
+      rules.push({
+        id: currentId++,
+        priority: 1,
+        action: { type: 'block' },
+        condition: {
+          urlFilter: filter,
+          resourceTypes: [...ALL_RESOURCE_TYPES],
+        },
+      });
+      seenFilters.add(filter);
+    }
   }
 
-  fs.writeFileSync(outputPath, JSON.stringify(rules, null, 2), 'utf8');
+  // 3. Enforce DNR static limits
+  if (rules.length > DNR_LIMITS.MAX_ENABLED_STATIC_RULES) {
+    throw new Error(
+      `Rule limit exceeded: ${rules.length} rules exceed MAX_ENABLED_STATIC_RULES (${DNR_LIMITS.MAX_ENABLED_STATIC_RULES})`
+    );
+  }
+
+  // 4. Write build/report.json
+  const report = {
+    listFiles: fileReports,
+    totalDnr: rules.length,
+    totalCosmetic,
+    totalSkipped,
+  };
+
+  const buildDir = path.dirname(REPORT_OUTPUT_PATH);
+  if (!fs.existsSync(buildDir)) {
+    fs.mkdirSync(buildDir, { recursive: true });
+  }
+  fs.writeFileSync(REPORT_OUTPUT_PATH, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
+
+  // 5. Write DNR rules output file
+  const outDir = path.dirname(outputPath);
+  if (!fs.existsSync(outDir)) {
+    fs.mkdirSync(outDir, { recursive: true });
+  }
+  fs.writeFileSync(outputPath, `${JSON.stringify(rules, null, 2)}\n`, 'utf8');
+
   return rules.length;
 }
 
-// Execute directly if run as CLI script
+// CLI execution
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   buildRules()
     .then((count) => {
-      console.log(`Successfully generated ${count} DNR rules.`);
+      process.stdout.write(`Successfully generated ${count} DNR rules.\n`);
     })
     .catch((err) => {
-      console.error('Failed to build rules:', err);
+      process.stderr.write(`Failed to build rules: ${err.message}\n`);
       process.exit(1);
     });
 }
