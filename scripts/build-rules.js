@@ -6,6 +6,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { DNR_LIMITS } from '../build/limits.js';
+import { parseNetworkFilter } from '../src/shared/filter-compiler.js';
+import { STATIC_ALLOW_RULE_ID_OFFSET } from '../src/shared/filter-lists.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -15,7 +17,7 @@ const COSMETIC_OUTPUT_PATH = path.join(ROOT_DIR, 'rules', 'cosmetic.json');
 const REPORT_OUTPUT_PATH = path.join(ROOT_DIR, 'build', 'report.json');
 const LISTS_DIR = path.join(ROOT_DIR, 'lists');
 
-// Canonical ad-network & tracking domains to guarantee inclusion (per AC-TD.1-4 and common blocklists)
+// Small static fallback of established ad and tracking domains.
 export const CANONICAL_DOMAINS = [
   'doubleclick.net',
   'googlesyndication.com',
@@ -29,7 +31,7 @@ export const CANONICAL_DOMAINS = [
   'rubiconproject.com',
 ];
 
-// Additional high-volume ad & tracking domains to reach >= 500 static rules robustly
+// Additional established ad and tracking domains used by the static fallback.
 export const TOP_AD_DOMAINS = [
   ...CANONICAL_DOMAINS,
   '2mdn.net',
@@ -180,92 +182,18 @@ export const RESOURCE_TYPE_MAP = Object.freeze({
  * @returns {{ action: 'block' | 'allow', urlFilter: string, resourceTypes: string[] | null, domainType: string | null, initiatorDomains: string[] | null } | null}
  */
 export function parseEasyListRule(line) {
-  if (typeof line !== 'string') {
-    return null;
-  }
-  const trimmed = line.trim();
-  if (!trimmed || trimmed.startsWith('!') || trimmed.startsWith('[')) {
-    return null;
-  }
-
-  // Cosmetic rules (element hiding) are skipped from DNR network rules
-  if (trimmed.includes('##') || trimmed.includes('#@#') || trimmed.includes('#?#')) {
-    return null;
-  }
-
-  let action = 'block';
-  let ruleText = trimmed;
-
-  if (ruleText.startsWith('@@')) {
-    action = 'allow';
-    ruleText = ruleText.slice(2);
-  }
-
-  let pattern = ruleText;
-  let optionsStr = '';
-  const dollarIndex = ruleText.indexOf('$');
-  if (dollarIndex !== -1) {
-    pattern = ruleText.slice(0, dollarIndex);
-    optionsStr = ruleText.slice(dollarIndex + 1);
-  }
-
-  if (!pattern) {
-    return null;
-  }
-
-  let domainType = null;
-  let initiatorDomains = null;
-  let resourceTypes = null;
-
-  if (optionsStr) {
-    const options = optionsStr
-      .split(',')
-      .map((opt) => opt.trim())
-      .filter(Boolean);
-    const parsedResourceTypes = [];
-
-    for (const opt of options) {
-      if (opt === 'third-party' || opt === '3p') {
-        domainType = 'thirdParty';
-      } else if (opt === '~third-party' || opt === '~3p' || opt === 'first-party' || opt === '1p') {
-        domainType = 'firstParty';
-      } else if (opt.startsWith('domain=')) {
-        const rawDomains = opt
-          .slice(7)
-          .split('|')
-          .map((d) => d.trim())
-          .filter(Boolean);
-        const included = [];
-        for (const d of rawDomains) {
-          if (!d.startsWith('~')) {
-            const clean = d.replace(/^\.+/, '');
-            if (clean) {
-              included.push(clean);
-            }
-          }
-        }
-        if (included.length > 0) {
-          initiatorDomains = included;
-        }
-      } else if (RESOURCE_TYPE_MAP[opt]) {
-        parsedResourceTypes.push(RESOURCE_TYPE_MAP[opt]);
-      } else {
-        // Unsupported modifier (e.g. popup, elemhide, badfilter, etc.)
-        return null;
-      }
-    }
-
-    if (parsedResourceTypes.length > 0) {
-      resourceTypes = parsedResourceTypes;
-    }
-  }
-
+  const parsed = parseNetworkFilter(line);
+  if (!parsed) return null;
   return {
-    action,
-    urlFilter: pattern,
-    resourceTypes,
-    domainType,
-    initiatorDomains,
+    action: parsed.action,
+    urlFilter: parsed.condition.urlFilter,
+    resourceTypes: parsed.condition.resourceTypes || null,
+    excludedResourceTypes: parsed.condition.excludedResourceTypes || null,
+    domainType: parsed.condition.domainType || null,
+    initiatorDomains: parsed.condition.initiatorDomains || null,
+    excludedInitiatorDomains: parsed.condition.excludedInitiatorDomains || null,
+    isUrlFilterCaseSensitive: parsed.condition.isUrlFilterCaseSensitive || false,
+    important: parsed.important,
   };
 }
 
@@ -411,6 +339,7 @@ export async function buildRules(outputPath = RULES_OUTPUT_PATH) {
     domainSpecific: {},
   };
   let currentId = 1;
+  let currentAllowId = STATIC_ALLOW_RULE_ID_OFFSET;
   let totalCosmetic = 0;
   let totalSkipped = 0;
 
@@ -418,7 +347,7 @@ export async function buildRules(outputPath = RULES_OUTPUT_PATH) {
   if (fs.existsSync(LISTS_DIR)) {
     const listFiles = fs
       .readdirSync(LISTS_DIR)
-      .filter((file) => file.endsWith('.txt'))
+      .filter((file) => file.endsWith('.txt') && file.startsWith('production-'))
       .sort();
 
     for (const fileName of listFiles) {
@@ -429,31 +358,46 @@ export async function buildRules(outputPath = RULES_OUTPUT_PATH) {
       const skippedMap = {};
       let fileConverted = 0;
       let fileParsed = 0;
+      const normalizeBadFilter = (line) =>
+        line
+          .trim()
+          .replace(/,badfilter(?=,|$)/, '')
+          .replace(/\$badfilter$/, '')
+          .replace(/\$$/, '');
+      const badFilters = new Set(
+        lines.filter((line) => /(?:\$|,)badfilter(?:,|$)/.test(line)).map(normalizeBadFilter)
+      );
 
       for (const line of lines) {
         if (!line.trim()) {
           continue;
         }
         fileParsed++;
+        if (/(?:\$|,)badfilter(?:,|$)/.test(line) || badFilters.has(normalizeBadFilter(line))) {
+          skippedMap.badfilter = (skippedMap.badfilter || 0) + 1;
+          totalSkipped++;
+          continue;
+        }
         const classification = classifyLine(line);
 
         if (classification.type === 'network' && classification.rule) {
           const r = classification.rule;
-          const condition = {
-            urlFilter: r.urlFilter,
-            resourceTypes: r.resourceTypes ? [...r.resourceTypes] : [...ALL_RESOURCE_TYPES],
-          };
-
-          if (r.domainType) {
-            condition.domainType = r.domainType;
+          const condition = { urlFilter: r.urlFilter };
+          if (r.resourceTypes) {
+            condition.resourceTypes = [...r.resourceTypes];
+          } else if (r.excludedResourceTypes) {
+            condition.excludedResourceTypes = [...r.excludedResourceTypes];
+          } else {
+            condition.resourceTypes = [...ALL_RESOURCE_TYPES];
           }
-          if (r.initiatorDomains && r.initiatorDomains.length > 0) {
-            condition.initiatorDomains = r.initiatorDomains;
+          for (const key of ['domainType', 'initiatorDomains', 'excludedInitiatorDomains']) {
+            if (r[key]) condition[key] = [...(Array.isArray(r[key]) ? r[key] : [r[key]])];
           }
+          if (r.isUrlFilterCaseSensitive) condition.isUrlFilterCaseSensitive = true;
 
           rules.push({
-            id: currentId++,
-            priority: r.action === 'allow' ? 2 : 1,
+            id: r.action === 'allow' ? currentAllowId++ : currentId++,
+            priority: r.important ? 3 : r.action === 'allow' ? 2 : 1,
             action: { type: r.action },
             condition,
           });
@@ -510,18 +454,8 @@ export async function buildRules(outputPath = RULES_OUTPUT_PATH) {
     }
   }
 
-  // 2. Pad with TOP_AD_DOMAINS to ensure all CANONICAL_DOMAINS and at least 500 rules exist
+  // A small, reviewed static baseline remains active until the first downloaded update succeeds.
   const domainSet = new Set(TOP_AD_DOMAINS);
-  let padIndex = 1;
-  while (domainSet.size + rules.length < 550) {
-    domainSet.add(`adserver-${padIndex}.tracker-network.net`);
-    domainSet.add(`tracking-node-${padIndex}.analytics-hub.org`);
-    domainSet.add(`metrics-collector-${padIndex}.telemetry-feed.io`);
-    domainSet.add(`pixel-${padIndex}.advertising-network.com`);
-    domainSet.add(`dsp-bidder-${padIndex}.ad-exchange.biz`);
-    padIndex++;
-  }
-
   for (const domain of domainSet) {
     const filter = `||${domain}^`;
     if (!seenFilters.has(filter)) {
@@ -549,6 +483,7 @@ export async function buildRules(outputPath = RULES_OUTPUT_PATH) {
   const report = {
     listFiles: fileReports,
     totalDnr: rules.length,
+    bundledBaselineDomains: domainSet.size,
     totalCosmetic,
     totalSkipped,
   };
