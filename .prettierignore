@@ -1,5 +1,7 @@
-node_modules/
 dist/
 coverage/
+node_modules/
+test-results/
+playwright-report/
+*.zip
 lists/*.txt
-tests/unit/background/temp_test_rules.json
