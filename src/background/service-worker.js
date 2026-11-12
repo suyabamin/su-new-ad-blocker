@@ -2,7 +2,7 @@
 // Coordinates network blocking, rule updates, stats tracking, alarms, and badge updates.
 
 import { logger } from '../shared/logger.js';
-import { updateRules } from './rule-updater.js';
+import { ALARM_NAME, handleAlarm, setupRuleUpdaterAlarm, updateRules } from './rule-updater.js';
 import { initStats, setupDnrRuleMatchedListener } from './stats.js';
 import { setupMessageRouter } from './message-router.js';
 import { updateBadge } from './badge.js';
@@ -48,7 +48,7 @@ export function setupAlarms() {
     return;
   }
   chrome.alarms.create('stats-prune', { periodInMinutes: 1440 });
-  chrome.alarms.create('list-update', { periodInMinutes: 1440 });
+  setupRuleUpdaterAlarm();
 }
 
 /**
@@ -65,9 +65,9 @@ export function setupAlarmListener() {
       } catch (err) {
         logger.error('ServiceWorker', 'Failed to prune stats on alarm:', err);
       }
-    } else if (alarm.name === 'list-update') {
+    } else if (alarm.name === ALARM_NAME) {
       try {
-        await updateRules();
+        await handleAlarm(alarm);
       } catch (err) {
         logger.error('ServiceWorker', 'Failed to update rules on alarm:', err);
       }
