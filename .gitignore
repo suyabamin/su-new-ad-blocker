@@ -9,3 +9,4 @@ playwright-report/
 .env
 lists/*.txt
 !lists/SOURCES.md
+_metadata/
