@@ -97,12 +97,6 @@ export async function bundleContentScripts({
     assertNoTopLevelModuleSyntax(bundlePath, code);
   }
 
-  // Also mirror bundles to outDir/dist/content to support relative path resolution
-  const distContentOutDir = path.join(outDir, 'dist', 'content');
-  fs.mkdirSync(distContentOutDir, { recursive: true });
-  fs.copyFileSync(cosmeticOutFile, path.join(distContentOutDir, 'cosmetic.js'));
-  fs.copyFileSync(youtubeOutFile, path.join(distContentOutDir, 'youtube.js'));
-
   return { cosmeticOutFile, youtubeOutFile };
 }
 
@@ -144,7 +138,7 @@ export function copyUnchangedDirectories({
 }
 
 /**
- * Generates dist/manifest.json with content_scripts rewritten to dist/content/*.js.
+ * Generates dist/manifest.json with content_scripts rewritten to content/*.js.
  *
  * @param {object} options
  * @param {string} [options.rootDir]
@@ -164,13 +158,13 @@ export function generateDistManifest({
       if (matches.includes('<all_urls>')) {
         return {
           ...cs,
-          js: ['dist/content/cosmetic.js'],
+          js: ['content/cosmetic.js'],
         };
       }
       if (matches.some((m) => m.includes('youtube.com'))) {
         return {
           ...cs,
-          js: ['dist/content/youtube.js'],
+          js: ['content/youtube.js'],
         };
       }
       return cs;
