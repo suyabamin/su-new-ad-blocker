@@ -4,7 +4,16 @@
 
 import { logger } from '../shared/logger.js';
 import { STORAGE_KEYS, dailyStatsKey } from '../shared/storage.js';
-import { listPaused } from './rules-manager.js';
+import {
+  DYNAMIC_ALLOW_RULE_ID_OFFSET,
+  DYNAMIC_RULE_ID_OFFSET,
+  DYNAMIC_RULES_PER_LIST,
+  FILTER_LISTS,
+  MAX_DYNAMIC_FILTER_RULES,
+  MAX_STATIC_RULES,
+  STATIC_ALLOW_RULE_ID_OFFSET,
+} from '../shared/filter-lists.js';
+import { listPaused, PAUSE_RULE_ID_OFFSET } from './rules-manager.js';
 
 const FLUSH_INTERVAL_MS = 1000;
 export const MAX_TOP_DOMAINS = 50;
@@ -39,12 +48,14 @@ let inMemoryState = {
 
 let flushTimeout = null;
 const seenMatchedRules = new Map();
+let networkStatsAvailable = false;
 
 /**
  * Resets all in-memory statistics.
  */
 export function resetInMemoryStats() {
   seenMatchedRules.clear();
+  networkStatsAvailable = false;
   inMemoryState = {
     today: {
       date: getTodayString(),
@@ -66,18 +77,29 @@ export async function syncMatchedRules() {
   const dnr = globalThis.chrome?.declarativeNetRequest;
   const tabs = globalThis.chrome?.tabs;
   if (!dnr?.getMatchedRules || !tabs?.get) {
+    networkStatsAvailable = false;
     return {};
   }
 
   try {
     const result = await dnr.getMatchedRules();
+    networkStatsAvailable = true;
     const matches = result?.rulesMatchedInfo || [];
     const now = Date.now();
     const deltas = {};
     const matchOccurrences = new Map();
     for (const match of matches) {
       const { tabId, rule } = match || {};
-      if (!Number.isInteger(tabId) || tabId < 0 || !rule) {
+      if (!Number.isInteger(tabId) || tabId < 0 || !Number.isInteger(rule?.ruleId)) {
+        continue;
+      }
+      if (
+        (rule.ruleId >= DYNAMIC_ALLOW_RULE_ID_OFFSET &&
+          rule.ruleId < DYNAMIC_ALLOW_RULE_ID_OFFSET + MAX_DYNAMIC_FILTER_RULES) ||
+        (rule.ruleId >= STATIC_ALLOW_RULE_ID_OFFSET &&
+          rule.ruleId < STATIC_ALLOW_RULE_ID_OFFSET + MAX_STATIC_RULES) ||
+        rule.ruleId >= PAUSE_RULE_ID_OFFSET
+      ) {
         continue;
       }
       const signature = `${tabId}:${rule.ruleId}:${match.timeStamp}`;
@@ -96,7 +118,13 @@ export async function syncMatchedRules() {
       if (!hostname || paused) {
         continue;
       }
-      recordBlockEvent(hostname, 'network');
+      const relativeRuleId = rule.ruleId - DYNAMIC_RULE_ID_OFFSET;
+      const dynamicListIndex = Math.floor(relativeRuleId / DYNAMIC_RULES_PER_LIST);
+      const listId =
+        relativeRuleId >= 0 && relativeRuleId < MAX_DYNAMIC_FILTER_RULES
+          ? FILTER_LISTS[dynamicListIndex]?.id || null
+          : null;
+      recordBlockEvent(hostname, 'network', listId);
       deltas[tabId] = (deltas[tabId] || 0) + 1;
     }
     for (const [key, seenAt] of seenMatchedRules) {
@@ -106,6 +134,7 @@ export async function syncMatchedRules() {
     }
     return deltas;
   } catch (err) {
+    networkStatsAvailable = false;
     logger.error('StatsTracker', 'Failed to collect matched DNR rules:', err);
     return {};
   }
@@ -301,6 +330,7 @@ export function getStatsSnapshot() {
     today: { ...inMemoryState.today },
     lifetime: { ...inMemoryState.lifetime },
     byDomain: { ...inMemoryState.byDomain },
+    networkStatsAvailable,
   };
 }
 
