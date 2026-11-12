@@ -11,6 +11,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.resolve(__dirname, '..');
 const RULES_OUTPUT_PATH = path.join(ROOT_DIR, 'rules', 'declarative_net_request_rules.json');
+const COSMETIC_OUTPUT_PATH = path.join(ROOT_DIR, 'rules', 'cosmetic.json');
 const REPORT_OUTPUT_PATH = path.join(ROOT_DIR, 'build', 'report.json');
 const LISTS_DIR = path.join(ROOT_DIR, 'lists');
 
@@ -269,6 +270,57 @@ export function parseEasyListRule(line) {
 }
 
 /**
+ * Parses a cosmetic filter rule (element hiding or exception).
+ * @param {string} line
+ * @returns {{ type: 'generic' | 'domain' | 'exception', domains: string[], selector: string } | null}
+ */
+export function parseCosmeticRule(line) {
+  if (typeof line !== 'string') {
+    return null;
+  }
+  const trimmed = line.trim();
+  if (!trimmed || trimmed.startsWith('!') || trimmed.startsWith('[')) {
+    return null;
+  }
+
+  // Element hiding exception: domain#@#selector
+  if (trimmed.includes('#@#')) {
+    const [domainPart, selector] = trimmed.split('#@#');
+    if (!selector) {
+      return null;
+    }
+    const domains = domainPart
+      ? domainPart
+          .split(',')
+          .map((d) => d.trim().toLowerCase())
+          .filter(Boolean)
+      : [];
+    return { type: 'exception', domains, selector };
+  }
+
+  // Standard element hiding: ##selector or domain##selector
+  if (trimmed.includes('##')) {
+    const [domainPart, selector] = trimmed.split('##');
+    if (!selector) {
+      return null;
+    }
+    const domains = domainPart
+      ? domainPart
+          .split(',')
+          .map((d) => d.trim().toLowerCase())
+          .filter(Boolean)
+      : [];
+    return {
+      type: domains.length > 0 ? 'domain' : 'generic',
+      domains,
+      selector,
+    };
+  }
+
+  return null;
+}
+
+/**
  * Classifies a line for statistics and reporting.
  * @param {string} line
  * @returns {{ type: 'empty' | 'comment' | 'cosmetic' | 'network' | 'unsupported', rule?: object, reason?: string }}
@@ -354,6 +406,10 @@ export async function buildRules(outputPath = RULES_OUTPUT_PATH) {
   const fileReports = [];
   const rules = [];
   const seenFilters = new Set();
+  const cosmeticRules = {
+    generic: [],
+    domainSpecific: {},
+  };
   let currentId = 1;
   let totalCosmetic = 0;
   let totalSkipped = 0;
@@ -409,6 +465,38 @@ export async function buildRules(outputPath = RULES_OUTPUT_PATH) {
           totalSkipped++;
           if (classification.type === 'cosmetic') {
             totalCosmetic++;
+            const parsedCosmetic = parseCosmeticRule(line);
+            if (parsedCosmetic) {
+              if (parsedCosmetic.type === 'generic') {
+                if (!cosmeticRules.generic.includes(parsedCosmetic.selector)) {
+                  cosmeticRules.generic.push(parsedCosmetic.selector);
+                }
+              } else if (parsedCosmetic.type === 'domain') {
+                for (const dom of parsedCosmetic.domains) {
+                  cosmeticRules.domainSpecific[dom] = cosmeticRules.domainSpecific[dom] || {
+                    selectors: [],
+                    exceptions: [],
+                  };
+                  if (
+                    !cosmeticRules.domainSpecific[dom].selectors.includes(parsedCosmetic.selector)
+                  ) {
+                    cosmeticRules.domainSpecific[dom].selectors.push(parsedCosmetic.selector);
+                  }
+                }
+              } else if (parsedCosmetic.type === 'exception') {
+                for (const dom of parsedCosmetic.domains) {
+                  cosmeticRules.domainSpecific[dom] = cosmeticRules.domainSpecific[dom] || {
+                    selectors: [],
+                    exceptions: [],
+                  };
+                  if (
+                    !cosmeticRules.domainSpecific[dom].exceptions.includes(parsedCosmetic.selector)
+                  ) {
+                    cosmeticRules.domainSpecific[dom].exceptions.push(parsedCosmetic.selector);
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -477,6 +565,13 @@ export async function buildRules(outputPath = RULES_OUTPUT_PATH) {
     fs.mkdirSync(outDir, { recursive: true });
   }
   fs.writeFileSync(outputPath, `${JSON.stringify(rules, null, 2)}\n`, 'utf8');
+
+  // 6. Write cosmetic rules JSON file
+  const cosmeticDir = path.dirname(COSMETIC_OUTPUT_PATH);
+  if (!fs.existsSync(cosmeticDir)) {
+    fs.mkdirSync(cosmeticDir, { recursive: true });
+  }
+  fs.writeFileSync(COSMETIC_OUTPUT_PATH, `${JSON.stringify(cosmeticRules, null, 2)}\n`, 'utf8');
 
   return rules.length;
 }
