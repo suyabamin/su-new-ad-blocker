@@ -28,7 +28,6 @@ export const test = base.extend({
     });
     await use(context);
     await context.close();
-    fs.rmSync(userDataDir, { recursive: true, force: true });
   },
   extensionId: async ({ context }, use) => {
     let [background] = context.serviceWorkers();
