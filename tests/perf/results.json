@@ -1,0 +1,17 @@
+{
+  "generatedAt": "2026-11-12T19:04:14.416Z",
+  "browser": "Chromium",
+  "extension": "unpacked dist/",
+  "comparison": "Static DNR ruleset on versus off; cosmetic scripts remain enabled in both modes.",
+  "runsPerModePerPage": 10,
+  "pages": {
+    "test-ad-page.html": {
+      "runCountPerMode": 10,
+      "blockingOnMs": [119.3, 60.5, 47.3, 61, 55.4, 47.9, 42.5, 43.2, 52.3, 42.1],
+      "blockingOffMs": [46.9, 51.6, 45.6, 47.3, 52.9, 47.7, 46.1, 46.3, 48.1, 48.9],
+      "medianBlockingOnMs": 50.1,
+      "medianBlockingOffMs": 47.5,
+      "medianAddedLoadMs": 2.1
+    }
+  }
+}
