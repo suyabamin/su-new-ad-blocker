@@ -44,12 +44,12 @@ criteria pass, lint is clean, tests pass, and verified in this session.
 
 ## Phase 4: Options Dashboard
 
-- [ ] **T4.1** — Options overview with lifetime/today summary and local Chart.js daily activity line chart
-- [ ] **T4.2** — Sortable top blocked domains table and type/list breakdowns with accessible alternatives
-- [ ] **T4.3** — Filter list toggles and validated manual list updater
-- [ ] **T4.4** — Allowlist manager and custom user DNR rules editor with syntax validation
-- [ ] **T4.5** — Data section with lossless JSON export and confirmation-guarded stats reset
-- [ ] **T4.6** — Complete i18n string catalog in `_locales/en/messages.json` with zero hardcoded UI strings
+- [x] **T4.1** — Options overview with lifetime/today summary and local Chart.js daily activity line chart
+- [x] **T4.2** — Sortable top blocked domains table and type/list breakdowns with accessible alternatives
+- [x] **T4.3** — Filter list toggles and validated manual list updater
+- [x] **T4.4** — Allowlist manager and custom user DNR rules editor with syntax validation
+- [x] **T4.5** — Data section with lossless JSON export and confirmation-guarded stats reset
+- [x] **T4.6** — Complete i18n string catalog in `_locales/en/messages.json` with zero hardcoded UI strings
 
 ---
 
