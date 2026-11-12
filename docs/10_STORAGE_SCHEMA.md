@@ -23,16 +23,19 @@ and the accessor wrapper `getWithDefaults()`. No magic strings anywhere else.
 ## 2. Pattern Keys and Helpers
 
 ### `dailyStatsKey(date)`
+
 - Validates that `date` is a valid string matching `YYYY-MM-DD` AND represents a real calendar date (e.g. rejects `2024-02-30`).
 - Returns `"stats:day:" + date`.
 - Throws `TypeError` on any invalid, missing, or impossible calendar date.
 
 ### `listCacheKey(listId)`
+
 - Validates that `listId` matches `/^[a-z0-9_-]{1,64}$/`.
 - Returns `"cache:lists:" + listId`.
 - Throws `TypeError` if invalid or out of range.
 
 ### `getWithDefaults(area, key, defaultValue)`
+
 - Dedicated read wrapper for `chrome.storage.local`. Reads from storage via this wrapper only; returns `defaultValue` when missing or undefined.
 
 ---
@@ -56,6 +59,7 @@ and the accessor wrapper `getWithDefaults()`. No magic strings anywhere else.
 ## 4. Statistics Data Schema
 
 ### Daily Bucket (`stats:day:YYYY-MM-DD`)
+
 ```js
 {
   date: '2026-11-12',
@@ -75,10 +79,12 @@ and the accessor wrapper `getWithDefaults()`. No magic strings anywhere else.
   }
 }
 ```
+
 - `topDomains` is strictly capped at 50 entries (lowest counts dropped upon insertion).
 - Only hostnames/domains are stored; never full URLs or query strings.
 
 ### Lifetime Totals (`stats:lifetime`)
+
 ```js
 {
   total: 1200,
