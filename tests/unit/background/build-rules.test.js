@@ -6,6 +6,7 @@ import {
   buildRules,
   buildDnrRulesFromDomains,
   extractDomainsFromFilterList,
+  parseEasyListRule,
   CANONICAL_DOMAINS,
 } from '../../../scripts/build-rules.js';
 
@@ -96,7 +97,7 @@ describe('build-rules script (scripts/build-rules.js)', () => {
       expect(rule).toHaveProperty('priority');
       expect(typeof rule.priority).toBe('number');
       expect(rule).toHaveProperty('action');
-      expect(rule.action).toHaveProperty('type', 'block');
+      expect(['block', 'allow']).toContain(rule.action.type);
       expect(rule).toHaveProperty('condition');
       expect(rule.condition).toHaveProperty('urlFilter');
       expect(rule.condition).toHaveProperty('resourceTypes');
@@ -115,5 +116,120 @@ describe('build-rules script (scripts/build-rules.js)', () => {
       const expectedFilter = `||${domain}^`;
       expect(urlFilters).toContain(expectedFilter);
     }
+  });
+
+  describe('parseEasyListRule line parser', () => {
+    it('parses basic block rule into DNR descriptor', () => {
+      const parsed = parseEasyListRule('||ads.example.com^');
+      expect(parsed).toEqual({
+        action: 'block',
+        urlFilter: '||ads.example.com^',
+        resourceTypes: null,
+        domainType: null,
+        initiatorDomains: null,
+      });
+    });
+
+    it('parses allow/exception rule (@@) into DNR allow descriptor', () => {
+      const parsed = parseEasyListRule('@@||whitelisted.example.com^');
+      expect(parsed).toEqual({
+        action: 'allow',
+        urlFilter: '||whitelisted.example.com^',
+        resourceTypes: null,
+        domainType: null,
+        initiatorDomains: null,
+      });
+    });
+
+    it('parses $third-party modifier correctly', () => {
+      const parsed = parseEasyListRule('||tracker.example.com^$third-party');
+      expect(parsed).toEqual({
+        action: 'block',
+        urlFilter: '||tracker.example.com^',
+        resourceTypes: null,
+        domainType: 'thirdParty',
+        initiatorDomains: null,
+      });
+    });
+
+    it('parses $domain= modifier correctly', () => {
+      const parsed = parseEasyListRule('||ad.example.com^$domain=example.com');
+      expect(parsed).toEqual({
+        action: 'block',
+        urlFilter: '||ad.example.com^',
+        resourceTypes: null,
+        domainType: null,
+        initiatorDomains: ['example.com'],
+      });
+    });
+
+    it('parses resource type modifiers ($script,image) correctly', () => {
+      const parsed = parseEasyListRule('||adservice.example.com^$script,image');
+      expect(parsed).toEqual({
+        action: 'block',
+        urlFilter: '||adservice.example.com^',
+        resourceTypes: ['script', 'image'],
+        domainType: null,
+        initiatorDomains: null,
+      });
+    });
+
+    it('returns null for cosmetic element-hiding rules', () => {
+      expect(parseEasyListRule('##.ad-banner')).toBeNull();
+      expect(parseEasyListRule('example.com##.sponsor')).toBeNull();
+      expect(parseEasyListRule('example.com#@#.false-positive')).toBeNull();
+    });
+
+    it('returns null for comments and metadata headers', () => {
+      expect(parseEasyListRule('! Title: EasyList')).toBeNull();
+      expect(parseEasyListRule('[Adblock Plus 2.0]')).toBeNull();
+      expect(parseEasyListRule('')).toBeNull();
+      expect(parseEasyListRule('   ')).toBeNull();
+    });
+
+    it('returns null for unsupported modifiers', () => {
+      expect(parseEasyListRule('||example.com^$popup')).toBeNull();
+      expect(parseEasyListRule('||example.com^$badfilter')).toBeNull();
+      expect(parseEasyListRule('||example.com^$elemhide')).toBeNull();
+    });
+  });
+
+  describe('DNR build output and static limits', () => {
+    it('sets allow rules priority (2) > block rules priority (1)', async () => {
+      const tempOutputPath = makeTempPath();
+      await buildRules(tempOutputPath);
+      const content = fs.readFileSync(tempOutputPath, 'utf8');
+      const rules = JSON.parse(content);
+
+      const allowRules = rules.filter((r) => r.action.type === 'allow');
+      const blockRules = rules.filter((r) => r.action.type === 'block');
+
+      expect(allowRules.length).toBeGreaterThan(0);
+      expect(blockRules.length).toBeGreaterThan(0);
+
+      for (const allow of allowRules) {
+        expect(allow.priority).toBe(2);
+      }
+      for (const block of blockRules) {
+        expect(block.priority).toBe(1);
+      }
+    });
+
+    it('generates build/report.json with summary counts', async () => {
+      const tempOutputPath = makeTempPath();
+      await buildRules(tempOutputPath);
+
+      const reportPath = path.resolve(__dirname, '../../../build/report.json');
+      expect(fs.existsSync(reportPath)).toBe(true);
+
+      const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
+      expect(report).toHaveProperty('listFiles');
+      expect(Array.isArray(report.listFiles)).toBe(true);
+      expect(report).toHaveProperty('totalDnr');
+      expect(typeof report.totalDnr).toBe('number');
+      expect(report.totalDnr).toBeGreaterThanOrEqual(500);
+      expect(report).toHaveProperty('totalCosmetic');
+      expect(report).toHaveProperty('totalSkipped');
+    });
   });
 });
