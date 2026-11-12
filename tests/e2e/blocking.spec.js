@@ -1,4 +1,11 @@
 import { test, expect } from './fixtures.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const fixturePath = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  '../site/test-ad-page.html'
+);
 
 test.describe('Extension Loading and UI (E2E)', () => {
   test('extension loads with valid service worker and opens popup without errors', async ({
@@ -67,5 +74,19 @@ test.describe('Extension Loading and UI (E2E)', () => {
 
     expect(outcome).toBe('blocked');
     expect(requestFailed).toBe(true);
+  });
+
+  test('popup reports ten blocked fixture requests without double counting', async ({
+    context,
+    extensionId,
+  }) => {
+    const page = await context.newPage();
+    await page.route('http://site.test.local/**', (route) => route.fulfill({ path: fixturePath }));
+    await page.goto('http://site.test.local/');
+    await page.evaluate(() => window.fixtureAdRequests);
+
+    const popup = await context.newPage();
+    await popup.goto(`chrome-extension://${extensionId}/src/popup/popup.html`);
+    await expect(popup.locator('#today-blocked-count')).toHaveText('10');
   });
 });
