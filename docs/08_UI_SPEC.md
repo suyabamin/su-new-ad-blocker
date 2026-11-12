@@ -24,13 +24,13 @@ Quick-glance status and per-site block count. Accessible by clicking the extensi
 
 ### 1.3 Elements
 
-| Element            | ID                    | Behaviour                                                 |
-| ------------------ | --------------------- | --------------------------------------------------------- |
-| Toggle switch      | `#toggle-enabled`     | Sends `MSG.SET_ENABLED`; persists state                   |
-| Site domain        | `#site-domain`        | Populated from `chrome.tabs.query` active tab             |
-| Site block count   | `#site-block-count`   | From `MSG.GET_DOMAIN_STATS`                               |
-| Global block count | `#global-block-count` | From `MSG.GET_GLOBAL_STATS`                               |
-| Dashboard link     | `#open-dashboard`     | Opens options page via `chrome.runtime.openOptionsPage()` |
+| Element            | ID                    | Behaviour                                                                                                            |
+| ------------------ | --------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Toggle switch      | `#toggle-enabled`     | Sends `MSG.SET_ENABLED`; persists state                                                                              |
+| Site domain        | `#site-domain`        | Hostname read from the active tab for the pause control; its diagnostic match count is a site aggregate, not per-tab |
+| Site block count   | `#site-block-count`   | From `MSG.GET_DOMAIN_STATS`                                                                                          |
+| Global block count | `#global-block-count` | From `MSG.GET_GLOBAL_STATS`                                                                                          |
+| Dashboard link     | `#open-dashboard`     | Opens options page via `chrome.runtime.openOptionsPage()`                                                            |
 
 ### 1.4 Rules
 
