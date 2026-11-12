@@ -7,11 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Narrow YouTube cosmetic selectors for current EasyList search, feed, sidebar, Shorts, and mobile ad-slot markup, plus separate selector-detection and successful-hide statistics.
+- Unit and E2E regression coverage for cosmetic category counts, duplicate DNR events, open shadow roots, SPA rescans, and ensuring normal Googlevideo media URLs do not match packaged DNR rules.
+
 ### Fixed
 
 - Replaced UI-triggered DNR match polling with event-based diagnostics and session-scoped request deduplication; packaged builds remain explicitly unavailable when Chrome does not expose debug feedback.
 - Made cosmetic report acknowledgements wait for storage flush, rejected invalid counts, and fixed dashboard date-range data and unavailable chart states.
 - Re-scanned YouTube cosmetic selectors after SPA navigation and observed class changes and discovered open shadow roots without touching video playback.
+- Restricted YouTube attribute-mutation processing to the changed element, reused one observer per document without duplicate startup/SPA scans, and retained Playwright profiles in `.pw-tmp` for auditability.
+- Refused DNR diagnostic counts when session deduplication state cannot be loaded or persisted, and serialized same-request feedback handling within the service worker.
+- Gated statistics reads and cosmetic reports on successful stored-state initialization so startup races or storage errors cannot surface default zeros or overwrite prior totals.
 
 ### Added
 
