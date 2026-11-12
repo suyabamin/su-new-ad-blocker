@@ -25,3 +25,7 @@ export const GENERIC_SELECTORS = Object.freeze([
   '.commercial-unit',
   '.native-ad',
 ]);
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.__SU_GENERIC_SELECTORS__ = GENERIC_SELECTORS;
+}
