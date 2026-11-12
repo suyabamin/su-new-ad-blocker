@@ -2,34 +2,36 @@
 
 ## Runtime Components
 
-| Context         | Files             | Responsibility                                                                   |
-| --------------- | ----------------- | -------------------------------------------------------------------------------- |
-| Service worker  | `src/background/` | Manages DNR rules, statistics, update alarms, messages, and the toolbar badge    |
-| Content scripts | `src/content/`    | Applies generic cosmetic selectors and YouTube ad UI selectors                   |
-| Popup           | `src/popup/`      | Shows the current site's and today's block counts and provides the pause control |
-| Options         | `src/options/`    | Displays statistics, list settings, allowlist, custom rules, and data controls   |
-| Shared          | `src/shared/`     | Defines message types, storage keys and defaults, settings, and logging          |
+| Context         | Files             | Responsibility                                                                            |
+| --------------- | ----------------- | ----------------------------------------------------------------------------------------- |
+| Service worker  | `src/background/` | Manages DNR rules, local statistics, update alarms, messages, and the toolbar badge       |
+| Content scripts | `src/content/`    | Hides configured generic cosmetic elements and selected YouTube ad UI elements            |
+| Popup           | `src/popup/`      | Shows available diagnostic site matches, local element counts, and site pause control     |
+| Options         | `src/options/`    | Shows local statistics and controls lists, allowlist, custom rules, and data export/reset |
+| Shared          | `src/shared/`     | Defines messages, storage keys, settings, filter sources/compiler, and logging            |
 
-## Network Blocking
+## Network Blocking and Filter Updates
 
-The build-time compiler in `scripts/build-rules.js` reads local `lists/*.txt` files and writes the DNR ruleset to `rules/declarative_net_request_rules.json`, cosmetic selectors to `rules/cosmetic.json`, and build counts to `build/report.json`. The browser enforces the registered static ruleset. `src/background/rules-manager.js` uses dynamic allow rules to pause blocking on domains.
+`scripts/build-rules.js` writes the static seed ruleset from its reviewed ad-domain baseline. It only reads files named `production-*.txt`; `lists/test-fixture.txt` is never included. Generated rules and counts are `rules/declarative_net_request_rules.json` and `build/report.json`.
 
-The update alarm is managed by `src/background/rule-updater.js`. It records update metadata in local storage; it does not download or compile remote filter lists.
+At install, on the daily `FILTER_UPDATE` alarm, when a list is toggled, and on manual request, `src/background/rule-updater.js` downloads enabled EasyList/EasyPrivacy text over HTTPS. The endpoints are fixed in `src/shared/filter-lists.js`. `src/shared/filter-compiler.js` converts its supported network-filter subset into at most 4,000 dynamic rules, reserving dynamic-rule capacity for site-pause rules. Unsupported modifiers are skipped rather than guessed. DNR receives the new and old managed rules in one `updateDynamicRules` operation; failed downloads, validation, or DNR updates leave the prior dynamic rules intact. List text is never executed or persisted.
 
-`src/background/stats-tracker.js` snapshots `getMatchedRules()` when popup statistics are requested, deduplicates matches, and attributes them to the page tab hostname. Cosmetic reports are categorized separately.
+`src/background/rules-manager.js` adds higher-priority dynamic allow rules to pause blocking on domains. Static seed rules remain active as a fallback if list downloads fail.
 
-## Cosmetic Filtering
+## Statistics
 
-`src/content/cosmetic.js` applies selectors from `src/content/selectors.js` at document start, observes DOM changes, and batches reports to the service worker using the canonical message type in `src/shared/messages.js`.
+`src/background/stats-tracker.js` records cosmetic and YouTube UI element counts from content-script reports. Network match diagnostics come from `getMatchedRules()` only where Chrome exposes that debugging API. They are approximate, sampled when the UI requests statistics, and explicitly marked unavailable when the API rejects the request. Site values are accumulated by page hostname and are not per-tab counts. No network totals are presented as measured in packaged builds when diagnostics are unavailable.
 
-## YouTube UI Filtering
+## Cosmetic and YouTube Filtering
 
-`src/content/youtube/youtube.js` runs on `https://www.youtube.com/*` and uses selectors from `src/content/youtube/selectors.js` to hide ad UI containers. It does not access video or audio elements or playback APIs.
+`src/content/cosmetic.js` applies selectors from `src/content/selectors.js` and observes the body for later matching elements. It batches element counts through `CS_BLOCKED_REPORT`.
+
+`src/content/youtube/youtube.js` runs on `https://www.youtube.com/*` and uses `src/content/youtube/selectors.js` to hide selected ad UI containers. It does not access video/audio elements or playback APIs; YouTube video ads remain unblocked by design.
 
 ## Messages and Storage
 
-Popup, options, and content scripts communicate with the service worker through message types declared in `src/shared/messages.js`. Shared state is stored in `chrome.storage.local` using keys from `src/shared/storage.js`; see `docs/10_STORAGE_SCHEMA.md` for the schema.
+Popup, options, and content scripts use the message constants in `src/shared/messages.js`. Settings, list preferences, and statistics remain in `chrome.storage.local`; keys are defined in `src/shared/storage.js`. Statistics retain backward-compatible `stats:lifetime`, `stats:meta`, and daily buckets. Downloaded list text is held only in memory during validation and compilation.
 
-## Build Output
+## Build Output and Privacy
 
-`npm run build-rules` compiles local filter inputs. `npm run build` bundles content scripts and assembles the unpacked extension in `dist/`. Runtime scripts and styles stay local, and the build copies the local Chart.js bundle into the options page. The extension uses Manifest V3 and the extension-page CSP declared in `manifest.json`; it does not execute remote code or send telemetry.
+`npm run build-rules` compiles the static baseline; `npm run build` bundles content scripts and assembles `dist/`. Runtime JavaScript and styles are local. The service worker downloads only filter-list text from the fixed HTTPS sources, uses no credentials, and never executes remote data. The manifest remains MV3 with the existing permissions; the extension sends no telemetry.
