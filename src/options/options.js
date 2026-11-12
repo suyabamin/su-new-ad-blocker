@@ -411,17 +411,25 @@ export async function initOptions() {
 
   if (lifetimeRes?.ok && lifetimeRes.data) {
     if (statLifetime) {
-      statLifetime.textContent = String(lifetimeRes.data.lifetime?.total ?? 0);
+      statLifetime.textContent =
+        lifetimeRes.data.available === true
+          ? String(lifetimeRes.data.lifetime?.byType?.network ?? 0)
+          : i18n('networkStatsUnavailable');
     }
   }
 
   if (todayRes?.ok && todayRes.data) {
     const d = todayRes.data;
+    const networkAvailable = d.networkStatsAvailable === true;
     if (statToday) {
-      statToday.textContent = String(d.totalBlocked ?? d.total ?? 0);
+      statToday.textContent = networkAvailable
+        ? String(d.byType?.network ?? 0)
+        : i18n('networkStatsUnavailable');
     }
     if (statNetwork) {
-      statNetwork.textContent = String(d.byType?.network ?? 0);
+      statNetwork.textContent = networkAvailable
+        ? String(d.byType?.network ?? 0)
+        : i18n('networkStatsUnavailable');
     }
     if (statCosmetic) {
       statCosmetic.textContent = String(d.byType?.cosmetic ?? 0);
@@ -432,7 +440,15 @@ export async function initOptions() {
   }
 
   // Chart: last 7 days
-  if (chartCanvas && rangeRes?.ok && Array.isArray(rangeRes.data)) {
+  if (chartCanvas && todayRes?.data?.networkStatsAvailable !== true) {
+    const chartContainer = chartCanvas.closest('.chart-wrap');
+    if (chartContainer) {
+      chartContainer.textContent = i18n('networkStatsUnavailable');
+      chartContainer.setAttribute('aria-label', i18n('networkStatsUnavailable'));
+    } else {
+      chartCanvas.hidden = true;
+    }
+  } else if (chartCanvas && rangeRes?.ok && Array.isArray(rangeRes.data)) {
     const labels = rangeRes.data.map((b) => b.date || '');
     const data = rangeRes.data.map((b) => b.total || 0);
     renderDailyChart(chartCanvas, labels, data);
@@ -446,7 +462,14 @@ export async function initOptions() {
   const topDomainsContainer = document.getElementById('top-domains-container');
   const topRes = await sendMsg({ type: MSG.GET_TOP_DOMAINS, payload: {} });
   if (topRes?.ok && topRes.data) {
-    renderTopDomains(topDomainsContainer, topRes.data);
+    if (topRes.data.available === true) {
+      const domains = Array.isArray(topRes.data.topDomains)
+        ? Object.fromEntries(topRes.data.topDomains.map(({ domain, count }) => [domain, count]))
+        : topRes.data.topDomains;
+      renderTopDomains(topDomainsContainer, domains);
+    } else if (topDomainsContainer) {
+      topDomainsContainer.textContent = i18n('networkStatsUnavailable');
+    }
   } else {
     renderTopDomains(topDomainsContainer, {});
   }
@@ -457,7 +480,21 @@ export async function initOptions() {
   const listUpdateStatus = document.getElementById('list-update-status');
 
   const handleListToggle = async (listId, enabled) => {
-    await sendMsg({ type: MSG.LIST_TOGGLE, payload: { listId, enabled } });
+    const result = await sendMsg({ type: MSG.LIST_TOGGLE, payload: { listId, enabled } });
+    if (!result?.ok) {
+      const toggle = document.getElementById(`list-toggle-${listId}`);
+      if (toggle) {
+        toggle.checked = !enabled;
+      }
+      showStatus(listUpdateStatus, i18n('listUpdateError'), 'err');
+      return;
+    }
+    const partial = result.data?.failedSources > 0;
+    showStatus(
+      listUpdateStatus,
+      i18n(partial ? 'listUpdatePartial' : 'listUpdateSuccess'),
+      partial ? 'err' : 'ok'
+    );
   };
 
   // Fetch lists config from storage via SETTINGS_GET (lists config lives in settings)
@@ -482,7 +519,8 @@ export async function initOptions() {
       const res = await sendMsg({ type: MSG.LIST_UPDATE_NOW, payload: {} });
       listUpdateBtn.disabled = false;
       if (res?.ok) {
-        showStatus(listUpdateStatus, i18n('listUpdateSuccess'), 'ok');
+        const key = res.data?.failedSources ? 'listUpdatePartial' : 'listUpdateSuccess';
+        showStatus(listUpdateStatus, i18n(key), res.data?.failedSources ? 'err' : 'ok');
       } else {
         showStatus(listUpdateStatus, i18n('listUpdateError'), 'err');
       }
