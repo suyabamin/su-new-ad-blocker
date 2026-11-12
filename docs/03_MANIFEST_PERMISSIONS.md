@@ -6,19 +6,19 @@ This document is the authoritative list of permissions the extension may request
 
 The following list matches `manifest.json` exactly:
 
-| Permission                      | Reason                                                           |
-| ------------------------------- | ---------------------------------------------------------------- |
-| `declarativeNetRequest`         | Enforces the registered static blocking ruleset                  |
-| `declarativeNetRequestFeedback` | Supports blocked-request diagnostics and statistics              |
-| `storage`                       | Persists settings and local statistics in `chrome.storage.local` |
-| `alarms`                        | Schedules maintenance and filter-list update checks              |
-| `activeTab`                     | Lets the popup inspect the current tab after user interaction    |
+| Permission                      | Reason                                                                                                         |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `declarativeNetRequest`         | Enforces the registered static blocking ruleset                                                                |
+| `declarativeNetRequestFeedback` | Enables DNR match diagnostics where Chrome exposes its unpacked/debug API; not relied on for packaged blocking |
+| `storage`                       | Persists settings and local statistics in `chrome.storage.local`                                               |
+| `alarms`                        | Schedules maintenance and filter-list update checks                                                            |
+| `activeTab`                     | Lets the popup inspect the current tab after user interaction                                                  |
 
 ## Host Permissions
 
-| Permission   | Reason                                                                                                                       |
-| ------------ | ---------------------------------------------------------------------------------------------------------------------------- |
-| `<all_urls>` | Required for `declarativeNetRequest` to match rules against all network requests and for content scripts to run on all pages |
+| Permission   | Reason                                                                                                                    |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------- |
+| `<all_urls>` | Allows the declared content scripts on supported pages and provides host access for the fixed HTTPS filter-list downloads |
 
 ## manifest.json excerpt
 
