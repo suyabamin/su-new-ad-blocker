@@ -27,30 +27,31 @@ must use `chrome.runtime.sendMessage` / `chrome.runtime.onMessage` conforming to
 
 ## 2. Canonical Message Types (16)
 
-| Constant | Value | Direction | Description |
-| --- | --- | --- | --- |
-| `GET_TAB_STATS` | `GET_TAB_STATS` | popup → background | Block count for active tab's hostname |
-| `GET_TODAY_SUMMARY` | `GET_TODAY_SUMMARY` | popup → background | Today's aggregate blocks split by type |
-| `GET_STATS_RANGE` | `GET_STATS_RANGE` | options → background | Daily stats for range `{ from, to }` |
-| `GET_TOP_DOMAINS` | `GET_TOP_DOMAINS` | options → background | Top N blocked domains `{ n }` |
-| `TOGGLE_PAUSE_SITE` | `TOGGLE_PAUSE_SITE` | popup → background | Pause/resume blocking for site `{ domain }` |
-| `GET_COSMETIC_RULES` | `GET_COSMETIC_RULES` | content → background | Fetch cosmetic rules for `{ hostname }` |
-| `CS_BLOCKED_REPORT` | `CS_BLOCKED_REPORT` | content → background | Batched cosmetic block counts `{ count, type }` |
-| `ALLOWLIST_ADD` | `ALLOWLIST_ADD` | options → background | Add domain to allowlist `{ domain }` |
-| `ALLOWLIST_REMOVE` | `ALLOWLIST_REMOVE` | options → background | Remove domain from allowlist `{ domain }` |
-| `LIST_TOGGLE` | `LIST_TOGGLE` | options → background | Enable/disable filter list `{ listId, enabled }` |
-| `LIST_UPDATE_NOW` | `LIST_UPDATE_NOW` | options → background | Trigger manual update of filter lists |
-| `CUSTOM_RULES_SET` | `CUSTOM_RULES_SET` | options → background | Update custom user rules `{ rules }` |
-| `STATS_EXPORT` | `STATS_EXPORT` | options → background | Export full stats as JSON `{}` |
-| `STATS_RESET` | `STATS_RESET` | options → background | Reset stats (requires `{ confirm: true }`) |
-| `SETTINGS_GET` | `SETTINGS_GET` | popup/options → background | Read current settings object `{}` |
-| `SETTINGS_SET` | `SETTINGS_SET` | popup/options → background | Patch settings `{ patch }` |
+| Constant             | Value                | Direction                  | Description                                      |
+| -------------------- | -------------------- | -------------------------- | ------------------------------------------------ |
+| `GET_TAB_STATS`      | `GET_TAB_STATS`      | popup → background         | Block count for active tab's hostname            |
+| `GET_TODAY_SUMMARY`  | `GET_TODAY_SUMMARY`  | popup → background         | Today's aggregate blocks split by type           |
+| `GET_STATS_RANGE`    | `GET_STATS_RANGE`    | options → background       | Daily stats for range `{ from, to }`             |
+| `GET_TOP_DOMAINS`    | `GET_TOP_DOMAINS`    | options → background       | Top N blocked domains `{ n }`                    |
+| `TOGGLE_PAUSE_SITE`  | `TOGGLE_PAUSE_SITE`  | popup → background         | Pause/resume blocking for site `{ domain }`      |
+| `GET_COSMETIC_RULES` | `GET_COSMETIC_RULES` | content → background       | Fetch cosmetic rules for `{ hostname }`          |
+| `CS_BLOCKED_REPORT`  | `CS_BLOCKED_REPORT`  | content → background       | Batched cosmetic block counts `{ count, type }`  |
+| `ALLOWLIST_ADD`      | `ALLOWLIST_ADD`      | options → background       | Add domain to allowlist `{ domain }`             |
+| `ALLOWLIST_REMOVE`   | `ALLOWLIST_REMOVE`   | options → background       | Remove domain from allowlist `{ domain }`        |
+| `LIST_TOGGLE`        | `LIST_TOGGLE`        | options → background       | Enable/disable filter list `{ listId, enabled }` |
+| `LIST_UPDATE_NOW`    | `LIST_UPDATE_NOW`    | options → background       | Trigger manual update of filter lists            |
+| `CUSTOM_RULES_SET`   | `CUSTOM_RULES_SET`   | options → background       | Update custom user rules `{ rules }`             |
+| `STATS_EXPORT`       | `STATS_EXPORT`       | options → background       | Export full stats as JSON `{}`                   |
+| `STATS_RESET`        | `STATS_RESET`        | options → background       | Reset stats (requires `{ confirm: true }`)       |
+| `SETTINGS_GET`       | `SETTINGS_GET`       | popup/options → background | Read current settings object `{}`                |
+| `SETTINGS_SET`       | `SETTINGS_SET`       | popup/options → background | Patch settings `{ patch }`                       |
 
 ---
 
 ## 3. Message & Response Envelopes
 
 ### Request Envelope
+
 ```js
 {
   type: MSG.GET_TAB_STATS,
@@ -60,6 +61,7 @@ must use `chrome.runtime.sendMessage` / `chrome.runtime.onMessage` conforming to
 ```
 
 ### Success Response
+
 ```js
 {
   ok: true,
@@ -70,6 +72,7 @@ must use `chrome.runtime.sendMessage` / `chrome.runtime.onMessage` conforming to
 ```
 
 ### Failure Response
+
 ```js
 {
   ok: false,
