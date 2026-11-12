@@ -401,6 +401,8 @@ export async function initOptions() {
   const statNetwork = document.getElementById('stat-network');
   const statCosmetic = document.getElementById('stat-cosmetic');
   const statYoutube = document.getElementById('stat-youtube');
+  const statYoutubeDetected = document.getElementById('stat-youtube-detected');
+  const statYoutubeUnhidden = document.getElementById('stat-youtube-unhidden');
   const chartCanvas = document.getElementById('daily-chart');
 
   const [lifetimeRes, todayRes, rangeRes] = await Promise.all([
@@ -436,6 +438,14 @@ export async function initOptions() {
     }
     if (statYoutube) {
       statYoutube.textContent = String(d.byType?.youtube ?? 0);
+    }
+    const youtubeDetected = d.byType?.youtubeDetected ?? 0;
+    const youtubeHidden = d.byType?.youtube ?? 0;
+    if (statYoutubeDetected) {
+      statYoutubeDetected.textContent = String(youtubeDetected);
+    }
+    if (statYoutubeUnhidden) {
+      statYoutubeUnhidden.textContent = String(Math.max(0, youtubeDetected - youtubeHidden));
     }
   }
 
@@ -666,6 +676,12 @@ export async function initOptions() {
         }
         if (statYoutube) {
           statYoutube.textContent = '0';
+        }
+        if (statYoutubeDetected) {
+          statYoutubeDetected.textContent = '0';
+        }
+        if (statYoutubeUnhidden) {
+          statYoutubeUnhidden.textContent = '0';
         }
       }
     });
