@@ -29,8 +29,8 @@ criteria pass, lint is clean, tests pass, and verified in this session.
 
 - [x] **T2.1** — Background statistics tracker (`stats-tracker.js`) with sampling and deduplication
 - [x] **T2.2** — Typed message router (`message-router.js`) handling all 16 canonical message types
-- [ ] **T2.3** — Accessible popup UI (`src/popup/`) with live tab/today block counts and pause toggle
-- [ ] **T2.4** — Statistics export, reset confirmation, and daily prune/update alarms
+- [x] **T2.3** — Accessible popup UI (`src/popup/`) with live tab/today block counts and pause toggle
+- [x] **T2.4** — Statistics export, reset confirmation, and daily prune/update alarms
 
 ---
 
