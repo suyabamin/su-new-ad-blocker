@@ -1,0 +1,5 @@
+node_modules/
+dist/
+coverage/
+lists/*.txt
+tests/unit/background/temp_test_rules.json
