@@ -9,6 +9,7 @@ import { FILTER_LISTS } from '../shared/filter-lists.js';
 import {
   getStatsSnapshot,
   resetInMemoryStats,
+  initStats,
   flushStats,
   getTodayString,
   recordBlockEvent,
@@ -17,6 +18,17 @@ import {
 import { pauseDomain, resumeDomain, isPaused } from './rules-manager.js';
 import { updateBadge } from './badge.js';
 import { updateRules } from './rule-updater.js';
+
+async function ensureStatsInitialized(sendResponse) {
+  if (await initStats()) {
+    return true;
+  }
+  sendResponse({
+    ok: false,
+    error: { code: 'INTERNAL', message: 'Statistics storage is unavailable' },
+  });
+  return false;
+}
 
 /**
  * Normalizes message request envelope { type, payload, v: 1 } or flat { type, ...payload }.
@@ -75,22 +87,26 @@ export function handleMessage(message, sender, sendResponse) {
 
   switch (type) {
     case MSG.GET_TAB_STATS: {
-      const hostname =
-        payload.hostname ||
-        payload.domain ||
-        (sender?.tab?.url ? new URL(sender.tab.url).hostname : '');
-      const hasHostname = Boolean(hostname);
-      if (!getStatsSnapshot().networkStatsAvailable) {
-        const snapshot = getStatsSnapshot();
-        sendResponse({
-          ok: true,
-          data: hasHostname
-            ? { hostname, count: null, available: false, scope: 'site-aggregate' }
-            : { lifetime: snapshot.lifetime, available: false, scope: 'global' },
-        });
-        return false;
-      }
-      syncMatchedRules().then(() => {
+      (async () => {
+        if (!(await ensureStatsInitialized(sendResponse))) {
+          return;
+        }
+        const hostname =
+          payload.hostname ||
+          payload.domain ||
+          (sender?.tab?.url ? new URL(sender.tab.url).hostname : '');
+        const hasHostname = Boolean(hostname);
+        if (!getStatsSnapshot().networkStatsAvailable) {
+          const snapshot = getStatsSnapshot();
+          sendResponse({
+            ok: true,
+            data: hasHostname
+              ? { hostname, count: null, available: false, scope: 'site-aggregate' }
+              : { lifetime: snapshot.lifetime, available: false, scope: 'global' },
+          });
+          return;
+        }
+        await syncMatchedRules();
         const snapshot = getStatsSnapshot();
         if (!hasHostname) {
           sendResponse({
@@ -106,12 +122,20 @@ export function handleMessage(message, sender, sendResponse) {
         const available = snapshot.networkStatsAvailable;
         const count = available ? snapshot.byDomain[hostname.toLowerCase()] || 0 : null;
         sendResponse({ ok: true, data: { hostname, count, available, scope: 'site-aggregate' } });
+      })().catch((error) => {
+        sendResponse({ ok: false, error: { code: 'INTERNAL', message: error.message } });
       });
       return true;
     }
 
     case MSG.GET_TODAY_SUMMARY: {
-      if (!getStatsSnapshot().networkStatsAvailable) {
+      (async () => {
+        if (!(await ensureStatsInitialized(sendResponse))) {
+          return;
+        }
+        if (getStatsSnapshot().networkStatsAvailable) {
+          await syncMatchedRules();
+        }
         const snapshot = getStatsSnapshot();
         sendResponse({
           ok: true,
@@ -123,36 +147,31 @@ export function handleMessage(message, sender, sendResponse) {
             networkStatsAvailable: snapshot.networkStatsAvailable,
           },
         });
-        return false;
-      }
-      syncMatchedRules().then(() => {
-        const snapshot = getStatsSnapshot();
-        sendResponse({
-          ok: true,
-          data: {
-            todayBlocked: snapshot.todayBlocked,
-            totalBlocked: snapshot.totalBlocked,
-            date: snapshot.todayDate,
-            byType: { ...snapshot.today.byType },
-            networkStatsAvailable: snapshot.networkStatsAvailable,
-          },
-        });
+      })().catch((error) => {
+        sendResponse({ ok: false, error: { code: 'INTERNAL', message: error.message } });
       });
       return true;
     }
 
     case MSG.GET_TOP_DOMAINS: {
-      const n = typeof payload.n === 'number' && payload.n > 0 ? payload.n : 10;
-      const snapshot = getStatsSnapshot();
-      const sorted = Object.entries(snapshot.networkStatsAvailable ? snapshot.byDomain : {})
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, n)
-        .map(([domain, count]) => ({ domain, count }));
-      sendResponse({
-        ok: true,
-        data: { topDomains: sorted, available: snapshot.networkStatsAvailable },
+      (async () => {
+        if (!(await ensureStatsInitialized(sendResponse))) {
+          return;
+        }
+        const n = typeof payload.n === 'number' && payload.n > 0 ? payload.n : 10;
+        const snapshot = getStatsSnapshot();
+        const sorted = Object.entries(snapshot.networkStatsAvailable ? snapshot.byDomain : {})
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, n)
+          .map(([domain, count]) => ({ domain, count }));
+        sendResponse({
+          ok: true,
+          data: { topDomains: sorted, available: snapshot.networkStatsAvailable },
+        });
+      })().catch((error) => {
+        sendResponse({ ok: false, error: { code: 'INTERNAL', message: error.message } });
       });
-      return false;
+      return true;
     }
 
     case MSG.TOGGLE_PAUSE_SITE: {
@@ -205,9 +224,20 @@ export function handleMessage(message, sender, sendResponse) {
         return false;
       }
       const domain = payload.domain || payload.hostname || '';
-      const blockType = payload.type === 'youtube' ? 'youtube' : 'cosmetic';
+      const reportTypes = ['cosmetic', 'youtube', 'youtubeDetected'];
+      if (payload.type !== undefined && !reportTypes.includes(payload.type)) {
+        sendResponse({
+          ok: false,
+          error: { code: 'BAD_PAYLOAD', message: 'type is not a supported cosmetic report' },
+        });
+        return false;
+      }
+      const blockType = reportTypes.includes(payload.type) ? payload.type : 'cosmetic';
       (async () => {
         try {
+          if (!(await ensureStatsInitialized(sendResponse))) {
+            return;
+          }
           recordBlockEvent(domain, blockType, null, count);
           await flushStats();
           sendResponse({ ok: true });
@@ -363,6 +393,9 @@ export function handleMessage(message, sender, sendResponse) {
     case MSG.STATS_EXPORT: {
       (async () => {
         try {
+          if (!(await ensureStatsInitialized(sendResponse))) {
+            return;
+          }
           await flushStats();
           const allData = await chrome.storage.local.get(null);
           sendResponse({ ok: true, data: allData });
@@ -390,13 +423,13 @@ export function handleMessage(message, sender, sendResponse) {
             [STORAGE_KEYS['stats:lifetime']]: {
               total: 0,
               totalBlocked: 0,
-              byType: { network: 0, cosmetic: 0, youtube: 0 },
+              byType: { network: 0, cosmetic: 0, youtube: 0, youtubeDetected: 0 },
             },
             [todayKey]: {
               date: today,
               total: 0,
               totalBlocked: 0,
-              byType: { network: 0, cosmetic: 0, youtube: 0 },
+              byType: { network: 0, cosmetic: 0, youtube: 0, youtubeDetected: 0 },
               byList: {},
               topDomains: {},
               byDomain: {},
@@ -449,7 +482,11 @@ export function handleMessage(message, sender, sendResponse) {
               total: diagnosticsAvailable
                 ? (bucket?.byType?.network ?? bucket?.total ?? bucket?.totalBlocked ?? 0)
                 : null,
-              byType: bucket?.byType || { network: bucket?.total ?? bucket?.totalBlocked ?? 0 },
+              byType:
+                bucket?.byType ??
+                (diagnosticsAvailable
+                  ? { network: bucket?.total ?? bucket?.totalBlocked ?? 0 }
+                  : null),
               networkStatsAvailable: diagnosticsAvailable,
             };
           });
