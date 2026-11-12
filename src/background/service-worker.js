@@ -4,7 +4,7 @@
 import { logger } from '../shared/logger.js';
 import { updateRules } from './rule-updater.js';
 import { initStats, setupDnrRuleMatchedListener } from './stats.js';
-import { setupMessageRouter } from './stats-api.js';
+import { setupMessageRouter } from './message-router.js';
 import { updateBadge } from './badge.js';
 
 export const RETENTION_DAYS = 90;
