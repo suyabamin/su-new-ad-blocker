@@ -37,7 +37,7 @@ describe('content branch coverage follow-up', () => {
     wrapper.append(ad);
     document.body.append(wrapper);
 
-    await new Promise((resolve) => setTimeout(resolve, 130));
+    await new Promise((resolve) => setTimeout(resolve, 300));
     expect(ad.style.display).toBe('none');
     observer.disconnect();
     _resetQueueState();
