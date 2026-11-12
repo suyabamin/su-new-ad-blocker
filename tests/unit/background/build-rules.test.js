@@ -1,6 +1,7 @@
 import { describe, it, expect, afterEach } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
+import os from 'node:os';
 import {
   buildRules,
   buildDnrRulesFromDomains,
@@ -9,11 +10,26 @@ import {
 } from '../../../scripts/build-rules.js';
 
 describe('build-rules script (scripts/build-rules.js)', () => {
-  const tempOutputPath = path.resolve(__dirname, 'temp_test_rules.json');
+  const tempPaths = [];
+
+  function makeTempPath() {
+    const p = path.join(
+      os.tmpdir(),
+      `test_rules_${Date.now()}_${Math.random().toString(36).slice(2)}.json`
+    );
+    tempPaths.push(p);
+    return p;
+  }
 
   afterEach(() => {
-    if (fs.existsSync(tempOutputPath)) {
-      fs.unlinkSync(tempOutputPath);
+    for (const p of tempPaths.splice(0)) {
+      try {
+        if (fs.existsSync(p)) {
+          fs.unlinkSync(p);
+        }
+      } catch {
+        // Windows may still have the file open briefly; ignore
+      }
     }
   });
 
@@ -63,6 +79,7 @@ describe('build-rules script (scripts/build-rules.js)', () => {
   });
 
   it('buildRules writes valid JSON array with >= 500 rules (AC-TD.1-1, AC-TD.1-2)', async () => {
+    const tempOutputPath = makeTempPath();
     const count = await buildRules(tempOutputPath);
     expect(count).toBeGreaterThanOrEqual(500);
 
@@ -87,6 +104,7 @@ describe('build-rules script (scripts/build-rules.js)', () => {
   });
 
   it('rules include all 10 canonical ad-network domains (AC-TD.1-4)', async () => {
+    const tempOutputPath = makeTempPath();
     await buildRules(tempOutputPath);
     const content = fs.readFileSync(tempOutputPath, 'utf8');
     const rules = JSON.parse(content);
