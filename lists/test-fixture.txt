@@ -1,0 +1,15 @@
+[Adblock Plus 2.0]
+! Title: SU New Ad Blocker Test Fixture List
+! Description: Test rules for unit, integration, and e2e tests
+||ads.test.local^
+||tracker.test.local^
+||analytics.test.local^
+||adservice.test.local^$script,image
+||partner.test.local/ad/*$third-party
+||domain-targeted.test.local^$domain=example.com
+@@||whitelisted.test.local^
+##.ad-banner
+##.ad-container
+##.sponsor-post
+test.local###sponsor-box
+test.local#@##false-positive
