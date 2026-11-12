@@ -16,6 +16,18 @@ export function formatNetworkCount(available, count) {
   return available ? String(count ?? 0) : UI_STRINGS.NETWORK_UNAVAILABLE;
 }
 
+function applyPopupMessages() {
+  if (!globalThis.chrome?.i18n?.getMessage) {
+    return;
+  }
+  for (const element of document.querySelectorAll('[data-i18n]')) {
+    const message = globalThis.chrome.i18n.getMessage(element.dataset.i18n);
+    if (message) {
+      element.textContent = message;
+    }
+  }
+}
+
 /**
  * Updates UI labels based on pause state.
  * @param {HTMLButtonElement} button
@@ -85,6 +97,7 @@ export async function getActiveTabHostname() {
  * Initializes popup UI listeners and queries background for live stats.
  */
 export async function initPopup() {
+  applyPopupMessages();
   const siteDisplay = document.getElementById('current-site-display');
   const pauseButton = document.getElementById('pause-site-button');
   const tabBlockedDisplay = document.getElementById('tab-blocked-count');
@@ -94,6 +107,8 @@ export async function initPopup() {
   const networkDisplay = document.getElementById('count-network');
   const cosmeticDisplay = document.getElementById('count-cosmetic');
   const youtubeDisplay = document.getElementById('count-youtube');
+  const youtubeDetectedDisplay = document.getElementById('count-youtube-detected');
+  const youtubeUnhiddenDisplay = document.getElementById('count-youtube-unhidden');
 
   if (openOptionsButton && typeof chrome !== 'undefined' && chrome.runtime?.openOptionsPage) {
     openOptionsButton.addEventListener('click', () => {
@@ -164,6 +179,14 @@ export async function initPopup() {
         }
         if (youtubeDisplay) {
           youtubeDisplay.textContent = String(response.data.byType?.youtube || 0);
+        }
+        const youtubeDetected = response.data.byType?.youtubeDetected || 0;
+        const youtubeHidden = response.data.byType?.youtube || 0;
+        if (youtubeDetectedDisplay) {
+          youtubeDetectedDisplay.textContent = String(youtubeDetected);
+        }
+        if (youtubeUnhiddenDisplay) {
+          youtubeUnhiddenDisplay.textContent = String(Math.max(0, youtubeDetected - youtubeHidden));
         }
       }
     });
