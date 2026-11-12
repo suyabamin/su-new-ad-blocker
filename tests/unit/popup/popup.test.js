@@ -25,6 +25,8 @@ describe('popup module (src/popup/popup.js)', () => {
       <strong id="count-network">0</strong>
       <strong id="count-cosmetic">0</strong>
       <strong id="count-youtube">0</strong>
+      <strong id="count-youtube-detected">0</strong>
+      <strong id="count-youtube-unhidden">0</strong>
       <button id="open-options-button">Options</button>
     `;
 
@@ -92,7 +94,7 @@ describe('popup module (src/popup/popup.js)', () => {
             data: {
               todayBlocked: 42,
               networkStatsAvailable: true,
-              byType: { network: 30, cosmetic: 10, youtube: 2 },
+              byType: { network: 30, cosmetic: 10, youtube: 2, youtubeDetected: 5 },
             },
           });
         }
@@ -108,6 +110,8 @@ describe('popup module (src/popup/popup.js)', () => {
       expect(document.getElementById('count-network').textContent).toBe('30');
       expect(document.getElementById('count-cosmetic').textContent).toBe('10');
       expect(document.getElementById('count-youtube').textContent).toBe('2');
+      expect(document.getElementById('count-youtube-detected').textContent).toBe('5');
+      expect(document.getElementById('count-youtube-unhidden').textContent).toBe('3');
     });
 
     it('shows restricted notice and disables pause button for restricted pages', async () => {
