@@ -36,7 +36,7 @@ criteria pass, lint is clean, tests pass, and verified in this session.
 
 ## Phase 3: Cosmetic Filtering
 
-- [ ] **T3.1** — Cosmetic rule extraction in rule compiler (`rules/cosmetic.json`)
+- [x] **T3.1** — Cosmetic rule extraction in rule compiler (`rules/cosmetic.json`)
 - [ ] **T3.2** — Generic cosmetic content script (`src/content/cosmetic.js`) with style injection and debounced MutationObserver
 - [ ] **T3.3** — Batched reporting via `CS_BLOCKED_REPORT` (at most one report per 2 seconds per tab)
 
