@@ -9,6 +9,10 @@ import {
   MAX_TOP_DOMAINS,
 } from '../../../src/background/stats-tracker.js';
 import { STORAGE_KEYS, dailyStatsKey } from '../../../src/shared/storage.js';
+import {
+  DYNAMIC_ALLOW_RULE_ID_OFFSET,
+  DYNAMIC_RULE_ID_OFFSET,
+} from '../../../src/shared/filter-lists.js';
 
 describe('stats-tracker (src/background/stats-tracker.js)', () => {
   let storageSetMock;
@@ -94,11 +98,15 @@ describe('stats-tracker (src/background/stats-tracker.js)', () => {
 
   it('counts each matched request once, skips paused tabs, and keeps daily total equal to tab deltas', async () => {
     const first = [
-      { tabId: 1, timeStamp: 100, rule: { ruleId: 7 } },
-      { tabId: 1, timeStamp: 101, rule: { ruleId: 7 } },
-      { tabId: 2, timeStamp: 102, rule: { ruleId: 8 } },
+      { tabId: 1, timeStamp: 100, rule: { ruleId: DYNAMIC_RULE_ID_OFFSET + 7 } },
+      { tabId: 1, timeStamp: 101, rule: { ruleId: DYNAMIC_RULE_ID_OFFSET + 8 } },
+      { tabId: 2, timeStamp: 102, rule: { ruleId: DYNAMIC_RULE_ID_OFFSET + 2008 } },
+      { tabId: 1, timeStamp: 104, rule: { ruleId: DYNAMIC_ALLOW_RULE_ID_OFFSET } },
     ];
-    const next = [...first, { tabId: 1, timeStamp: 103, rule: { ruleId: 7 } }];
+    const next = [
+      ...first,
+      { tabId: 1, timeStamp: 103, rule: { ruleId: DYNAMIC_RULE_ID_OFFSET + 7 } },
+    ];
     globalThis.chrome.declarativeNetRequest = {
       getMatchedRules: vi
         .fn()
@@ -120,7 +128,9 @@ describe('stats-tracker (src/background/stats-tracker.js)', () => {
 
     const snapshot = getStatsSnapshot();
     expect(snapshot.today.byType.network).toBe(3);
+    expect(snapshot.networkStatsAvailable).toBe(true);
     expect(snapshot.byDomain).toEqual({ 'publisher.test': 3 });
+    expect(snapshot.today.byList).toEqual({ easylist: 3 });
     const tabDeltaTotal = [...Object.values(firstDeltas), ...Object.values(secondDeltas)].reduce(
       (sum, count) => sum + count,
       0
