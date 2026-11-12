@@ -1,9 +1,17 @@
 {
-  "generic": [".ad-banner", ".ad-container", ".sponsor-post"],
+  "generic": [
+    ".ad-banner",
+    ".ad-container",
+    ".sponsor-post"
+  ],
   "domainSpecific": {
     "test.local": {
-      "selectors": ["#sponsor-box"],
-      "exceptions": ["#false-positive"]
+      "selectors": [
+        "#sponsor-box"
+      ],
+      "exceptions": [
+        "#false-positive"
+      ]
     }
   }
 }
