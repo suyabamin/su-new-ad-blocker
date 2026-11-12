@@ -1,7 +1,8 @@
 # Phase 3 Baseline Audit
 
-**Recorded:** 2026-11-13 (Asia/Dhaka)  
-**Branch and commit:** `main`, `c771173` (`fix: harden statistics and YouTube diagnostics`)  
+**Recorded:** 2026-11-13 (Asia/Dhaka)
+
+**Branch and commit:** `main`, `c771173` (`fix: harden statistics and YouTube diagnostics`)
 **Audit state:** No source or documentation changes had been made when this report was recorded.
 
 ## Git state
