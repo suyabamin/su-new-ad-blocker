@@ -6,17 +6,23 @@ import {
   installYouTubeObserver,
   hideAdElements,
   initYouTubeCosmetic,
+  detectPageType,
+  queueYouTubeBlockedReport,
+  _resetYtReportQueue,
   YT_STYLE_ELEMENT_ID,
+  YT_REPORT_INTERVAL_MS,
 } from '../../../src/content/youtube.js';
 import {
   YOUTUBE_SELECTORS,
   FORBIDDEN_YOUTUBE_SELECTORS,
 } from '../../../src/content/youtube-selectors.js';
+import { vi } from 'vitest';
 
 describe('YouTube cosmetic module (src/content/youtube.js)', () => {
   beforeEach(() => {
     document.head.innerHTML = '';
     document.body.innerHTML = '';
+    _resetYtReportQueue();
     const old = document.getElementById(YT_STYLE_ELEMENT_ID);
     if (old) {
       old.remove();
@@ -110,5 +116,64 @@ describe('YouTube cosmetic module (src/content/youtube.js)', () => {
     expect(buildYouTubeCss(null)).toBe('');
     expect(injectYouTubeStyles(null)).toBeNull();
     expect(installYouTubeObserver(null)).toBeNull();
+  });
+
+  describe('detectPageType (T5.1)', () => {
+    it('accurately identifies page types from URLs/paths', () => {
+      expect(detectPageType('/watch?v=123')).toBe('watch');
+      expect(detectPageType('/results?search_query=test')).toBe('search');
+      expect(detectPageType('/@somechannel')).toBe('channel');
+      expect(detectPageType('/channel/UC12345')).toBe('channel');
+      expect(detectPageType('/c/coolcreator')).toBe('channel');
+      expect(detectPageType('/')).toBe('home');
+      expect(detectPageType('')).toBe('home');
+      expect(detectPageType('/feed/explore')).toBe('other');
+      expect(detectPageType(null)).toBe('other');
+    });
+  });
+
+  describe('queueYouTubeBlockedReport batched reporting (T5.3)', () => {
+    it('batches reporting calls within 2000ms window', () => {
+      vi.useFakeTimers();
+      const sendMock = vi.fn();
+      globalThis.chrome = {
+        runtime: {
+          sendMessage: sendMock,
+        },
+      };
+
+      queueYouTubeBlockedReport(2);
+      queueYouTubeBlockedReport(3);
+
+      expect(sendMock).not.toHaveBeenCalled();
+
+      vi.advanceTimersByTime(YT_REPORT_INTERVAL_MS);
+
+      expect(sendMock).toHaveBeenCalledTimes(1);
+      expect(sendMock.mock.calls[0][0].payload.count).toBe(5);
+      expect(sendMock.mock.calls[0][0].payload.type).toBe('youtube');
+      expect(sendMock.mock.calls[0][0].payload.hostname).toBe('youtube.com');
+
+      vi.useRealTimers();
+      delete globalThis.chrome;
+    });
+  });
+
+  describe('settings toggle integration (T5.3)', () => {
+    it('does not inject styles or observers when youtubeEnabled is false', () => {
+      globalThis.chrome = {
+        runtime: {
+          sendMessage: vi.fn((msg, cb) => {
+            if (cb) {
+              cb({ ok: true, data: { youtubeEnabled: false } });
+            }
+          }),
+        },
+      };
+
+      initYouTubeCosmetic();
+      expect(document.getElementById(YT_STYLE_ELEMENT_ID)).toBeNull();
+      delete globalThis.chrome;
+    });
   });
 });
