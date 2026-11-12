@@ -1,15 +1,14 @@
 import { describe, it, expect } from 'vitest';
 import { DEFAULT_SETTINGS, validateSettingsPatch } from '../../../src/shared/settings.js';
 
-// AC-TC.1-7 and AC-TC.1-8: settings structure and patch validation
+// AC-TC.1-7 and AC-TC.1-8: settings structure and patch validation per Section 2
 
 describe('DEFAULT_SETTINGS (src/shared/settings.js)', () => {
   it('is a frozen object (AC-TC.1-7)', () => {
     expect(Object.isFrozen(DEFAULT_SETTINGS)).toBe(true);
   });
 
-  it('has the exact shape from docs/10_STORAGE_SCHEMA.md Section 3 (AC-TC.1-7)', () => {
-    // Explicit literals — not copied from source
+  it('has the exact shape from Section 2 (AC-TC.1-7)', () => {
     expect(DEFAULT_SETTINGS).toEqual({
       blockingEnabled: true,
       cosmeticEnabled: true,
@@ -37,8 +36,14 @@ describe('validateSettingsPatch (src/shared/settings.js)', () => {
       ok: true,
       errors: [],
     });
-    expect(validateSettingsPatch({ locale: 'fr' })).toEqual({ ok: true, errors: [] });
+    expect(validateSettingsPatch({ locale: 'en' })).toEqual({ ok: true, errors: [] });
     expect(validateSettingsPatch({})).toEqual({ ok: true, errors: [] });
+  });
+
+  it('returns ok:false with error when locale is not "en"', () => {
+    const result = validateSettingsPatch({ locale: 'fr' });
+    expect(result.ok).toBe(false);
+    expect(result.errors).toContain('locale must be "en"');
   });
 
   it('returns ok:false with errors for unknown keys', () => {
