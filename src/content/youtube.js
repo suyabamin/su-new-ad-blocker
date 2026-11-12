@@ -1,10 +1,94 @@
-// YouTube Cosmetic Content Script: hides ad UI containers only
+// src/content/youtube.js
+// YouTube Cosmetic Content Script: hides ad UI containers only.
 // NEVER manipulates video/audio playback, never skips/mutes, never clicks buttons.
-// See docs/06_YOUTUBE_MODULE.md and docs/15_TASK_PLAN.md TF.2
+// See docs/06_YOUTUBE_MODULE.md and docs/15_TASK_PLAN.md T5.1, T5.2, T5.3
 
-import { YOUTUBE_SELECTORS } from './youtube-selectors.js';
+import { YOUTUBE_SELECTORS } from './youtube/selectors.js';
+import { MSG } from '../shared/messages.js';
 
 export const YT_STYLE_ELEMENT_ID = 'su-ad-blocker-youtube-styles';
+export const YT_REPORT_INTERVAL_MS = 2000;
+
+let pendingYtReportCount = 0;
+let ytReportTimer = null;
+
+/**
+ * Resets reporting queue state (for unit testing).
+ */
+export function _resetYtReportQueue() {
+  if (ytReportTimer !== null) {
+    clearTimeout(ytReportTimer);
+    ytReportTimer = null;
+  }
+  pendingYtReportCount = 0;
+}
+
+/**
+ * Batches YouTube ad container block counts and dispatches CS_BLOCKED_REPORT.
+ * @param {number} count
+ */
+export function queueYouTubeBlockedReport(count) {
+  if (typeof count !== 'number' || count <= 0) {
+    return;
+  }
+  pendingYtReportCount += count;
+
+  if (ytReportTimer !== null) {
+    return;
+  }
+
+  ytReportTimer = setTimeout(() => {
+    ytReportTimer = null;
+    const toReport = pendingYtReportCount;
+    pendingYtReportCount = 0;
+
+    const rt = globalThis.chrome?.runtime;
+    if (toReport > 0 && rt?.sendMessage) {
+      rt.sendMessage({
+        type: MSG.CS_BLOCKED_REPORT,
+        payload: {
+          count: toReport,
+          type: 'youtube',
+          hostname: 'youtube.com',
+        },
+      });
+    }
+  }, YT_REPORT_INTERVAL_MS);
+}
+
+/**
+ * Detects the YouTube page type from a URL or pathname (T5.1).
+ * @param {string} [urlOrPath]
+ * @returns {'watch' | 'search' | 'channel' | 'home' | 'other'}
+ */
+export function detectPageType(urlOrPath) {
+  if (urlOrPath === null) {
+    return 'other';
+  }
+  const path =
+    urlOrPath !== undefined
+      ? urlOrPath
+      : typeof window !== 'undefined'
+        ? window.location?.pathname
+        : '';
+  if (typeof path !== 'string') {
+    return 'other';
+  }
+
+  if (path.includes('/watch')) {
+    return 'watch';
+  }
+  if (path.includes('/results')) {
+    return 'search';
+  }
+  if (path.startsWith('/channel/') || path.startsWith('/c/') || path.startsWith('/@')) {
+    return 'channel';
+  }
+  if (path === '/' || path === '') {
+    return 'home';
+  }
+  return 'other';
+}
 
 /**
  * Builds CSS stylesheet string applying display:none !important to YouTube ad containers.
@@ -46,16 +130,30 @@ export function injectYouTubeStyles(doc = document, selectors = YOUTUBE_SELECTOR
  * Hides all matching ad elements within a given container root.
  * @param {Element|Document} root
  * @param {string[]} selectors
+ * @returns {number} count of newly hidden elements
  */
 export function hideAdElements(root, selectors = YOUTUBE_SELECTORS) {
   if (!root || !root.querySelectorAll) {
-    return;
+    return 0;
   }
   const combined = selectors.join(', ');
-  const matches = root.querySelectorAll(combined);
-  for (const el of matches) {
-    el.style.setProperty('display', 'none', 'important');
+  let hiddenCount = 0;
+  try {
+    const matches = root.querySelectorAll(combined);
+    for (const el of matches) {
+      if (el.style.display !== 'none') {
+        el.style.setProperty('display', 'none', 'important');
+        hiddenCount++;
+      }
+    }
+  } catch {
+    // Invalid selector or detached node
   }
+
+  if (hiddenCount > 0) {
+    queueYouTubeBlockedReport(hiddenCount);
+  }
+  return hiddenCount;
 }
 
 /**
@@ -72,15 +170,22 @@ export function installYouTubeObserver(doc = document, selectors = YOUTUBE_SELEC
   const combined = selectors.join(', ');
 
   const observer = new MutationObserver((mutations) => {
+    let directMatches = 0;
     for (const mutation of mutations) {
       for (const node of mutation.addedNodes) {
         if (node.nodeType === 1) {
           if (node.matches && node.matches(combined)) {
-            node.style.setProperty('display', 'none', 'important');
+            if (node.style.display !== 'none') {
+              node.style.setProperty('display', 'none', 'important');
+              directMatches++;
+            }
           }
           hideAdElements(node, selectors);
         }
       }
+    }
+    if (directMatches > 0) {
+      queueYouTubeBlockedReport(directMatches);
     }
   });
 
@@ -93,14 +198,9 @@ export function installYouTubeObserver(doc = document, selectors = YOUTUBE_SELEC
 }
 
 /**
- * Initializes the YouTube cosmetic hiding module.
- * Attaches to yt-navigate-finish event for soft SPA navigation.
+ * Executes injection and observer setup after checking settings.
  */
-export function initYouTubeCosmetic() {
-  if (typeof document === 'undefined') {
-    return;
-  }
-
+function setupYouTubeCosmetic() {
   injectYouTubeStyles(document, YOUTUBE_SELECTORS);
 
   if (document.body) {
@@ -113,13 +213,35 @@ export function initYouTubeCosmetic() {
     });
   }
 
-  // Handle YouTube SPA soft navigation
+  // Handle YouTube SPA soft navigation (T5.1)
   if (typeof window !== 'undefined' && window.addEventListener) {
     window.addEventListener('yt-navigate-finish', () => {
       if (document.body) {
         hideAdElements(document.body, YOUTUBE_SELECTORS);
       }
     });
+  }
+}
+
+/**
+ * Initializes the YouTube cosmetic hiding module (T5.3 settings toggle).
+ */
+export function initYouTubeCosmetic() {
+  if (typeof document === 'undefined') {
+    return;
+  }
+
+  const rt = globalThis.chrome?.runtime;
+  if (rt?.sendMessage) {
+    rt.sendMessage({ type: MSG.SETTINGS_GET, payload: {} }, (res) => {
+      if (res?.ok && res.data && res.data.youtubeEnabled === false) {
+        // Disabled by user setting
+        return;
+      }
+      setupYouTubeCosmetic();
+    });
+  } else {
+    setupYouTubeCosmetic();
   }
 }
 
