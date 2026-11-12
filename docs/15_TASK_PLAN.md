@@ -21,7 +21,7 @@ criteria pass, lint is clean, tests pass, and verified in this session.
 - [x] **T1.3** — Generated DNR rulesets within static limits (`build/limits.js`, `build/report.json`)
 - [x] **T1.4** — Background `rules-manager.js` for dynamic pause/allow rules
 - [x] **T1.5** — Background `service-worker.js` entry point and toolbar `badge.js`
-- [ ] **T1.6** — E2E blocking test in Playwright (`tests/e2e/blocking.spec.js`)
+- [x] **T1.6** — E2E blocking test in Playwright (`tests/e2e/blocking.spec.js`)
 
 ---
 
