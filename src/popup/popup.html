@@ -33,23 +33,31 @@
 
       <section class="stats-card">
         <div class="stats-item">
-          <span class="stats-number" id="tab-blocked-count">0</span>
+          <span class="stats-number" id="tab-blocked-count">—</span>
           <span class="stats-label">Network matches for this site (debug build)</span>
         </div>
         <div class="stats-divider"></div>
         <div class="stats-item">
-          <span class="stats-number" id="today-blocked-count">0</span>
+          <span class="stats-number" id="today-blocked-count">—</span>
           <span class="stats-label">Network matches today</span>
         </div>
       </section>
 
       <section class="breakdown-section" id="breakdown-section">
-        <span class="breakdown-item">Network: <strong id="count-network">0</strong></span>
+        <span class="breakdown-item">Network: <strong id="count-network">—</strong></span>
         <span class="breakdown-item"
-          >Cosmetic elements hidden: <strong id="count-cosmetic">0</strong></span
+          >Cosmetic elements hidden: <strong id="count-cosmetic">—</strong></span
         >
         <span class="breakdown-item"
-          >YouTube ad UI hidden: <strong id="count-youtube">0</strong></span
+          >YouTube ad UI hidden: <strong id="count-youtube">—</strong></span
+        >
+        <span class="breakdown-item"
+          ><span data-i18n="statYoutubeDetected">YouTube ad selector matches</span>:
+          <strong id="count-youtube-detected">—</strong></span
+        >
+        <span class="breakdown-item"
+          ><span data-i18n="statYoutubeUnhidden">Detected but not hidden by this extension</span>:
+          <strong id="count-youtube-unhidden">—</strong></span
         >
       </section>
 
