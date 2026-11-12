@@ -75,22 +75,9 @@ describe('stats tracker (src/background/stats.js)', () => {
     expect(snapshot.byDomain['ad.tracker.com']).toBe(10);
   });
 
-  it('setupDnrRuleMatchedListener records event from valid URL', () => {
-    let callback;
-    mockChrome.declarativeNetRequest.onRuleMatchedDebug = {
-      addListener: (cb) => {
-        callback = cb;
-      },
-    };
-
+  it('does not register the debug event as a second network counting source', () => {
     setupDnrRuleMatchedListener();
-    expect(callback).toBeDefined();
-
-    callback({ request: { url: 'https://adservice.google.com/ads?id=123' } });
-
-    const snapshot = getStatsSnapshot();
-    expect(snapshot.totalBlocked).toBe(1);
-    expect(snapshot.byDomain['adservice.google.com']).toBe(1);
+    expect(getStatsSnapshot().totalBlocked).toBe(0);
   });
 
   it('handles invalid inputs and errors safely', async () => {
@@ -108,16 +95,7 @@ describe('stats tracker (src/background/stats.js)', () => {
     vi.spyOn(mockChrome.storage.local, 'set').mockRejectedValueOnce(new Error('Storage failure'));
     await expect(flushStats()).resolves.not.toThrow();
 
-    // setupDnrRuleMatchedListener invalid url branch
-    let callback;
-    mockChrome.declarativeNetRequest.onRuleMatchedDebug = {
-      addListener: (cb) => {
-        callback = cb;
-      },
-    };
     setupDnrRuleMatchedListener();
-    callback({ request: { url: 'not-a-valid-url' } });
-    callback(null);
 
     // Environment without chrome.storage
     const saved = globalThis.chrome;
