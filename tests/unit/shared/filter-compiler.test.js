@@ -44,6 +44,20 @@ describe('EasyList DNR compiler', () => {
     expect(parseNetworkFilter('||ads.example^$popup')).toBeNull();
   });
 
+  it('supports exact EasyList YouTube ad endpoints without broadening them', () => {
+    expect(parseNetworkFilter('||youtube.com/pagead/')).toMatchObject({
+      action: 'block',
+      condition: { urlFilter: '||youtube.com/pagead/' },
+    });
+    expect(parseNetworkFilter('||youtube.com/youtubei/v1/player/ad_break')).toMatchObject({
+      action: 'block',
+      condition: { urlFilter: '||youtube.com/youtubei/v1/player/ad_break' },
+    });
+    expect(
+      parseNetworkFilter('||googlevideo.com/videoplayback?$rewrite=abp-resource:abp.js')
+    ).toBeNull();
+  });
+
   it('ignores comments, cosmetic filters, malformed domains, and unsafe patterns', () => {
     expect(parseNetworkFilter(42)).toBeNull();
     expect(parseNetworkFilter('! comment')).toBeNull();
