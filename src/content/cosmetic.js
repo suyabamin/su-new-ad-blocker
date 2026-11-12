@@ -1,7 +1,12 @@
 // Generic Cosmetic Content Script: injects CSS and installs MutationObserver to hide ad containers
 // See docs/15_TASK_PLAN.md TF.1
 
-import { GENERIC_SELECTORS } from './selectors.js';
+import { GENERIC_SELECTORS as IMPORTED_SELECTORS } from './selectors.js';
+
+export const GENERIC_SELECTORS =
+  (typeof globalThis !== 'undefined' && globalThis.__SU_GENERIC_SELECTORS__) ||
+  IMPORTED_SELECTORS ||
+  [];
 
 export const STYLE_ELEMENT_ID = 'su-ad-blocker-cosmetic-styles';
 
