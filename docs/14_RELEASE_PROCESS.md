@@ -18,7 +18,7 @@
 ## 2. Build
 
 ```bash
-npm run build-rules   # Regenerate DNR ruleset from latest filter lists
+npm run build-rules   # Regenerate the bundled static baseline from production-*.txt inputs
 npm run lint          # Must pass
 npm test              # Must pass
 npm run build         # Bundles content scripts with esbuild into IIFEs and populates dist/
