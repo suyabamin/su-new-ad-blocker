@@ -1,83 +1,187 @@
-// tests/perf/run.js
-// Performance benchmark harness measuring cosmetic injection and rule parsing overhead.
-// Task: T6.1
+import fs from 'node:fs';
+import http from 'node:http';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import * as prettier from 'prettier';
+import { buildExtension } from '../../scripts/build.js';
 
-import { performance } from 'node:perf_hooks';
-import { JSDOM } from 'jsdom';
-import { buildCosmeticCss, injectCosmeticStyles } from '../../src/content/cosmetic.js';
-import { GENERIC_SELECTORS } from '../../src/content/selectors.js';
-import { buildYouTubeCss } from '../../src/content/youtube.js';
-import { YOUTUBE_SELECTORS } from '../../src/content/youtube/selectors.js';
+const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+const SITE_DIR = path.join(ROOT_DIR, 'tests', 'site');
+const DIST_DIR = path.join(ROOT_DIR, 'dist');
+const OUTPUT_PATH = path.join(ROOT_DIR, 'tests', 'perf', 'results.json');
+const RUNS_PER_MODE = 10;
+const RULESET_ID = 'main_blocking_rules';
 
-/**
- * Calculates median from an array of numbers.
- * @param {number[]} numbers
- * @returns {number}
- */
-export function median(numbers) {
-  if (!numbers || numbers.length === 0) {
-    return 0;
-  }
-  const sorted = [...numbers].sort((a, b) => a - b);
-  const mid = Math.floor(sorted.length / 2);
-  return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+function median(values) {
+  const ordered = [...values].sort((a, b) => a - b);
+  const middle = Math.floor(ordered.length / 2);
+  return ordered.length % 2 ? ordered[middle] : (ordered[middle - 1] + ordered[middle]) / 2;
 }
 
-/**
- * Runs performance benchmark iterations.
- * @param {number} [iterations=100]
- * @returns {{ medianCosmeticMs: number, medianYouTubeMs: number, passed: boolean }}
- */
-export function runBenchmark(iterations = 100) {
-  const cosmeticTimes = [];
-  const youtubeTimes = [];
+function rounded(value) {
+  return Math.round(value * 100) / 100;
+}
 
-  for (let i = 0; i < iterations; i++) {
-    const dom = new JSDOM(
-      '<!doctype html><html><head></head><body><div class="ad-banner"></div></body></html>'
+function listSitePages() {
+  return fs
+    .readdirSync(SITE_DIR, { withFileTypes: true })
+    .filter((entry) => entry.isFile() && entry.name.toLowerCase().endsWith('.html'))
+    .map((entry) => entry.name)
+    .sort();
+}
+
+function createSiteServer() {
+  return http.createServer((request, response) => {
+    const pageName = path.basename(new URL(request.url, 'http://127.0.0.1').pathname);
+    const pagePath = path.join(SITE_DIR, pageName);
+    if (!pageName || !fs.existsSync(pagePath) || !pagePath.startsWith(`${SITE_DIR}${path.sep}`)) {
+      response.writeHead(404).end('Not found');
+      return;
+    }
+    response.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
+    fs.createReadStream(pagePath).pipe(response);
+  });
+}
+
+async function setBlocking(worker, enabled) {
+  await worker.evaluate(
+    async ({ rulesetId, isEnabled }) => {
+      await globalThis.chrome.declarativeNetRequest.updateEnabledRulesets({
+        enableRulesetIds: isEnabled ? [rulesetId] : [],
+        disableRulesetIds: isEnabled ? [] : [rulesetId],
+      });
+    },
+    { rulesetId: RULESET_ID, isEnabled: enabled }
+  );
+}
+
+async function measureNavigation(context, url) {
+  const page = await context.newPage();
+  try {
+    await page.goto(url, { waitUntil: 'load', timeout: 30_000 });
+    await page.waitForFunction(
+      () => performance.getEntriesByType('navigation')[0]?.loadEventEnd > 0,
+      null,
+      { timeout: 5000 }
     );
-    const doc = dom.window.document;
-
-    // Benchmark cosmetic CSS injection
-    const t0 = performance.now();
-    buildCosmeticCss(GENERIC_SELECTORS);
-    injectCosmeticStyles(doc, GENERIC_SELECTORS);
-    const t1 = performance.now();
-    cosmeticTimes.push(t1 - t0);
-
-    // Benchmark YouTube CSS generation
-    const t2 = performance.now();
-    buildYouTubeCss(YOUTUBE_SELECTORS);
-    const t3 = performance.now();
-    youtubeTimes.push(t3 - t2);
+    return await page.evaluate(() => performance.getEntriesByType('navigation')[0].loadEventEnd);
+  } finally {
+    await page.close();
   }
-
-  const medianCosmeticMs = median(cosmeticTimes);
-  const medianYouTubeMs = median(youtubeTimes);
-
-  // Maximum allowed median latency: 5ms for cosmetic, 1ms for YouTube CSS
-  const passed = medianCosmeticMs < 5 && medianYouTubeMs < 1;
-
-  return {
-    iterations,
-    medianCosmeticMs: Number(medianCosmeticMs.toFixed(3)),
-    medianYouTubeMs: Number(medianYouTubeMs.toFixed(3)),
-    passed,
-  };
 }
 
-// If run directly via node
-if (process.argv[1] && process.argv[1].endsWith('run.js')) {
-  console.log('Running performance benchmark harness...');
-  const results = runBenchmark(100);
-  console.log(`Iterations: ${results.iterations}`);
-  console.log(`Median Cosmetic Injection: ${results.medianCosmeticMs} ms`);
-  console.log(`Median YouTube CSS Build: ${results.medianYouTubeMs} ms`);
+async function runMeasurements(pages, context, worker, baseUrl) {
+  const pageResults = {};
+  for (const pageName of pages) {
+    const url = `${baseUrl}/${encodeURIComponent(pageName)}`;
+    const on = [];
+    const off = [];
+    const pairedAdded = [];
 
-  if (!results.passed) {
-    console.error('Benchmark failed: median added time exceeds budget.');
-    process.exit(1);
+    for (let run = 0; run < RUNS_PER_MODE; run++) {
+      const order = run % 2 === 0 ? [true, false] : [false, true];
+      const pair = {};
+      for (const enabled of order) {
+        await setBlocking(worker, enabled);
+        pair[enabled ? 'on' : 'off'] = rounded(await measureNavigation(context, url));
+        (enabled ? on : off).push(pair[enabled ? 'on' : 'off']);
+      }
+      pairedAdded.push(pair.on - pair.off);
+    }
+
+    pageResults[pageName] = {
+      runCountPerMode: RUNS_PER_MODE,
+      blockingOnMs: on,
+      blockingOffMs: off,
+      medianBlockingOnMs: rounded(median(on)),
+      medianBlockingOffMs: rounded(median(off)),
+      medianAddedLoadMs: rounded(median(pairedAdded)),
+    };
   }
-  console.log('Performance benchmark PASSED.');
-  process.exit(0);
+  return pageResults;
 }
+
+async function startServer(server) {
+  await new Promise((resolve, reject) => {
+    server.once('error', reject);
+    server.listen(0, '127.0.0.1', resolve);
+  });
+  return server.address().port;
+}
+
+async function closeServer(server) {
+  if (server?.listening) {
+    await new Promise((resolve, reject) =>
+      server.close((error) => (error ? reject(error) : resolve()))
+    );
+  }
+}
+
+async function run() {
+  process.env.PLAYWRIGHT_BROWSERS_PATH ||= 'D:\\.playwright-browsers';
+  const { chromium } = await import('@playwright/test');
+  const pages = listSitePages();
+  if (pages.length === 0) {
+    throw new Error(`No HTML pages found in ${SITE_DIR}`);
+  }
+
+  await buildExtension({ rootDir: ROOT_DIR, outDir: DIST_DIR });
+  const server = createSiteServer();
+  const port = await startServer(server);
+  const profileParent = path.join(ROOT_DIR, '.pw-tmp');
+  fs.mkdirSync(profileParent, { recursive: true });
+  const profile = fs.mkdtempSync(path.join(profileParent, 'perf-run-'));
+  let context;
+
+  try {
+    context = await chromium.launchPersistentContext(profile, {
+      channel: 'chromium',
+      headless: false,
+      ignoreDefaultArgs: ['--disable-extensions'],
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        `--disable-extensions-except=${DIST_DIR}`,
+        `--load-extension=${DIST_DIR}`,
+      ],
+    });
+    let [worker] = context.serviceWorkers();
+    if (!worker) {
+      worker = await context.waitForEvent('serviceworker', { timeout: 30_000 });
+    }
+
+    const results = await runMeasurements(pages, context, worker, `http://127.0.0.1:${port}`);
+    const output = {
+      generatedAt: new Date().toISOString(),
+      browser: 'Chromium',
+      extension: 'unpacked dist/',
+      comparison:
+        'Static DNR ruleset on versus off; cosmetic scripts remain enabled in both modes.',
+      runsPerModePerPage: RUNS_PER_MODE,
+      pages: results,
+    };
+    const prettierOptions = await prettier.resolveConfig(OUTPUT_PATH);
+    const formatted = await prettier.format(JSON.stringify(output), {
+      ...prettierOptions,
+      parser: 'json',
+    });
+    fs.writeFileSync(OUTPUT_PATH, formatted, 'utf8');
+    process.stdout.write(`Performance results written to ${OUTPUT_PATH}\n`);
+    for (const [pageName, result] of Object.entries(results)) {
+      process.stdout.write(
+        `${pageName}: on median ${result.medianBlockingOnMs} ms, ` +
+          `off median ${result.medianBlockingOffMs} ms, ` +
+          `added median ${result.medianAddedLoadMs} ms (${RUNS_PER_MODE} runs per mode)\n`
+      );
+    }
+  } finally {
+    await context?.close();
+    await closeServer(server);
+    fs.rmSync(profile, { recursive: true, force: true });
+  }
+}
+
+run().catch((error) => {
+  process.stderr.write(`Performance run failed: ${error.stack || error.message}\n`);
+  process.exitCode = 1;
+});
