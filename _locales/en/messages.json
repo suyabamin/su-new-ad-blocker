@@ -39,6 +39,14 @@
     "message": "YouTube ad UI elements hidden",
     "description": "Block type: youtube"
   },
+  "statYoutubeDetected": {
+    "message": "YouTube ad selector matches",
+    "description": "Unique YouTube elements detected by a bundled ad selector; not proof that every match is an advertisement"
+  },
+  "statYoutubeUnhidden": {
+    "message": "Detected but not hidden by this extension",
+    "description": "YouTube selector matches minus elements successfully hidden by the extension"
+  },
   "chartTitle": {
     "message": "Network matches per day (last 7 days; debug builds)",
     "description": "Chart title for daily activity line chart"
