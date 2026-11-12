@@ -181,6 +181,7 @@ export function installCosmeticObserver(doc = document, selectors = GENERIC_SELE
     subtree: true,
   });
 
+  hideMatchingNodes();
   resetIdleTimer();
   return observer;
 }
