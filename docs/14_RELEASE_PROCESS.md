@@ -28,7 +28,7 @@ Per ADR-0005, MV3 content scripts run as classic scripts and cannot contain ES m
 The build script performs:
 
 1. Creates `dist/` directory.
-2. Bundles content scripts (`src/content/cosmetic.js` and `src/content/youtube.js`; the build script also supports `src/content/youtube/youtube.js` if present) with `esbuild` into IIFE files in `dist/content/` (`--bundle --format=iife --target=chrome120 --platform=browser`, minified when `NODE_ENV=production`).
+2. Bundles content scripts (`src/content/cosmetic.js` and `src/content/youtube/youtube.js`, falling back to `src/content/youtube.js` when the directory entry is absent) with `esbuild` into IIFE files in `dist/content/` (`--bundle --format=iife --target=chrome120 --platform=browser`, minified when `NODE_ENV=production`).
 3. Asserts that output bundles contain no top-level `import` or `export` statements.
 4. Copies unchanged runtime directories into `dist/`: `src/background/`, `src/popup/`, `src/options/`, `src/shared/`, `src/assets/`, `rules/`, and `icons/`.
 5. Generates `dist/manifest.json` from root `manifest.json`, rewriting `content_scripts` paths to the bundled `content/*.js` paths relative to the extension root.
