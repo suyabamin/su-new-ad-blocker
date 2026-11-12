@@ -77,8 +77,8 @@ describe('background unit tests', () => {
       const { handleInstalled, initServiceWorker } =
         await import('../../../src/background/service-worker.js');
       initServiceWorker();
-      const res = await handleInstalled({ reason: 'install' });
-      expect(res.ok).toBe(true);
+      // handleInstalled is void; verify it resolves without throwing
+      await expect(handleInstalled({ reason: 'install' })).resolves.toBeUndefined();
     });
   });
 });
