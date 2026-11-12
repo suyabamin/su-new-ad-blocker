@@ -1,62 +1,48 @@
 # 13 — Store Listing
 
-## 1. Extension Name
+## Extension name
 
 **SU New Ad Blocker**
 
-## 2. Short Description (up to 132 characters)
+## Short description
 
-Block ads and trackers, hide ad containers, reduce YouTube ad clutter. 100% local — no data collected.
+Blocks requests matching bundled rules, hides selected ad containers, and stores blocking counts locally.
 
-## 3. Full Description
+## Full description
 
-SU New Ad Blocker is a fast, privacy-first ad blocker for Chrome, Edge, and Brave. It uses Chrome's built-in declarativeNetRequest API to block ads and trackers before they load — without slowing down your browser.
+SU New Ad Blocker is a Manifest V3 extension for Chromium browsers. It uses the browser's
+declarativeNetRequest engine to block network requests that match its bundled rules. Cosmetic
+selectors hide selected ad containers, and the YouTube module hides selected ad interface elements.
 
-**What it does:**
+The popup shows current-site and daily counts. The Options page provides statistics, a domain
+allowlist, filter-list settings, and custom declarativeNetRequest rules.
 
-- Blocks ads and trackers on all websites using EasyList and EasyPrivacy filter lists
-- Hides leftover ad containers that survive network blocking
-- Reduces YouTube ad clutter: hides overlay ads, masthead banners, and promoted cards
-- Shows a live block count in the toolbar popup
-- Lets you whitelist sites you trust
-- Displays full statistics and filter list status in the options dashboard
+### Known limitations
 
-**Privacy:**
+- The bundled rules and selectors do not catch every advertisement or tracker.
+- YouTube video ads are not blocked by design. The YouTube module only hides selected interface
+  containers and does not manipulate video or audio playback.
+- The current filter-list updater records local update metadata; it does not download filter lists.
 
-- No data leaves your device — ever
-- No telemetry, no analytics, no account required
-- All statistics are stored locally in your browser
+### Privacy
 
-**Open-source filter lists:**
+Settings and blocking statistics are stored in `chrome.storage.local`. The extension does not send
+stored settings or statistics to a server and does not include telemetry or analytics. See
+[`docs/PRIVACY.md`](PRIVACY.md) for the data keys and current network behavior.
 
-- EasyList (GPL v3)
-- EasyPrivacy (GPL v3)
-
-## 4. Category
+## Category
 
 Productivity
 
-## 5. Screenshots Required (1280×800 or 640×400)
+## Screenshots
 
-| #   | Description                                        |
-| --- | -------------------------------------------------- |
-| 1   | Popup open on a news site showing block count      |
-| 2   | Options dashboard showing statistics and whitelist |
-| 3   | YouTube page with ad containers hidden             |
-| 4   | Before/after comparison on a typical ad-heavy page |
+Prepare screenshots at 1280×800 or 640×400. Suggested views:
 
-## 6. Promotional Images
+1. Popup showing current-site and daily counts.
+2. Options page showing statistics and the allowlist.
+3. A page where selected ad interface containers are hidden.
 
-| Size                       | Required |
-| -------------------------- | -------- |
-| 440×280 (small promo tile) | Yes      |
-| 920×680 (large promo tile) | Optional |
-| 1400×560 (marquee banner)  | Optional |
+## Privacy policy URL
 
-## 7. Privacy Policy URL
-
-Must be hosted at a stable URL before submission. Content should match `docs/12_PRIVACY_COMPLIANCE.md` section 5.
-
-## 8. Single-Purpose Justification
-
-This extension's single purpose is to block advertisements and trackers. It uses `declarativeNetRequest` (not `webRequest`) to enforce blocking rules, which is the Chrome-recommended approach for ad blockers in Manifest V3.
+Publish `docs/PRIVACY.md` at a stable public URL and enter that URL in the store listing before
+submission.
