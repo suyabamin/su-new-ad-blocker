@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { handleMessage } from '../../../src/background/message-router.js';
 import { MSG } from '../../../src/shared/messages.js';
 import { recordBlockEvent, resetInMemoryStats } from '../../../src/background/stats-tracker.js';
@@ -18,10 +18,32 @@ describe('background coverage follow-up', () => {
       },
       declarativeNetRequest: {
         getMatchedRules: vi.fn().mockResolvedValue({ rulesMatchedInfo: [] }),
+        getDynamicRules: vi.fn().mockResolvedValue([]),
+        updateDynamicRules: vi.fn().mockResolvedValue(undefined),
       },
       tabs: { get: vi.fn().mockResolvedValue({ url: 'https://example.com/page' }) },
     };
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (url) => {
+        const privacy = url.includes('easyprivacy');
+        const name = privacy ? 'EasyPrivacy' : 'EasyList';
+        const suffix = privacy ? 'privacy' : 'ads';
+        return {
+          ok: true,
+          url,
+          headers: { get: () => null },
+          text: async () =>
+            `[Adblock Plus 2.0]\n! Title: ${name}\n${Array.from(
+              { length: 120 },
+              (_, index) => `||host${index}.${suffix}.example^`
+            ).join('\n')}`,
+        };
+      })
+    );
   });
+
+  afterEach(() => vi.unstubAllGlobals());
 
   it('returns synchronized tab and daily summaries and sorts reported domains', async () => {
     const send = (message) => new Promise((resolve) => handleMessage(message, {}, resolve));
@@ -33,7 +55,10 @@ describe('background coverage follow-up', () => {
     );
     expect(tabCall).toBe(true);
     const tab = await send({ type: MSG.GET_TAB_STATS, payload: { hostname: 'example.com' } });
-    expect(tab).toEqual({ ok: true, data: { hostname: 'example.com', count: 0 } });
+    expect(tab).toEqual({
+      ok: true,
+      data: { hostname: 'example.com', count: 0, available: true, scope: 'site-aggregate' },
+    });
 
     const summary = await send({ type: MSG.GET_TODAY_SUMMARY, payload: {} });
     expect(summary.ok).toBe(true);
