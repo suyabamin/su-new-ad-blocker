@@ -64,6 +64,7 @@ describe('manifest.json specification (T1.1, D1, D2)', () => {
       cs.matches.includes('https://www.youtube.com/*')
     );
     expect(youtube).toBeDefined();
+    expect(youtube.matches).toContain('https://m.youtube.com/*');
     expect(youtube.run_at).toBe('document_start');
     expect(youtube.js).toContain('src/content/youtube/youtube.js');
   });
