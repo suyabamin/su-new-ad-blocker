@@ -94,6 +94,22 @@ test.describe('Extension Loading and UI (E2E)', () => {
     expect(requestFailure).toContain('ERR_BLOCKED_BY_CLIENT');
   });
 
+  test('packaged DNR rules do not match normal YouTube video media URLs', async ({
+    context,
+    extensionId,
+  }) => {
+    const extensionPage = await context.newPage();
+    await extensionPage.goto(`chrome-extension://${extensionId}/src/popup/popup.html`);
+    const outcome = await extensionPage.evaluate(() =>
+      globalThis.chrome.declarativeNetRequest.testMatchOutcome({
+        url: 'https://rr1---sn-q4flrnez.googlevideo.com/videoplayback?itag=18',
+        type: 'media',
+        initiator: 'https://www.youtube.com',
+      })
+    );
+    expect(outcome.matchedRules).toEqual([]);
+  });
+
   test('popup reports unavailable network diagnostics without inventing a count', async ({
     context,
     extensionId,
