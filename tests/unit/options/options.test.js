@@ -235,12 +235,16 @@ describe('options dashboard (src/options/options.js)', () => {
           return;
         }
         if (msg.type === MSG.GET_TAB_STATS) {
-          cb({ ok: true, data: { lifetime: { total: 450 } } });
+          cb({
+            ok: true,
+            data: { lifetime: { total: 450, byType: { network: 450 } }, available: true },
+          });
         } else if (msg.type === MSG.GET_TODAY_SUMMARY) {
           cb({
             ok: true,
             data: {
               totalBlocked: 42,
+              networkStatsAvailable: true,
               byType: { network: 30, cosmetic: 10, youtube: 2 },
             },
           });
@@ -250,7 +254,10 @@ describe('options dashboard (src/options/options.js)', () => {
             data: [{ date: '2026-11-12', total: 42 }],
           });
         } else if (msg.type === MSG.GET_TOP_DOMAINS) {
-          cb({ ok: true, data: { 'doubleclick.net': 25 } });
+          cb({
+            ok: true,
+            data: { topDomains: [{ domain: 'doubleclick.net', count: 25 }], available: true },
+          });
         } else if (msg.type === MSG.SETTINGS_GET) {
           cb({
             ok: true,
@@ -267,7 +274,7 @@ describe('options dashboard (src/options/options.js)', () => {
       await initOptions();
 
       expect(document.getElementById('stat-lifetime').textContent).toBe('450');
-      expect(document.getElementById('stat-today').textContent).toBe('42');
+      expect(document.getElementById('stat-today').textContent).toBe('30');
       expect(document.getElementById('stat-network').textContent).toBe('30');
       expect(document.getElementById('stat-cosmetic').textContent).toBe('10');
       expect(document.getElementById('stat-youtube').textContent).toBe('2');
