@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-11-13
+
+### Added
+
+- Production release archive at `release/su_new_ad_blocker-0.1.0.zip` and a ZIP-content unit test.
+- Chromium load-time benchmark comparing the static DNR ruleset on and off, with recorded results.
+- Privacy policy and Chrome/Edge unpacked loading guide.
+
+### Changed
+
+- Replaced the package and performance command placeholders with working scripts.
+- Updated the store listing to describe implemented behavior and known limitations.
+
+### Fixed
+
+- Clarified that the current updater records metadata and does not download filter lists.
+- Documented that resetting statistics does not delete settings or custom rules.
+
+### Security
+
+- The release packager rejects source maps, environment files, dependencies, tests, and docs.
+
 ### Fixed
 
 - Attribute blocked network matches to the page tab, deduplicate matched-rule snapshots, and exclude paused domains from network counts.
