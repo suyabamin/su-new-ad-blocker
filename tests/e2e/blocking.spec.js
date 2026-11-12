@@ -43,4 +43,29 @@ test.describe('Extension Loading and UI (E2E)', () => {
     // Verify no unhandled exceptions
     expect(consoleErrors).toHaveLength(0);
   });
+
+  test('declarativeNetRequest static ruleset blocks requests to known ad domains', async ({
+    context,
+  }) => {
+    const page = await context.newPage();
+
+    let requestFailed = false;
+    page.on('requestfailed', (req) => {
+      if (req.url().includes('doubleclick.net') || req.url().includes('ads.test.local')) {
+        requestFailed = true;
+      }
+    });
+
+    const outcome = await page.evaluate(async () => {
+      try {
+        await fetch('https://doubleclick.net/pagead/ads.js', { mode: 'no-cors' });
+        return 'loaded';
+      } catch {
+        return 'blocked';
+      }
+    });
+
+    expect(outcome).toBe('blocked');
+    expect(requestFailed).toBe(true);
+  });
 });
