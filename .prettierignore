@@ -5,3 +5,5 @@ test-results/
 playwright-report/
 *.zip
 lists/*.txt
+.pw-tmp/
+.pw-tmp-*/
