@@ -2,7 +2,8 @@
 
 ## 1. Overview
 
-The extension tracks two counters:
+The global and per-domain totals count network requests only. Cosmetic and YouTube
+events remain available in `byType` diagnostics and do not increase these totals.
 
 - **Global counter** — total requests blocked across all sites since last reset
 - **Per-domain counters** — requests blocked per initiator domain
@@ -11,11 +12,11 @@ All counters live in `chrome.storage.local`. No data leaves the device.
 
 ## 2. Event Source
 
-`chrome.declarativeNetRequest.onRuleMatchedDebug` fires for every DNR rule match.
+The background tracker snapshots `chrome.declarativeNetRequest.getMatchedRules()` when popup statistics are requested. New rule matches are deduplicated by tab, rule, and match timestamp, then attributed to the page hostname for that tab. Paused page domains are excluded.
 
-> **Note:** `onRuleMatchedDebug` requires the `declarativeNetRequestFeedback` permission and is only available when the extension is running in developer mode **or** installed via enterprise policy. In a production build from the Chrome Web Store, this event does not fire.
->
-> **Fallback (ADR-0003 when needed):** If `onRuleMatchedDebug` is unavailable, the popup will display "Statistics unavailable in production builds" rather than incorrect zeros. A future task may implement a `webNavigation`-based heuristic counter.
+> **Note:** DNR match diagnostics require feedback permission and are intended for unpacked/debug or enterprise installs. In production store builds these diagnostics may be unavailable, so reliable network counts are not guaranteed there.
+
+The `getMatchedRules()` API returns matched rule metadata, not request URLs. Requests are attributed to the page tab, and the API only retains certain matches for active documents for a limited period. Cosmetic statistics remain separate and are reported by the content script.
 
 ## 3. Storage Schema
 
@@ -31,11 +32,7 @@ See `docs/10_STORAGE_SCHEMA.md` for the full schema. Stats-relevant keys:
 
 ```js
 // Pseudocode — not the implementation
-onRuleMatchedDebug(({ request }) => {
-  const domain = extractDomain(request.initiator);
-  incrementGlobal();
-  incrementDomain(domain);
-});
+getMatchedRules() -> deduplicate newly observed matches -> attribute each to its tab hostname
 ```
 
 - `extractDomain` strips scheme and port, returns eTLD+1 (e.g. `example.com`).
