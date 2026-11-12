@@ -38,6 +38,10 @@ describe('message router (src/background/message-router.js)', () => {
             Object.assign(storageState, items);
           }),
         },
+        session: {
+          get: vi.fn(async () => ({})),
+          set: vi.fn().mockResolvedValue(undefined),
+        },
       },
       declarativeNetRequest: {
         updateDynamicRules: vi.fn().mockResolvedValue(undefined),
@@ -89,14 +93,13 @@ describe('message router (src/background/message-router.js)', () => {
   });
 
   describe('stats message types', () => {
-    it('handles GET_TAB_STATS', () => {
-      let response;
-      handleMessage(
-        { type: MSG.GET_TAB_STATS, payload: { hostname: 'example.com' } },
-        {},
-        (res) => {
-          response = res;
-        }
+    it('handles GET_TAB_STATS', async () => {
+      const response = await new Promise((resolve) =>
+        handleMessage(
+          { type: MSG.GET_TAB_STATS, payload: { hostname: 'example.com' } },
+          {},
+          resolve
+        )
       );
       expect(response.ok).toBe(true);
       expect(response.data).toEqual({
@@ -107,11 +110,10 @@ describe('message router (src/background/message-router.js)', () => {
       });
     });
 
-    it('handles GET_TODAY_SUMMARY', () => {
-      let response;
-      handleMessage({ type: MSG.GET_TODAY_SUMMARY, payload: {} }, {}, (res) => {
-        response = res;
-      });
+    it('handles GET_TODAY_SUMMARY', async () => {
+      const response = await new Promise((resolve) =>
+        handleMessage({ type: MSG.GET_TODAY_SUMMARY, payload: {} }, {}, resolve)
+      );
       expect(response.ok).toBe(true);
       expect(response.data).toHaveProperty('todayBlocked', 0);
       expect(response.data).toHaveProperty('totalBlocked', 0);
@@ -119,11 +121,21 @@ describe('message router (src/background/message-router.js)', () => {
       expect(response.data).toHaveProperty('byType');
     });
 
-    it('handles GET_TOP_DOMAINS', () => {
-      let response;
-      handleMessage({ type: MSG.GET_TOP_DOMAINS, payload: { n: 5 } }, {}, (res) => {
-        response = res;
+    it('does not answer an uninitialized statistics read with default zero values', async () => {
+      global.chrome.storage.local.get.mockRejectedValueOnce(new Error('Storage unavailable'));
+      const response = await new Promise((resolve) =>
+        handleMessage({ type: MSG.GET_TODAY_SUMMARY, payload: {} }, {}, resolve)
+      );
+      expect(response).toMatchObject({
+        ok: false,
+        error: { code: 'INTERNAL', message: 'Statistics storage is unavailable' },
       });
+    });
+
+    it('handles GET_TOP_DOMAINS', async () => {
+      const response = await new Promise((resolve) =>
+        handleMessage({ type: MSG.GET_TOP_DOMAINS, payload: { n: 5 } }, {}, resolve)
+      );
       expect(response.ok).toBe(true);
       expect(Array.isArray(response.data.topDomains)).toBe(true);
     });
@@ -146,6 +158,61 @@ describe('message router (src/background/message-router.js)', () => {
       expect(response.ok).toBe(true);
     });
 
+    it('waits for stored statistics to load before applying a cosmetic report', async () => {
+      let finishStorageRead;
+      global.chrome.storage.local.get.mockImplementationOnce(
+        () =>
+          new Promise((resolve) => {
+            finishStorageRead = () => resolve({});
+          })
+      );
+      const responsePromise = new Promise((resolve) =>
+        handleMessage(
+          {
+            type: MSG.CS_BLOCKED_REPORT,
+            payload: { count: 3, domain: 'example.com', type: 'cosmetic' },
+          },
+          {},
+          resolve
+        )
+      );
+      expect(finishStorageRead).toBeTypeOf('function');
+      finishStorageRead();
+
+      expect((await responsePromise).ok).toBe(true);
+      const todayBucket = Object.values(storageState).find((value) => value?.date);
+      expect(todayBucket.byType.cosmetic).toBe(3);
+    });
+
+    it('stores YouTube selector detections separately from successful hides', async () => {
+      const response = await new Promise((resolve) =>
+        handleMessage(
+          {
+            type: MSG.CS_BLOCKED_REPORT,
+            payload: { count: 3, hostname: 'youtube.com', type: 'youtubeDetected' },
+          },
+          {},
+          resolve
+        )
+      );
+      expect(response.ok).toBe(true);
+      const todayBucket = Object.values(storageState).find((value) => value?.date);
+      expect(todayBucket.byType).toMatchObject({ youtube: 0, youtubeDetected: 3 });
+    });
+
+    it('rejects unsupported cosmetic report categories', () => {
+      let response;
+      handleMessage(
+        { type: MSG.CS_BLOCKED_REPORT, payload: { count: 2, type: 'network' } },
+        {},
+        (result) => {
+          response = result;
+        }
+      );
+      expect(response.ok).toBe(false);
+      expect(response.error.code).toBe('BAD_PAYLOAD');
+    });
+
     it('handles STATS_RESET (requires confirm: true)', async () => {
       let rejectResponse;
       handleMessage({ type: MSG.STATS_RESET, payload: {} }, {}, (res) => {
@@ -165,7 +232,7 @@ describe('message router (src/background/message-router.js)', () => {
       expect(storageState[STORAGE_KEYS['stats:lifetime']]).toEqual({
         total: 0,
         totalBlocked: 0,
-        byType: { network: 0, cosmetic: 0, youtube: 0 },
+        byType: { network: 0, cosmetic: 0, youtube: 0, youtubeDetected: 0 },
       });
     });
 
@@ -203,6 +270,22 @@ describe('message router (src/background/message-router.js)', () => {
         expect.objectContaining({ date: '2026-11-01', total: 10 }),
         expect.objectContaining({ date: '2026-11-02', total: 20 }),
       ]);
+    });
+
+    it('keeps unavailable daily chart values null instead of returning fabricated zeros', async () => {
+      const response = await new Promise((resolve) =>
+        handleMessage(
+          { type: MSG.GET_STATS_RANGE, payload: { from: '2026-11-03', to: '2026-11-03' } },
+          {},
+          resolve
+        )
+      );
+      expect(response.ok).toBe(true);
+      expect(response.data[0]).toMatchObject({
+        total: null,
+        byType: null,
+        networkStatsAvailable: false,
+      });
     });
   });
 
