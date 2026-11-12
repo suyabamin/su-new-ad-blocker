@@ -12,11 +12,11 @@ and the accessor wrapper `getWithDefaults()`. No magic strings anywhere else.
 | ---------------- | ---------------- | ---------- | ------------------------------------------------------------ |
 | `schemaVersion`  | `schemaVersion`  | `number`   | Integer schema version; increment on breaking layout changes |
 | `settings`       | `settings`       | `object`   | User settings — see Section 3 for shape                      |
-| `lists`          | `lists`          | `object`   | Map of `listId → { enabled, url, etag, lastFetched }`        |
+| `lists`          | `lists`          | `object`   | Map of supported list IDs to `{ enabled }` preferences       |
 | `allowlist`      | `allowlist`      | `string[]` | Domains paused from blocking                                 |
 | `customRules`    | `customRules`    | `object[]` | User-authored DNR rules                                      |
 | `stats:lifetime` | `stats:lifetime` | `object`   | `{ total, byType: { network, cosmetic, youtube } }`          |
-| `stats:meta`     | `stats:meta`     | `object`   | `{ firstSeen, lastReset }`                                   |
+| `stats:meta`     | `stats:meta`     | `object`   | Reset and last successful filter-update metadata             |
 
 ---
 
@@ -103,5 +103,5 @@ and the accessor wrapper `getWithDefaults()`. No magic strings anywhere else.
 - Daily buckets older than 90 days are pruned automatically.
 - Alarms registered:
   - `"stats-prune"`: runs daily to prune buckets older than 90 days.
-  - `"list-update"`: runs daily to trigger filter list update check.
+  - `"FILTER_UPDATE"`: downloads and applies enabled filter lists daily.
 - No other alarms are permitted.
