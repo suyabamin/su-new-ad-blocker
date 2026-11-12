@@ -1,5 +1,6 @@
 {
   "manifest_version": 3,
+  "default_locale": "en",
   "name": "SU New Ad Blocker",
   "short_name": "SU Ad Blocker",
   "version": "0.1.0",
