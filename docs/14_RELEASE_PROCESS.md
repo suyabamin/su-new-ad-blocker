@@ -18,15 +18,21 @@
 npm run build-rules   # Regenerate DNR ruleset from latest filter lists
 npm run lint          # Must pass
 npm test              # Must pass
-npm run build         # Produces dist/su-new-ad-blocker.zip
+npm run build         # Bundles content scripts with esbuild into IIFEs and populates dist/
+npm run test:e2e      # E2E verification against dist/
 ```
 
 ## 3. Build Script (`scripts/build.js`)
 
-1. Cleans `dist/`.
-2. Copies: `manifest.json`, `icons/`, `rules/`, `src/`, `lists/SOURCES.md`.
-3. Does **not** copy: `tests/`, `scripts/`, `docs/`, `node_modules/`, `.eslintrc.cjs`, `jest.config.js`, filter list `.txt` files.
-4. Creates `dist/su-new-ad-blocker.zip`.
+Per ADR-0005, MV3 content scripts run as classic scripts and cannot contain ES module syntax (`import`/`export`).
+The build script performs:
+
+1. Creates `dist/` directory.
+2. Bundles content scripts (`src/content/cosmetic.js` and `src/content/youtube/youtube.js`) with `esbuild` into IIFE files in `dist/content/` (`--bundle --format=iife --target=chrome120 --platform=browser`, minified when `NODE_ENV=production`).
+3. Asserts that output bundles contain no top-level `import` or `export` statements.
+4. Copies unchanged runtime directories into `dist/`: `src/background/`, `src/popup/`, `src/options/`, `src/shared/`, `src/assets/`, `rules/`, and `icons/`.
+5. Generates `dist/manifest.json` from root `manifest.json`, rewriting `content_scripts` paths to the bundled `dist/content/*.js`.
+6. Does **not** copy: `tests/`, `scripts/`, `docs/`, `node_modules/`, or raw filter list `.txt` files.
 
 ## 4. Chrome Web Store Submission
 
