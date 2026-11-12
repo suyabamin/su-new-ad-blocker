@@ -16,10 +16,10 @@
     "test:coverage": "vitest run --coverage --passWithNoTests",
     "pretest:e2e": "npm run build",
     "test:e2e": "playwright test --pass-with-no-tests",
-    "test:perf": "node -e \"console.log('Placeholder for test:perf (Phase 5/future)'); process.exit(0);\"",
+    "test:perf": "node tests/perf/run.js",
     "test:a11y": "node -e \"console.log('Placeholder for test:a11y (Phase 5/future)'); process.exit(0);\"",
     "build:release": "node -e \"console.log('Placeholder for build:release (T5.2)'); process.exit(0);\"",
-    "package": "node -e \"console.log('Placeholder for package (T5.2)'); process.exit(0);\"",
+    "package": "node scripts/package.js",
     "build-rules": "node scripts/build-rules.js",
     "build": "node scripts/build.js",
     "validate-manifest": "node -e \"const m=JSON.parse(require('fs').readFileSync('manifest.json','utf8'));if(m.manifest_version!==3)throw new Error('Not MV3');console.log('manifest.json OK');\""
