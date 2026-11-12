@@ -7,3 +7,4 @@ playwright-report/
 lists/*.txt
 .pw-tmp/
 .pw-tmp-*/
+rules/cosmetic.json
