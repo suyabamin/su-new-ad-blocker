@@ -8,7 +8,7 @@ export const GENERIC_SELECTORS =
   IMPORTED_SELECTORS ||
   [];
 
-export const STYLE_ELEMENT_ID = 'su-ad-blocker-cosmetic-styles';
+export const STYLE_ELEMENT_ID = 'su-cosmetic-styles';
 
 /**
  * Builds CSS stylesheet string applying display:none !important to all selectors.
