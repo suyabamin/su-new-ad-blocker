@@ -13,10 +13,12 @@
         <span class="version-tag">v0.1.0</span>
       </header>
 
+      <div id="status-container" class="status-message status-restricted" hidden></div>
+
       <section class="site-status-section">
         <div class="site-info">
           <span class="site-label">Current Site:</span>
-          <span id="current-site-display" class="site-hostname">Checking...</span>
+          <span id="current-site-display" class="site-hostname">Loading...</span>
         </div>
         <button
           id="pause-site-button"
@@ -39,6 +41,12 @@
           <span class="stats-number" id="today-blocked-count">0</span>
           <span class="stats-label">Blocked today</span>
         </div>
+      </section>
+
+      <section class="breakdown-section" id="breakdown-section">
+        <span class="breakdown-item">Network: <strong id="count-network">0</strong></span>
+        <span class="breakdown-item">Cosmetic: <strong id="count-cosmetic">0</strong></span>
+        <span class="breakdown-item">YouTube: <strong id="count-youtube">0</strong></span>
       </section>
 
       <footer class="popup-footer">
