@@ -35,15 +35,22 @@ The following YouTube ad UI containers are targeted for CSS hiding:
 | `#player-ads`                                  | Player ad container div                            |
 | `.ytd-promoted-video-renderer`                 | Promoted video in search results                   |
 
+The selector module also contains narrow selectors from the current EasyList YouTube
+cosmetic section for sponsored search renderers, feed ad slots, Shorts ad slots, sidebar
+ad slots, and mobile companion/feed slots. These selectors target ad-specific renderers;
+ordinary video renderers and playback controls are not selected.
+
 All selectors live in `src/content/youtube/selectors.js`. Do not embed selectors in `youtube.js` directly.
 
 ## 3. Implementation (`src/content/youtube.js`)
 
-- Runs at `document_idle` on `*://*.youtube.com/*` only.
+- Runs at `document_start` on `https://www.youtube.com/*` and `https://m.youtube.com/*`.
 - Injects a `<style>` tag with CSS built from `src/content/youtube/selectors.js`.
-- Installs a `MutationObserver` on the body and discovered open shadow roots. It watches child insertion and `class`/`style` changes, and hides matching containers inserted later.
+- Installs one `MutationObserver` per document on the body and discovered open shadow roots. It watches child insertion and `class`/`style` changes. Attribute changes inspect only the changed element; inserted subtrees are scanned and newly discovered open roots are observed.
 - Re-applies the cosmetic scan after `yt-navigate-finish`, `yt-page-data-updated`, and `popstate` events.
 - Open shadow roots are scanned and receive their own local style element. Closed shadow roots cannot be inspected by a content script.
+- Repeated observer setup returns the existing observer. SPA events rescan the document to find roots YouTube attached without a later DOM insertion event.
+- `youtubeDetected` counts unique selector-matched elements. `youtube` counts unique elements this script successfully hides. Selector matches can be false positives and neither count proves a video ad was blocked.
 
 ## 4. What Must Never Be Selected
 
@@ -69,3 +76,4 @@ The following are **forbidden targets** — these must never appear in `youtube-
 - Each selector in `youtube-selectors.js` must have a test proving it hides the target element.
 - Each forbidden selector must have a test proving it is not present in `youtube-selectors.js`.
 - See `docs/11_TESTING.md` for test setup.
+- JSDOM fixtures cover scoped feed/search/sidebar/Shorts/banner/sponsored matches, normal-result preservation, late open-root discovery, and duplicate suppression. These tests do not verify live YouTube markup or video-ad blocking.
