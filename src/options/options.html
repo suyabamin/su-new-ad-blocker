@@ -3,55 +3,131 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SU New Ad Blocker — Options & Dashboard</title>
+    <title>SU New Ad Blocker — Dashboard &amp; Settings</title>
     <link rel="stylesheet" href="options.css" />
   </head>
   <body>
     <div class="options-container">
       <header class="options-header">
-        <h1>SU New Ad Blocker — Dashboard & Settings</h1>
-        <p class="subtitle">100% Local Ad & Tracker Protection</p>
+        <h1 data-i18n="optionsTitle">SU New Ad Blocker — Dashboard &amp; Settings</h1>
+        <p class="subtitle" data-i18n="optionsSubtitle">100% Local Ad &amp; Tracker Protection</p>
       </header>
 
-      <main class="options-grid">
-        <!-- Allowlist Management -->
-        <section class="card">
-          <h2>Domain Allowlist</h2>
-          <p class="card-desc">Domains listed here will not have ads or trackers blocked.</p>
+      <main class="options-main">
+        <!-- T4.1: Overview -->
+        <section class="card" aria-labelledby="sec-overview">
+          <h2 id="sec-overview" data-i18n="sectionOverview">Overview</h2>
+          <div class="stats-overview" role="list">
+            <div class="stat-box" role="listitem">
+              <span class="stat-val" id="stat-lifetime">0</span>
+              <span class="stat-lbl" data-i18n="statLifetimeBlocked">Lifetime Blocked</span>
+            </div>
+            <div class="stat-box" role="listitem">
+              <span class="stat-val" id="stat-today">0</span>
+              <span class="stat-lbl" data-i18n="statTodayBlocked">Blocked Today</span>
+            </div>
+            <div class="stat-box" role="listitem">
+              <span class="stat-val" id="stat-network">0</span>
+              <span class="stat-lbl" data-i18n="statNetwork">Network</span>
+            </div>
+            <div class="stat-box" role="listitem">
+              <span class="stat-val" id="stat-cosmetic">0</span>
+              <span class="stat-lbl" data-i18n="statCosmetic">Cosmetic</span>
+            </div>
+            <div class="stat-box" role="listitem">
+              <span class="stat-val" id="stat-youtube">0</span>
+              <span class="stat-lbl" data-i18n="statYoutube">YouTube</span>
+            </div>
+          </div>
+          <div class="chart-wrap" aria-label="Daily activity chart">
+            <canvas id="daily-chart" height="200"></canvas>
+          </div>
+        </section>
+
+        <!-- T4.2: Top Domains -->
+        <section class="card" aria-labelledby="sec-top-domains">
+          <h2 id="sec-top-domains" data-i18n="sectionTopDomains">Top Blocked Domains</h2>
+          <div id="top-domains-container" aria-live="polite"></div>
+        </section>
+
+        <!-- T4.3: Filter Lists -->
+        <section class="card" aria-labelledby="sec-filter-lists">
+          <h2 id="sec-filter-lists" data-i18n="sectionFilterLists">Filter Lists</h2>
+          <div id="filter-lists-container"></div>
+          <div class="actions-group">
+            <button type="button" id="list-update-btn" class="btn btn-secondary">
+              <span data-i18n="btnUpdateNow">Update Now</span>
+            </button>
+          </div>
+          <div id="list-update-status" class="status-msg" aria-live="polite" role="status"></div>
+        </section>
+
+        <!-- T4.4: Allowlist -->
+        <section class="card" aria-labelledby="sec-allowlist">
+          <h2 id="sec-allowlist" data-i18n="sectionAllowlist">Domain Allowlist</h2>
+          <p class="card-desc" data-i18n="allowlistDesc">
+            Domains listed here will not have ads or trackers blocked.
+          </p>
           <form id="allowlist-form" class="input-form">
             <input
               type="text"
               id="allowlist-input"
-              placeholder="e.g. example.com"
+              data-i18n-placeholder="allowlistPlaceholder"
+              data-i18n-aria="allowlistAriaLabel"
               aria-label="Domain to allow"
+              placeholder="e.g. example.com"
+              autocomplete="off"
+              spellcheck="false"
               required
             />
-            <button type="submit" class="btn btn-primary" id="allowlist-add-btn">Add Domain</button>
+            <button type="submit" class="btn btn-primary" id="allowlist-add-btn">
+              <span data-i18n="btnAddDomain">Add Domain</span>
+            </button>
           </form>
-          <div id="allowlist-error" class="error-msg" role="alert" aria-live="polite"></div>
-          <ul id="allowlist-items" class="domain-list"></ul>
+          <div id="allowlist-error" class="error-msg" role="alert" aria-live="assertive"></div>
+          <ul id="allowlist-items" class="domain-list" aria-label="Allowlisted domains"></ul>
         </section>
 
-        <!-- Statistics & Maintenance -->
-        <section class="card">
-          <h2>Statistics & Data</h2>
-          <div class="stats-overview">
-            <div class="stat-box">
-              <span class="stat-val" id="stat-total-blocked">0</span>
-              <span class="stat-lbl">Lifetime Blocked</span>
-            </div>
+        <!-- T4.4: Custom Rules -->
+        <section class="card" aria-labelledby="sec-custom-rules">
+          <h2 id="sec-custom-rules" data-i18n="sectionCustomRules">Custom Rules</h2>
+          <p class="card-desc" data-i18n="customRulesDesc">
+            Enter custom DNR rules as JSON. Must be a valid JSON array of declarativeNetRequest rule
+            objects.
+          </p>
+          <textarea
+            id="custom-rules-textarea"
+            class="code-textarea"
+            rows="8"
+            data-i18n-placeholder="customRulesPlaceholder"
+            aria-label="Custom DNR rules JSON"
+            placeholder="[]"
+            spellcheck="false"
+          ></textarea>
+          <div class="actions-group">
+            <button type="button" id="custom-rules-save-btn" class="btn btn-primary">
+              <span data-i18n="btnSaveRules">Save Rules</span>
+            </button>
           </div>
+          <div id="custom-rules-status" class="status-msg" aria-live="polite" role="status"></div>
+        </section>
+
+        <!-- T4.5: Data -->
+        <section class="card" aria-labelledby="sec-data">
+          <h2 id="sec-data" data-i18n="sectionData">Statistics &amp; Data</h2>
           <div class="actions-group">
             <button type="button" id="export-stats-btn" class="btn btn-secondary">
-              Export Stats (JSON)
+              <span data-i18n="btnExportStats">Export Stats (JSON)</span>
             </button>
             <button type="button" id="reset-stats-btn" class="btn btn-danger">
-              Reset All Statistics
+              <span data-i18n="btnResetStats">Reset All Statistics</span>
             </button>
           </div>
+          <div id="data-status" class="status-msg" aria-live="polite" role="status"></div>
         </section>
       </main>
     </div>
+    <script src="vendor/chart.umd.js"></script>
     <script src="options.js" type="module"></script>
   </body>
 </html>
