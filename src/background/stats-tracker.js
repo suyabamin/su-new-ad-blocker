@@ -5,18 +5,16 @@
 import { logger } from '../shared/logger.js';
 import { STORAGE_KEYS, dailyStatsKey } from '../shared/storage.js';
 import {
-  DYNAMIC_ALLOW_RULE_ID_OFFSET,
   DYNAMIC_RULE_ID_OFFSET,
   DYNAMIC_RULES_PER_LIST,
   FILTER_LISTS,
   MAX_DYNAMIC_FILTER_RULES,
   MAX_STATIC_RULES,
-  STATIC_ALLOW_RULE_ID_OFFSET,
 } from '../shared/filter-lists.js';
-import { listPaused, PAUSE_RULE_ID_OFFSET } from './rules-manager.js';
 
 const FLUSH_INTERVAL_MS = 1000;
 export const MAX_TOP_DOMAINS = 50;
+const MAX_SEEN_NETWORK_REQUESTS = 2000;
 
 /**
  * Returns current date formatted as YYYY-MM-DD.
@@ -47,15 +45,20 @@ let inMemoryState = {
 };
 
 let flushTimeout = null;
-const seenMatchedRules = new Map();
+let processedRequestIds = new Set();
 let networkStatsAvailable = false;
+let registeredDebugEvent = null;
+let statsInitialized = false;
+let statsInitialization = null;
 
 /**
  * Resets all in-memory statistics.
  */
 export function resetInMemoryStats() {
-  seenMatchedRules.clear();
+  processedRequestIds = new Set();
   networkStatsAvailable = false;
+  statsInitialized = false;
+  statsInitialization = null;
   inMemoryState = {
     today: {
       date: getTodayString(),
@@ -72,125 +75,153 @@ export function resetInMemoryStats() {
   };
 }
 
-/** Collects newly matched blocking rules and attributes them to their page tab. */
-export async function syncMatchedRules() {
-  const dnr = globalThis.chrome?.declarativeNetRequest;
-  const tabs = globalThis.chrome?.tabs;
-  if (!dnr?.getMatchedRules || !tabs?.get) {
-    networkStatsAvailable = false;
-    return {};
+function blockingRuleList(ruleId) {
+  if (ruleId >= 1 && ruleId <= MAX_STATIC_RULES) {
+    return { isBlock: true, listId: null };
+  }
+  const relativeId = ruleId - DYNAMIC_RULE_ID_OFFSET;
+  if (relativeId < 0 || relativeId >= MAX_DYNAMIC_FILTER_RULES) {
+    return { isBlock: false, listId: null };
+  }
+  const listIndex = Math.floor(relativeId / DYNAMIC_RULES_PER_LIST);
+  return { isBlock: true, listId: FILTER_LISTS[listIndex]?.id || null };
+}
+
+function requestHostname(rawUrl) {
+  if (typeof rawUrl !== 'string') {
+    return '';
+  }
+  try {
+    return new URL(rawUrl).hostname.toLowerCase();
+  } catch {
+    return '';
+  }
+}
+
+async function rememberRequestId(requestId) {
+  if (processedRequestIds.has(requestId)) {
+    return false;
+  }
+  processedRequestIds.add(requestId);
+  while (processedRequestIds.size > MAX_SEEN_NETWORK_REQUESTS) {
+    processedRequestIds.delete(processedRequestIds.values().next().value);
+  }
+  const session = globalThis.chrome?.storage?.session;
+  if (!session?.set) {
+    processedRequestIds.delete(requestId);
+    return false;
+  }
+  try {
+    await session.set({
+      [STORAGE_KEYS['stats:seenNetworkRequests']]: [...processedRequestIds],
+    });
+  } catch (error) {
+    processedRequestIds.delete(requestId);
+    logger.error('StatsTracker', 'Session deduplication persistence failed:', error);
+    return false;
+  }
+  return true;
+}
+
+/** Records a real DNR match event. This event is available for unpacked builds only. */
+export async function recordDnrMatchedRequest(info) {
+  const ruleId = info?.rule?.ruleId;
+  const requestId = info?.request?.requestId;
+  const attribution = Number.isInteger(ruleId) ? blockingRuleList(ruleId) : null;
+  if (!attribution?.isBlock || typeof requestId !== 'string' || !requestId) {
+    return false;
   }
 
-  try {
-    const result = await dnr.getMatchedRules();
-    networkStatsAvailable = true;
-    const matches = result?.rulesMatchedInfo || [];
-    const now = Date.now();
-    const deltas = {};
-    const matchOccurrences = new Map();
-    for (const match of matches) {
-      const { tabId, rule } = match || {};
-      if (!Number.isInteger(tabId) || tabId < 0 || !Number.isInteger(rule?.ruleId)) {
-        continue;
-      }
-      if (
-        (rule.ruleId >= DYNAMIC_ALLOW_RULE_ID_OFFSET &&
-          rule.ruleId < DYNAMIC_ALLOW_RULE_ID_OFFSET + MAX_DYNAMIC_FILTER_RULES) ||
-        (rule.ruleId >= STATIC_ALLOW_RULE_ID_OFFSET &&
-          rule.ruleId < STATIC_ALLOW_RULE_ID_OFFSET + MAX_STATIC_RULES) ||
-        rule.ruleId >= PAUSE_RULE_ID_OFFSET
-      ) {
-        continue;
-      }
-      const signature = `${tabId}:${rule.ruleId}:${match.timeStamp}`;
-      const occurrence = matchOccurrences.get(signature) || 0;
-      matchOccurrences.set(signature, occurrence + 1);
-      const key = `${signature}:${occurrence}`;
-      if (seenMatchedRules.has(key)) {
-        continue;
-      }
-      seenMatchedRules.set(key, now);
-      const tab = await tabs.get(tabId);
-      const hostname = tab?.url ? new URL(tab.url).hostname.toLowerCase() : '';
-      const paused = listPaused().some(
-        (domain) => hostname === domain || hostname.endsWith(`.${domain}`)
-      );
-      if (!hostname || paused) {
-        continue;
-      }
-      const relativeRuleId = rule.ruleId - DYNAMIC_RULE_ID_OFFSET;
-      const dynamicListIndex = Math.floor(relativeRuleId / DYNAMIC_RULES_PER_LIST);
-      const listId =
-        relativeRuleId >= 0 && relativeRuleId < MAX_DYNAMIC_FILTER_RULES
-          ? FILTER_LISTS[dynamicListIndex]?.id || null
-          : null;
-      recordBlockEvent(hostname, 'network', listId);
-      deltas[tabId] = (deltas[tabId] || 0) + 1;
-    }
-    for (const [key, seenAt] of seenMatchedRules) {
-      if (now - seenAt > 5 * 60 * 1000) {
-        seenMatchedRules.delete(key);
-      }
-    }
-    return deltas;
-  } catch (err) {
-    networkStatsAvailable = false;
-    logger.error('StatsTracker', 'Failed to collect matched DNR rules:', err);
-    return {};
+  await initStats();
+  if (!(await rememberRequestId(requestId))) {
+    return false;
   }
+
+  const hostname = requestHostname(info.request.initiator || info.request.documentUrl);
+  networkStatsAvailable = true;
+  recordBlockEvent(hostname, 'network', attribution.listId, 1, true);
+  await flushStats();
+  return true;
+}
+
+/** Kept for callers from older builds; polling is intentionally not used for accounting. */
+export async function syncMatchedRules() {
+  return {};
 }
 
 /**
  * Loads statistics from storage on startup.
  */
 export async function initStats() {
+  if (statsInitialized) {
+    return;
+  }
+  if (statsInitialization) {
+    return statsInitialization;
+  }
   if (typeof chrome === 'undefined' || !chrome.storage || !chrome.storage.local) {
     return;
   }
 
-  try {
-    const todayStr = getTodayString();
-    const todayKey = dailyStatsKey(todayStr);
+  statsInitialization = (async () => {
+    try {
+      const todayStr = getTodayString();
+      const todayKey = dailyStatsKey(todayStr);
 
-    const data = await chrome.storage.local.get([STORAGE_KEYS['stats:lifetime'], todayKey]);
+      const data = await chrome.storage.local.get([STORAGE_KEYS['stats:lifetime'], todayKey]);
 
-    const storedLifetime = data[STORAGE_KEYS['stats:lifetime']] || {};
-    const storedDay = data[todayKey] || {};
-    const hasLifetimeNetworkCount = Number.isFinite(storedLifetime.byType?.network);
-    const hasDayNetworkCount = Number.isFinite(storedDay.byType?.network);
+      const storedLifetime = data[STORAGE_KEYS['stats:lifetime']] || {};
+      const storedDay = data[todayKey] || {};
+      const hasLifetimeNetworkCount = Number.isFinite(storedLifetime.byType?.network);
+      const hasDayNetworkCount = Number.isFinite(storedDay.byType?.network);
 
-    inMemoryState.lifetime = {
-      total: hasLifetimeNetworkCount
-        ? Number(storedLifetime.byType.network)
-        : Number(storedLifetime.total) || Number(storedLifetime.totalBlocked) || 0,
-      byType: {
-        network: Number(storedLifetime.byType?.network) || 0,
-        cosmetic: Number(storedLifetime.byType?.cosmetic) || 0,
-        youtube: Number(storedLifetime.byType?.youtube) || 0,
-      },
-    };
+      inMemoryState.lifetime = {
+        total: hasLifetimeNetworkCount
+          ? Number(storedLifetime.byType.network)
+          : Number(storedLifetime.total) || Number(storedLifetime.totalBlocked) || 0,
+        byType: {
+          network: Number(storedLifetime.byType?.network) || 0,
+          cosmetic: Number(storedLifetime.byType?.cosmetic) || 0,
+          youtube: Number(storedLifetime.byType?.youtube) || 0,
+        },
+      };
 
-    const dayTopDomains = storedDay.topDomains || storedDay.byDomain || {};
-    inMemoryState.today = {
-      date: todayStr,
-      total: hasDayNetworkCount
-        ? Number(storedDay.byType.network)
-        : Number(storedDay.total) || Number(storedDay.totalBlocked) || 0,
-      byType: {
-        network: Number(storedDay.byType?.network) || 0,
-        cosmetic: Number(storedDay.byType?.cosmetic) || 0,
-        youtube: Number(storedDay.byType?.youtube) || 0,
-      },
-      byList: storedDay.byList || {},
-      topDomains: { ...dayTopDomains },
-    };
+      const dayTopDomains = storedDay.topDomains || storedDay.byDomain || {};
+      inMemoryState.today = {
+        date: todayStr,
+        total: hasDayNetworkCount
+          ? Number(storedDay.byType.network)
+          : Number(storedDay.total) || Number(storedDay.totalBlocked) || 0,
+        byType: {
+          network: Number(storedDay.byType?.network) || 0,
+          cosmetic: Number(storedDay.byType?.cosmetic) || 0,
+          youtube: Number(storedDay.byType?.youtube) || 0,
+        },
+        byList: storedDay.byList || {},
+        topDomains: { ...dayTopDomains },
+      };
 
-    inMemoryState.byDomain = { ...dayTopDomains };
+      inMemoryState.byDomain = { ...dayTopDomains };
 
-    logger.info('StatsTracker', `Initialized with ${inMemoryState.lifetime.total} lifetime blocks`);
-  } catch (err) {
-    logger.error('StatsTracker', 'Failed to load stats from storage:', err);
-  }
+      const session = globalThis.chrome?.storage?.session;
+      if (session?.get) {
+        const seen = await session.get(STORAGE_KEYS['stats:seenNetworkRequests']);
+        const storedRequestIds = seen[STORAGE_KEYS['stats:seenNetworkRequests']];
+        processedRequestIds = new Set(Array.isArray(storedRequestIds) ? storedRequestIds : []);
+      }
+
+      statsInitialized = true;
+      logger.info(
+        'StatsTracker',
+        `Initialized with ${inMemoryState.lifetime.total} lifetime blocks`
+      );
+    } catch (err) {
+      logger.error('StatsTracker', 'Failed to load stats from storage:', err);
+    }
+  })().finally(() => {
+    statsInitialization = null;
+  });
+  return statsInitialization;
 }
 
 /**
@@ -221,14 +252,21 @@ export function updateTopDomains(topDomains, domain, count = 1) {
  * @param {'network' | 'cosmetic' | 'youtube'} [type='network']
  * @param {string} [listId]
  * @param {number} [count=1]
+ * @param {boolean} [allowUnattributed=false]
  */
-export function recordBlockEvent(domain, type = 'network', listId = null, count = 1) {
-  if (!domain || typeof domain !== 'string') {
+export function recordBlockEvent(
+  domain,
+  type = 'network',
+  listId = null,
+  count = 1,
+  allowUnattributed = false
+) {
+  if (!Number.isSafeInteger(count) || count <= 0) {
     return;
   }
 
-  const cleanDomain = domain.toLowerCase().trim();
-  if (!cleanDomain) {
+  const cleanDomain = typeof domain === 'string' ? domain.toLowerCase().trim() : '';
+  if (type === 'network' && !cleanDomain && !allowUnattributed) {
     return;
   }
 
@@ -254,8 +292,10 @@ export function recordBlockEvent(domain, type = 'network', listId = null, count 
   if (blockType === 'network') {
     inMemoryState.today.total += count;
     inMemoryState.lifetime.total += count;
-    updateTopDomains(inMemoryState.today.topDomains, cleanDomain, count);
-    inMemoryState.byDomain[cleanDomain] = (inMemoryState.byDomain[cleanDomain] || 0) + count;
+    if (cleanDomain) {
+      updateTopDomains(inMemoryState.today.topDomains, cleanDomain, count);
+      inMemoryState.byDomain[cleanDomain] = (inMemoryState.byDomain[cleanDomain] || 0) + count;
+    }
   }
 
   if (blockType === 'network' && listId && typeof listId === 'string') {
@@ -275,7 +315,9 @@ export function scheduleFlush() {
 
   flushTimeout = setTimeout(() => {
     flushTimeout = null;
-    flushStats();
+    flushStats().catch((error) => {
+      logger.error('StatsTracker', 'Scheduled statistics flush failed:', error);
+    });
   }, FLUSH_INTERVAL_MS);
 }
 
@@ -310,12 +352,14 @@ export async function flushStats() {
         byList: { ...inMemoryState.today.byList },
         topDomains: { ...inMemoryState.today.topDomains },
         byDomain: { ...inMemoryState.byDomain },
+        networkStatsAvailable,
       },
     });
 
     logger.debug('StatsTracker', 'Flushed statistics to storage');
   } catch (err) {
     logger.error('StatsTracker', 'Failed to flush statistics:', err);
+    throw err;
   }
 }
 
@@ -338,5 +382,25 @@ export function getStatsSnapshot() {
  * Sets up listener for declarativeNetRequest.onRuleMatchedDebug.
  */
 export function setupDnrRuleMatchedListener() {
-  // getMatchedRules is polled on stats reads; the debug event is not available in store builds.
+  const event = globalThis.chrome?.declarativeNetRequest?.onRuleMatchedDebug;
+  if (!event?.addListener) {
+    networkStatsAvailable = false;
+    return false;
+  }
+  if (registeredDebugEvent === event) {
+    return true;
+  }
+  try {
+    event.addListener((info) => {
+      recordDnrMatchedRequest(info).catch((error) => {
+        logger.error('StatsTracker', 'Failed to persist DNR match event:', error);
+      });
+    });
+    registeredDebugEvent = event;
+    return true;
+  } catch (error) {
+    networkStatsAvailable = false;
+    logger.info('StatsTracker', 'DNR match diagnostics are unavailable:', error);
+    return false;
+  }
 }

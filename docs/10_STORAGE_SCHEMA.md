@@ -18,6 +18,10 @@ and the accessor wrapper `getWithDefaults()`. No magic strings anywhere else.
 | `stats:lifetime` | `stats:lifetime` | `object`   | `{ total, byType: { network, cosmetic, youtube } }`          |
 | `stats:meta`     | `stats:meta`     | `object`   | Reset and last successful filter-update metadata             |
 
+The additional key `stats:seenNetworkRequests` is stored in `chrome.storage.session` (not
+`chrome.storage.local`). It contains at most 2,000 recent DNR request IDs solely to deduplicate
+diagnostic events across service-worker restarts. It clears with the browser session.
+
 ---
 
 ## 2. Pattern Keys and Helpers

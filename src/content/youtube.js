@@ -28,7 +28,7 @@ export function _resetYtReportQueue() {
  * @param {number} count
  */
 export function queueYouTubeBlockedReport(count) {
-  if (typeof count !== 'number' || count <= 0) {
+  if (!Number.isSafeInteger(count) || count <= 0) {
     return;
   }
   pendingYtReportCount += count;
@@ -126,6 +126,16 @@ export function injectYouTubeStyles(doc = document, selectors = YOUTUBE_SELECTOR
   return styleEl;
 }
 
+function injectShadowStyles(shadowRoot, selectors) {
+  if (!shadowRoot || shadowRoot.getElementById?.(YT_STYLE_ELEMENT_ID)) {
+    return;
+  }
+  const styleEl = document.createElement('style');
+  styleEl.id = YT_STYLE_ELEMENT_ID;
+  styleEl.textContent = buildYouTubeCss(selectors);
+  shadowRoot.appendChild(styleEl);
+}
+
 /**
  * Hides all matching ad elements within a given container root.
  * @param {Element|Document} root
@@ -139,6 +149,10 @@ export function hideAdElements(root, selectors = YOUTUBE_SELECTORS) {
   const combined = selectors.join(', ');
   let hiddenCount = 0;
   try {
+    if (root.nodeType === 1 && root.matches?.(combined) && root.style.display !== 'none') {
+      root.style.setProperty('display', 'none', 'important');
+      hiddenCount++;
+    }
     const matches = root.querySelectorAll(combined);
     for (const el of matches) {
       if (el.style.display !== 'none') {
@@ -167,32 +181,50 @@ export function installYouTubeObserver(doc = document, selectors = YOUTUBE_SELEC
     return null;
   }
 
-  const combined = selectors.join(', ');
-
+  const observedRoots = new WeakSet();
+  const observeRoot = (root) => {
+    if (!root || observedRoots.has(root)) {
+      return;
+    }
+    observedRoots.add(root);
+    observer.observe(root, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class', 'style'],
+    });
+    if (root.host) {
+      injectShadowStyles(root, selectors);
+      hideAdElements(root, selectors);
+    }
+    for (const element of root.querySelectorAll?.('*') || []) {
+      if (element.shadowRoot) {
+        observeRoot(element.shadowRoot);
+      }
+    }
+  };
   const observer = new MutationObserver((mutations) => {
-    let directMatches = 0;
     for (const mutation of mutations) {
+      if (mutation.type === 'attributes') {
+        hideAdElements(mutation.target, selectors);
+      }
       for (const node of mutation.addedNodes) {
         if (node.nodeType === 1) {
-          if (node.matches && node.matches(combined)) {
-            if (node.style.display !== 'none') {
-              node.style.setProperty('display', 'none', 'important');
-              directMatches++;
-            }
+          if (node.shadowRoot) {
+            observeRoot(node.shadowRoot);
           }
           hideAdElements(node, selectors);
+          for (const element of node.querySelectorAll?.('*') || []) {
+            if (element.shadowRoot) {
+              observeRoot(element.shadowRoot);
+            }
+          }
         }
       }
     }
-    if (directMatches > 0) {
-      queueYouTubeBlockedReport(directMatches);
-    }
   });
 
-  observer.observe(doc.body, {
-    childList: true,
-    subtree: true,
-  });
+  observeRoot(doc.body);
 
   return observer;
 }
@@ -215,11 +247,20 @@ function setupYouTubeCosmetic() {
 
   // Handle YouTube SPA soft navigation (T5.1)
   if (typeof window !== 'undefined' && window.addEventListener) {
-    window.addEventListener('yt-navigate-finish', () => {
+    const rescan = () => {
       if (document.body) {
+        for (const element of document.querySelectorAll('*')) {
+          if (element.shadowRoot) {
+            injectShadowStyles(element.shadowRoot, YOUTUBE_SELECTORS);
+            hideAdElements(element.shadowRoot, YOUTUBE_SELECTORS);
+          }
+        }
         hideAdElements(document.body, YOUTUBE_SELECTORS);
       }
-    });
+    };
+    window.addEventListener('yt-navigate-finish', rescan);
+    window.addEventListener('yt-page-data-updated', rescan);
+    window.addEventListener('popstate', rescan);
   }
 }
 

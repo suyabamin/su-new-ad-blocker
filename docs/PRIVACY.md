@@ -16,7 +16,7 @@ SU New Ad Blocker stores its settings and statistics locally in `chrome.storage.
 | `stats:meta`           | Reset and filter-update timestamps and update summary metadata             |
 | `stats:day:YYYY-MM-DD` | Daily category totals, list attribution, and up to 50 attributed hostnames |
 
-The extension does not store full page URLs or query strings in its statistics. Cosmetic and YouTube totals count DOM elements hidden. Network match diagnostics may be unavailable in packaged builds; the UI reports that state instead of substituting estimates. Site values, when available, are hostname aggregates and not per-tab counts.
+The extension does not store full page URLs or query strings in its statistics. Cosmetic and YouTube totals count DOM elements hidden. Network match diagnostics may be unavailable in packaged builds; the UI reports that state instead of substituting estimates. Site values, when available, are hostname aggregates and not per-tab counts. Up to 2,000 recent DNR request IDs are temporarily held in `chrome.storage.session` to avoid recounting after a service-worker restart; this session data clears when the browser session ends.
 
 ## Network activity
 

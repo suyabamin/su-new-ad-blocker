@@ -63,7 +63,7 @@ All sources and license references are recorded in `lists/SOURCES.md`. The build
 
 ## 8. Constraints and Limits
 
-- MV3 service workers are non-persistent; all state must be in `chrome.storage.local`.
+- MV3 service workers are non-persistent; settings and statistics live in `chrome.storage.local`. Bounded request IDs used for DNR event deduplication live in `chrome.storage.session` for the browser session.
 - `declarativeNetRequest` static ruleset limit: 30,000 rules per extension.
 - Dynamic rule limit: 5,000 rules (Chrome 112+).
 - CSP prohibits inline scripts in extension pages (`script-src 'self'`).

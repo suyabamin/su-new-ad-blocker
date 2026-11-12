@@ -100,6 +100,26 @@ describe('YouTube cosmetic module (src/content/youtube.js)', () => {
     observer.disconnect();
   });
 
+  it('handles later class changes and discovered open shadow roots', async () => {
+    const observer = installYouTubeObserver(document, YOUTUBE_SELECTORS);
+    const dynamic = document.createElement('div');
+    document.body.appendChild(dynamic);
+    dynamic.classList.add('ytp-ad-module');
+
+    const host = document.createElement('div');
+    const shadow = host.attachShadow({ mode: 'open' });
+    const shadowAd = document.createElement('div');
+    shadowAd.className = 'ytp-ad-overlay-container';
+    shadow.appendChild(shadowAd);
+    document.body.appendChild(host);
+
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(dynamic.style.display).toBe('none');
+    expect(shadowAd.style.display).toBe('none');
+    expect(shadow.getElementById(YT_STYLE_ELEMENT_ID)).not.toBeNull();
+    observer.disconnect();
+  });
+
   it('initYouTubeCosmetic runs safely and responds to yt-navigate-finish event', () => {
     expect(() => initYouTubeCosmetic()).not.toThrow();
 

@@ -20,13 +20,13 @@ At install, on the daily `FILTER_UPDATE` alarm, when a list is toggled, and on m
 
 ## Statistics
 
-`src/background/stats-tracker.js` records cosmetic and YouTube UI element counts from content-script reports. Network match diagnostics come from `getMatchedRules()` only where Chrome exposes that debugging API. They are approximate, sampled when the UI requests statistics, and explicitly marked unavailable when the API rejects the request. Site values are accumulated by page hostname and are not per-tab counts. No network totals are presented as measured in packaged builds when diagnostics are unavailable.
+`src/background/stats-tracker.js` records cosmetic and YouTube UI element counts from content-script reports. Network diagnostics are collected from `onRuleMatchedDebug`, which Chrome limits to unpacked extensions. Request IDs are deduplicated in `chrome.storage.session`; category totals are stored in `chrome.storage.local`. Site values are attributed to the request initiator hostname when available and are not per-tab counts. Packaged builds do not present network totals as measured when this diagnostic event is unavailable.
 
 ## Cosmetic and YouTube Filtering
 
 `src/content/cosmetic.js` applies selectors from `src/content/selectors.js` and observes the body for later matching elements. It batches element counts through `CS_BLOCKED_REPORT`.
 
-`src/content/youtube/youtube.js` runs on `https://www.youtube.com/*` and uses `src/content/youtube/selectors.js` to hide selected ad UI containers. It does not access video/audio elements or playback APIs; YouTube video ads remain unblocked by design.
+`src/content/youtube.js` runs on YouTube pages declared in `manifest.json` and uses `src/content/youtube/selectors.js` to hide selected ad UI containers in the document and discovered open shadow roots. It does not access video/audio elements or playback APIs; YouTube video ads remain unblocked by design.
 
 ## Messages and Storage
 

@@ -6,6 +6,7 @@ import {
   resetInMemoryStats,
   updateTopDomains,
   syncMatchedRules,
+  recordDnrMatchedRequest,
   MAX_TOP_DOMAINS,
 } from '../../../src/background/stats-tracker.js';
 import { STORAGE_KEYS, dailyStatsKey } from '../../../src/shared/storage.js';
@@ -16,15 +17,21 @@ import {
 
 describe('stats-tracker (src/background/stats-tracker.js)', () => {
   let storageSetMock;
+  let sessionValues;
 
   beforeEach(() => {
     vi.useFakeTimers();
     storageSetMock = vi.fn().mockResolvedValue(undefined);
+    sessionValues = {};
     globalThis.chrome = {
       storage: {
         local: {
           get: vi.fn().mockResolvedValue({}),
           set: storageSetMock,
+        },
+        session: {
+          get: vi.fn(async (key) => ({ [key]: sessionValues[key] })),
+          set: vi.fn(async (values) => Object.assign(sessionValues, values)),
         },
       },
     };
@@ -92,50 +99,59 @@ describe('stats-tracker (src/background/stats-tracker.js)', () => {
         byList: { easylist: 1 },
         topDomains: { 'ads.network.com': 1 },
         byDomain: { 'ads.network.com': 1 },
+        networkStatsAvailable: false,
       });
     });
   });
 
-  it('counts each matched request once, skips paused tabs, and keeps daily total equal to tab deltas', async () => {
-    const first = [
-      { tabId: 1, timeStamp: 100, rule: { ruleId: DYNAMIC_RULE_ID_OFFSET + 7 } },
-      { tabId: 1, timeStamp: 101, rule: { ruleId: DYNAMIC_RULE_ID_OFFSET + 8 } },
-      { tabId: 2, timeStamp: 102, rule: { ruleId: DYNAMIC_RULE_ID_OFFSET + 2008 } },
-      { tabId: 1, timeStamp: 104, rule: { ruleId: DYNAMIC_ALLOW_RULE_ID_OFFSET } },
-    ];
-    const next = [
-      ...first,
-      { tabId: 1, timeStamp: 103, rule: { ruleId: DYNAMIC_RULE_ID_OFFSET + 7 } },
-    ];
-    globalThis.chrome.declarativeNetRequest = {
-      getMatchedRules: vi
-        .fn()
-        .mockResolvedValueOnce({ rulesMatchedInfo: first })
-        .mockResolvedValueOnce({ rulesMatchedInfo: next }),
-    };
-    globalThis.chrome.tabs = {
-      get: vi.fn(async (tabId) => ({
-        url: tabId === 1 ? 'https://publisher.test/article' : 'https://paused.test/',
-      })),
-    };
-    const { pauseDomain, resetRulesManagerState } =
-      await import('../../../src/background/rules-manager.js');
-    resetRulesManagerState();
-    await pauseDomain('paused.test');
-
-    const firstDeltas = await syncMatchedRules();
-    const secondDeltas = await syncMatchedRules();
-
+  it('counts distinct blocking request events and ignores allow rules', async () => {
     const snapshot = getStatsSnapshot();
-    expect(snapshot.today.byType.network).toBe(3);
-    expect(snapshot.networkStatsAvailable).toBe(true);
-    expect(snapshot.byDomain).toEqual({ 'publisher.test': 3 });
-    expect(snapshot.today.byList).toEqual({ easylist: 3 });
-    const tabDeltaTotal = [...Object.values(firstDeltas), ...Object.values(secondDeltas)].reduce(
-      (sum, count) => sum + count,
-      0
-    );
-    expect(snapshot.today.total).toBe(tabDeltaTotal);
-    resetRulesManagerState();
+    expect(
+      await recordDnrMatchedRequest({
+        rule: { ruleId: DYNAMIC_RULE_ID_OFFSET + 7 },
+        request: { requestId: 'request-1', initiator: 'https://publisher.test' },
+      })
+    ).toBe(true);
+    expect(
+      await recordDnrMatchedRequest({
+        rule: { ruleId: DYNAMIC_RULE_ID_OFFSET + 7 },
+        request: { requestId: 'request-1', initiator: 'https://publisher.test' },
+      })
+    ).toBe(false);
+    expect(
+      await recordDnrMatchedRequest({
+        rule: { ruleId: DYNAMIC_ALLOW_RULE_ID_OFFSET },
+        request: { requestId: 'request-2', initiator: 'https://publisher.test' },
+      })
+    ).toBe(false);
+    expect(getStatsSnapshot().today.byType.network).toBe(snapshot.today.byType.network + 1);
+    expect(getStatsSnapshot().byDomain).toEqual({ 'publisher.test': 1 });
+    expect(getStatsSnapshot().today.byList).toEqual({ easylist: 1 });
+    expect(await syncMatchedRules()).toEqual({});
+  });
+
+  it('restores request deduplication after tracker reinitialization', async () => {
+    const event = {
+      rule: { ruleId: DYNAMIC_RULE_ID_OFFSET + 7 },
+      request: { requestId: 'persistent-request', initiator: 'https://publisher.test' },
+    };
+    expect(await recordDnrMatchedRequest(event)).toBe(true);
+    resetInMemoryStats();
+    expect(await recordDnrMatchedRequest(event)).toBe(false);
+    expect(globalThis.chrome.storage.session.set).toHaveBeenCalledWith({
+      [STORAGE_KEYS['stats:seenNetworkRequests']]: ['persistent-request'],
+    });
+  });
+
+  it('does not count a request when durable session deduplication fails', async () => {
+    globalThis.chrome.storage.session.set.mockRejectedValueOnce(new Error('Session write failed'));
+    expect(
+      await recordDnrMatchedRequest({
+        rule: { ruleId: DYNAMIC_RULE_ID_OFFSET + 7 },
+        request: { requestId: 'unpersisted-request', initiator: 'https://publisher.test' },
+      })
+    ).toBe(false);
+    expect(getStatsSnapshot().today.byType.network).toBe(0);
+    expect(getStatsSnapshot().networkStatsAvailable).toBe(false);
   });
 });

@@ -35,14 +35,15 @@ The following YouTube ad UI containers are targeted for CSS hiding:
 | `#player-ads`                                  | Player ad container div                            |
 | `.ytd-promoted-video-renderer`                 | Promoted video in search results                   |
 
-All selectors live in `src/content/youtube-selectors.js`. Do not embed selectors in `youtube.js` directly.
+All selectors live in `src/content/youtube/selectors.js`. Do not embed selectors in `youtube.js` directly.
 
 ## 3. Implementation (`src/content/youtube.js`)
 
 - Runs at `document_idle` on `*://*.youtube.com/*` only.
-- Injects a `<style>` tag with CSS built from `src/content/youtube-selectors.js`.
-- Installs a `MutationObserver` on `document.body` (subtree, childList) to handle dynamically injected ad containers (YouTube is a SPA — containers appear after navigation without a full page reload).
-- Observer also fires on YouTube's `yt-navigate-finish` event (custom event fired by the YouTube SPA) to re-apply hiding after soft navigation.
+- Injects a `<style>` tag with CSS built from `src/content/youtube/selectors.js`.
+- Installs a `MutationObserver` on the body and discovered open shadow roots. It watches child insertion and `class`/`style` changes, and hides matching containers inserted later.
+- Re-applies the cosmetic scan after `yt-navigate-finish`, `yt-page-data-updated`, and `popstate` events.
+- Open shadow roots are scanned and receive their own local style element. Closed shadow roots cannot be inspected by a content script.
 
 ## 4. What Must Never Be Selected
 
@@ -64,7 +65,7 @@ The following are **forbidden targets** — these must never appear in `youtube-
 
 ## 6. Testing
 
-- Unit tests use JSDOM with a mocked YouTube page DOM.
+- Unit tests use JSDOM with a mocked YouTube page DOM. This does not verify current selectors against the live YouTube site; that requires a real browser session with network access.
 - Each selector in `youtube-selectors.js` must have a test proving it hides the target element.
 - Each forbidden selector must have a test proving it is not present in `youtube-selectors.js`.
 - See `docs/11_TESTING.md` for test setup.

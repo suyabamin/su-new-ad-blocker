@@ -16,6 +16,7 @@ const EXPECTED_STORAGE_KEYS = {
   customRules: 'customRules',
   'stats:lifetime': 'stats:lifetime',
   'stats:meta': 'stats:meta',
+  'stats:seenNetworkRequests': 'stats:seenNetworkRequests',
 };
 
 describe('STORAGE_KEYS (src/shared/storage.js)', () => {
@@ -23,8 +24,8 @@ describe('STORAGE_KEYS (src/shared/storage.js)', () => {
     expect(Object.isFrozen(STORAGE_KEYS)).toBe(true);
   });
 
-  it('has exactly 7 keys (AC-TC.1-4)', () => {
-    expect(Object.keys(STORAGE_KEYS)).toHaveLength(7);
+  it('has exactly 8 keys (AC-TC.1-4)', () => {
+    expect(Object.keys(STORAGE_KEYS)).toHaveLength(8);
   });
 
   it('values are unique non-empty strings (AC-TC.1-4)', () => {
@@ -36,7 +37,7 @@ describe('STORAGE_KEYS (src/shared/storage.js)', () => {
     expect(new Set(values).size).toBe(values.length);
   });
 
-  it('matches the canonical 7 keys from Section 2 explicitly (AC-TC.1-4)', () => {
+  it('matches the canonical 8 keys from Section 2 explicitly (AC-TC.1-4)', () => {
     expect(STORAGE_KEYS).toEqual(EXPECTED_STORAGE_KEYS);
     expect(Object.keys(STORAGE_KEYS).sort()).toEqual(Object.keys(EXPECTED_STORAGE_KEYS).sort());
   });

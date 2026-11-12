@@ -1,4 +1,4 @@
-// Canonical storage key constants and pattern-key helpers for chrome.storage.local.
+// Canonical storage key constants and pattern-key helpers for browser storage areas.
 // All keys used anywhere in the extension MUST come from this module.
 // See docs/10_STORAGE_SCHEMA.md
 
@@ -10,6 +10,7 @@ export const STORAGE_KEYS = Object.freeze({
   customRules: 'customRules',
   'stats:lifetime': 'stats:lifetime',
   'stats:meta': 'stats:meta',
+  'stats:seenNetworkRequests': 'stats:seenNetworkRequests',
 });
 
 /**

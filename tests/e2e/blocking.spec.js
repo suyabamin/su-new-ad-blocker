@@ -74,10 +74,10 @@ test.describe('Extension Loading and UI (E2E)', () => {
   }) => {
     const page = await context.newPage();
 
-    let requestFailed = false;
+    let requestFailure = '';
     page.on('requestfailed', (req) => {
       if (req.url().includes('doubleclick.net') || req.url().includes('ads.test.local')) {
-        requestFailed = true;
+        requestFailure = req.failure()?.errorText || '';
       }
     });
 
@@ -91,10 +91,10 @@ test.describe('Extension Loading and UI (E2E)', () => {
     });
 
     expect(outcome).toBe('blocked');
-    expect(requestFailed).toBe(true);
+    expect(requestFailure).toContain('ERR_BLOCKED_BY_CLIENT');
   });
 
-  test('popup reports ten blocked fixture requests without double counting', async ({
+  test('popup reports unavailable network diagnostics without inventing a count', async ({
     context,
     extensionId,
   }) => {
@@ -106,6 +106,6 @@ test.describe('Extension Loading and UI (E2E)', () => {
 
     const popup = await context.newPage();
     await popup.goto(`chrome-extension://${extensionId}/src/popup/popup.html`);
-    await expect(popup.locator('#today-blocked-count')).toHaveText('10');
+    await expect(popup.locator('#today-blocked-count')).toHaveText('Unavailable in this build');
   });
 });

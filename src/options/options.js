@@ -450,12 +450,16 @@ export async function initOptions() {
     }
   } else if (chartCanvas && rangeRes?.ok && Array.isArray(rangeRes.data)) {
     const labels = rangeRes.data.map((b) => b.date || '');
-    const data = rangeRes.data.map((b) => b.total || 0);
+    const data = rangeRes.data.map((b) => b.total);
     renderDailyChart(chartCanvas, labels, data);
   } else if (chartCanvas) {
-    // Fallback: last 7 days with zeros
-    const labels = lastNDays(7);
-    renderDailyChart(chartCanvas, labels, Array(7).fill(0));
+    const chartContainer = chartCanvas.closest('.chart-wrap');
+    if (chartContainer) {
+      chartContainer.textContent = i18n('networkStatsUnavailable');
+      chartContainer.setAttribute('aria-label', i18n('networkStatsUnavailable'));
+    } else {
+      chartCanvas.hidden = true;
+    }
   }
 
   // ---- T4.2: Top Domains ----

@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Replaced UI-triggered DNR match polling with event-based diagnostics and session-scoped request deduplication; packaged builds remain explicitly unavailable when Chrome does not expose debug feedback.
+- Made cosmetic report acknowledgements wait for storage flush, rejected invalid counts, and fixed dashboard date-range data and unavailable chart states.
+- Re-scanned YouTube cosmetic selectors after SPA navigation and observed class changes and discovered open shadow roots without touching video playback.
+
 ### Added
 
 - HTTPS downloads and local compilation of supported EasyList and EasyPrivacy filters, with a daily alarm and manual/list-toggle updates.

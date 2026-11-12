@@ -93,7 +93,7 @@ describe('stats tracker (src/background/stats.js)', () => {
 
     // Storage error during flush
     vi.spyOn(mockChrome.storage.local, 'set').mockRejectedValueOnce(new Error('Storage failure'));
-    await expect(flushStats()).resolves.not.toThrow();
+    await expect(flushStats()).rejects.toThrow('Storage failure');
 
     setupDnrRuleMatchedListener();
 

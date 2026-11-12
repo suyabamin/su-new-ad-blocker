@@ -128,17 +128,20 @@ describe('message router (src/background/message-router.js)', () => {
       expect(Array.isArray(response.data.topDomains)).toBe(true);
     });
 
-    it('handles CS_BLOCKED_REPORT', () => {
+    it('handles CS_BLOCKED_REPORT after flushing its statistics', async () => {
       let response;
-      handleMessage(
-        {
-          type: MSG.CS_BLOCKED_REPORT,
-          payload: { count: 3, domain: 'example.com', type: 'cosmetic' },
-        },
-        {},
-        (res) => {
-          response = res;
-        }
+      await new Promise((resolve) =>
+        handleMessage(
+          {
+            type: MSG.CS_BLOCKED_REPORT,
+            payload: { count: 3, domain: 'example.com', type: 'cosmetic' },
+          },
+          {},
+          (res) => {
+            response = res;
+            resolve();
+          }
+        )
       );
       expect(response.ok).toBe(true);
     });
@@ -181,8 +184,8 @@ describe('message router (src/background/message-router.js)', () => {
     it('handles GET_STATS_RANGE', async () => {
       const fromKey = dailyStatsKey('2026-11-01');
       const toKey = dailyStatsKey('2026-11-02');
-      storageState[fromKey] = { total: 10 };
-      storageState[toKey] = { total: 20 };
+      storageState[fromKey] = { total: 10, networkStatsAvailable: true };
+      storageState[toKey] = { total: 20, networkStatsAvailable: true };
 
       let response;
       await new Promise((resolve) => {
@@ -196,8 +199,10 @@ describe('message router (src/background/message-router.js)', () => {
         );
       });
       expect(response.ok).toBe(true);
-      expect(response.data[fromKey]).toEqual({ total: 10 });
-      expect(response.data[toKey]).toEqual({ total: 20 });
+      expect(response.data).toEqual([
+        expect.objectContaining({ date: '2026-11-01', total: 10 }),
+        expect.objectContaining({ date: '2026-11-02', total: 20 }),
+      ]);
     });
   });
 

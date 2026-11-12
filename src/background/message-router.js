@@ -80,10 +80,7 @@ export function handleMessage(message, sender, sendResponse) {
         payload.domain ||
         (sender?.tab?.url ? new URL(sender.tab.url).hostname : '');
       const hasHostname = Boolean(hostname);
-      if (
-        !globalThis.chrome?.declarativeNetRequest?.getMatchedRules ||
-        !globalThis.chrome?.tabs?.get
-      ) {
+      if (!getStatsSnapshot().networkStatsAvailable) {
         const snapshot = getStatsSnapshot();
         sendResponse({
           ok: true,
@@ -114,10 +111,7 @@ export function handleMessage(message, sender, sendResponse) {
     }
 
     case MSG.GET_TODAY_SUMMARY: {
-      if (
-        !globalThis.chrome?.declarativeNetRequest?.getMatchedRules ||
-        !globalThis.chrome?.tabs?.get
-      ) {
+      if (!getStatsSnapshot().networkStatsAvailable) {
         const snapshot = getStatsSnapshot();
         sendResponse({
           ok: true,
@@ -202,12 +196,26 @@ export function handleMessage(message, sender, sendResponse) {
     }
 
     case MSG.CS_BLOCKED_REPORT: {
-      const count = typeof payload.count === 'number' && payload.count > 0 ? payload.count : 1;
-      const domain = payload.domain || payload.hostname || 'cosmetic';
+      const count = payload.count;
+      if (!Number.isSafeInteger(count) || count <= 0) {
+        sendResponse({
+          ok: false,
+          error: { code: 'BAD_PAYLOAD', message: 'count must be a positive safe integer' },
+        });
+        return false;
+      }
+      const domain = payload.domain || payload.hostname || '';
       const blockType = payload.type === 'youtube' ? 'youtube' : 'cosmetic';
-      recordBlockEvent(domain, blockType, null, count);
-      sendResponse({ ok: true });
-      return false;
+      (async () => {
+        try {
+          recordBlockEvent(domain, blockType, null, count);
+          await flushStats();
+          sendResponse({ ok: true });
+        } catch (error) {
+          sendResponse({ ok: false, error: { code: 'INTERNAL', message: error.message } });
+        }
+      })();
+      return true;
     }
 
     case MSG.ALLOWLIST_ADD: {
@@ -406,8 +414,10 @@ export function handleMessage(message, sender, sendResponse) {
     }
 
     case MSG.GET_STATS_RANGE: {
-      const { from, to } = payload;
-      if (!from || !to) {
+      const days = Number.isInteger(payload.days) && payload.days > 0 ? payload.days : null;
+      const from = payload.from;
+      const to = payload.to;
+      if (!days && (!from || !to)) {
         sendResponse({
           ok: false,
           error: { code: 'BAD_PAYLOAD', message: 'from and to dates are required' },
@@ -416,10 +426,34 @@ export function handleMessage(message, sender, sendResponse) {
       }
       (async () => {
         try {
-          const fromKey = dailyStatsKey(from);
-          const toKey = dailyStatsKey(to);
-          const rangeData = await chrome.storage.local.get([fromKey, toKey]);
-          sendResponse({ ok: true, data: rangeData });
+          const end = to ? new Date(`${to}T00:00:00`) : new Date();
+          const start = from
+            ? new Date(`${from}T00:00:00`)
+            : new Date(end.getTime() - (days - 1) * 24 * 60 * 60 * 1000);
+          if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || start > end) {
+            throw new TypeError('Invalid stats date range');
+          }
+          const keys = [];
+          const dates = [];
+          for (const date = new Date(start); date <= end; date.setDate(date.getDate() + 1)) {
+            const dateString = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+            dates.push(dateString);
+            keys.push(dailyStatsKey(dateString));
+          }
+          const rangeData = await chrome.storage.local.get(keys);
+          const data = dates.map((date, index) => {
+            const bucket = rangeData[keys[index]];
+            const diagnosticsAvailable = bucket?.networkStatsAvailable === true;
+            return {
+              date,
+              total: diagnosticsAvailable
+                ? (bucket?.byType?.network ?? bucket?.total ?? bucket?.totalBlocked ?? 0)
+                : null,
+              byType: bucket?.byType || { network: bucket?.total ?? bucket?.totalBlocked ?? 0 },
+              networkStatsAvailable: diagnosticsAvailable,
+            };
+          });
+          sendResponse({ ok: true, data });
         } catch (err) {
           sendResponse({ ok: false, error: { code: 'INTERNAL', message: err.message } });
         }
