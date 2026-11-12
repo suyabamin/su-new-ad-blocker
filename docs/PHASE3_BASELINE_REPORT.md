@@ -54,7 +54,11 @@ In the fresh unpacked test profile, `getDynamicRules()` returned zero rules whil
 `LIST_UPDATE_NOW` returned `Failed to fetch`, leaving zero dynamic rules. The discrepancy
 needs investigation; the stale timestamp/count is not proof that those rules are currently
 installed. A separate isolated API smoke test confirmed that a single test dynamic rule
-persists across a Chromium restart.
+persists across a Chromium restart. Chromium's unpacked-only `testMatchOutcome()` returned no
+match for a `googlevideo.com/videoplayback` media request or the narrow YouTube
+`/youtubei/v1/player/ad_break` and `/pagead/ads` paths. It matched the packaged static
+`doubleclick.net` rule for `googleads.g.doubleclick.net/pagead/id`. These are rule-engine
+simulations; they do not prove those requests were sent or that a live ad was blocked.
 
 ## Real-browser baseline
 
