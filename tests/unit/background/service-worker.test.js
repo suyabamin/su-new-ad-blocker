@@ -34,10 +34,10 @@ describe('service-worker module (src/background/service-worker.js)', () => {
   });
 
   describe('setupAlarms', () => {
-    it('creates stats-prune and list-update daily alarms', () => {
+    it('creates stats-prune and filter-update daily alarms', () => {
       setupAlarms();
       expect(alarmsCreateMock).toHaveBeenCalledWith('stats-prune', { periodInMinutes: 1440 });
-      expect(alarmsCreateMock).toHaveBeenCalledWith('list-update', { periodInMinutes: 1440 });
+      expect(alarmsCreateMock).toHaveBeenCalledWith('FILTER_UPDATE', { periodInMinutes: 1440 });
     });
   });
 
