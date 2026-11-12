@@ -9,7 +9,12 @@ export const UI_STRINGS = Object.freeze({
   NO_ACTIVE_SITE: 'No active webpage',
   RESTRICTED_PAGE: 'Restricted Page',
   RESTRICTED_MESSAGE: 'Ad blocking cannot run on internal or restricted browser pages.',
+  NETWORK_UNAVAILABLE: 'Unavailable in this build',
 });
+
+export function formatNetworkCount(available, count) {
+  return available ? String(count ?? 0) : UI_STRINGS.NETWORK_UNAVAILABLE;
+}
 
 /**
  * Updates UI labels based on pause state.
@@ -106,7 +111,10 @@ export async function initPopup() {
     if (typeof chrome !== 'undefined' && chrome.runtime?.sendMessage) {
       chrome.runtime.sendMessage({ type: MSG.GET_TAB_STATS, payload: { hostname } }, (response) => {
         if (response?.ok && tabBlockedDisplay) {
-          tabBlockedDisplay.textContent = String(response.data?.count || 0);
+          tabBlockedDisplay.textContent = formatNetworkCount(
+            response.data?.available === true,
+            response.data?.count
+          );
         }
       });
     }
@@ -140,10 +148,16 @@ export async function initPopup() {
     chrome.runtime.sendMessage({ type: MSG.GET_TODAY_SUMMARY }, (response) => {
       if (response?.ok && response.data) {
         if (todayBlockedDisplay) {
-          todayBlockedDisplay.textContent = String(response.data.todayBlocked || 0);
+          todayBlockedDisplay.textContent = formatNetworkCount(
+            response.data.networkStatsAvailable === true,
+            response.data.todayBlocked
+          );
         }
         if (networkDisplay) {
-          networkDisplay.textContent = String(response.data.byType?.network || 0);
+          networkDisplay.textContent = formatNetworkCount(
+            response.data.networkStatsAvailable === true,
+            response.data.byType?.network
+          );
         }
         if (cosmeticDisplay) {
           cosmeticDisplay.textContent = String(response.data.byType?.cosmetic || 0);
