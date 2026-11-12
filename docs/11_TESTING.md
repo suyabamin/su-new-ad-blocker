@@ -70,8 +70,10 @@ E2E tests load the unpacked extension in a persistent Chromium context provided 
 The browser binary is at `D:\.playwright-browsers\chromium-1254` (set via
 `PLAYWRIGHT_BROWSERS_PATH=D:\.playwright-browsers`).
 
-The extension directory passed to Playwright MUST be the project root (which must have a valid
-`manifest.json`).
+The build step (`npm run build`, triggered automatically by `npm run test:e2e` via `pretest:e2e`)
+bundles content scripts with esbuild into IIFE format and packages the extension in `dist/`.
+The extension directory passed to Playwright is `dist/` (which contains `manifest.json` and all
+runtime assets).
 
 E2E tests live in `tests/e2e/` and are named `*.spec.js`.
 
@@ -91,6 +93,7 @@ npx playwright install chromium
 npm run lint
 npm test
 npm run test:coverage
+npm run build
 npm run test:e2e
 ```
 
