@@ -5,7 +5,9 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const EXTENSION_PATH = path.resolve(__dirname, '../../');
+const EXTENSION_PATH = fs.existsSync(path.resolve(__dirname, '../../dist/manifest.json'))
+  ? path.resolve(__dirname, '../../dist')
+  : path.resolve(__dirname, '../../');
 
 export const test = base.extend({
   context: async ({ headless }, use) => {
