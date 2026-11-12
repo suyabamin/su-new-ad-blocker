@@ -23,7 +23,7 @@ const SETTING_TYPES = Object.freeze({
 
 /**
  * Validates a partial settings patch object.
- * Unknown keys and wrong types are reported as errors; unknown keys are not applied.
+ * Unknown keys and wrong types are reported as errors; locale must be "en".
  *
  * @param {object} patch - Partial settings object from a SETTINGS_SET message payload.
  * @returns {{ ok: boolean, errors: string[] }}
@@ -43,6 +43,10 @@ export function validateSettingsPatch(patch) {
     const expectedType = SETTING_TYPES[key];
     if (typeof value !== expectedType) {
       errors.push(`"${key}" must be a ${expectedType}, got ${typeof value}`);
+      continue;
+    }
+    if (key === 'locale' && value !== 'en') {
+      errors.push('locale must be "en"');
     }
   }
 
