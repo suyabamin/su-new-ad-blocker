@@ -209,6 +209,8 @@ describe('options dashboard (src/options/options.js)', () => {
         <span id="stat-network">0</span>
         <span id="stat-cosmetic">0</span>
         <span id="stat-youtube">0</span>
+        <span id="stat-youtube-detected">0</span>
+        <span id="stat-youtube-unhidden">0</span>
         <canvas id="daily-chart"></canvas>
         <div id="top-domains-container"></div>
         <div id="filter-lists-container"></div>
@@ -245,7 +247,7 @@ describe('options dashboard (src/options/options.js)', () => {
             data: {
               totalBlocked: 42,
               networkStatsAvailable: true,
-              byType: { network: 30, cosmetic: 10, youtube: 2 },
+              byType: { network: 30, cosmetic: 10, youtube: 2, youtubeDetected: 5 },
             },
           });
         } else if (msg.type === MSG.GET_STATS_RANGE) {
@@ -278,6 +280,8 @@ describe('options dashboard (src/options/options.js)', () => {
       expect(document.getElementById('stat-network').textContent).toBe('30');
       expect(document.getElementById('stat-cosmetic').textContent).toBe('10');
       expect(document.getElementById('stat-youtube').textContent).toBe('2');
+      expect(document.getElementById('stat-youtube-detected').textContent).toBe('5');
+      expect(document.getElementById('stat-youtube-unhidden').textContent).toBe('3');
 
       const allowlistItems = document.querySelectorAll('#allowlist-items li');
       expect(allowlistItems.length).toBe(1);
