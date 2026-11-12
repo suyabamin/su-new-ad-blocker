@@ -4,14 +4,15 @@ This document is the authoritative list of permissions the extension may request
 
 ## Declared Permissions
 
-| Permission                      | Reason                                                                                                    |
-| ------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| `declarativeNetRequest`         | Required to register and enforce DNR blocking rules                                                       |
-| `declarativeNetRequestFeedback` | Required for `onRuleMatchedDebug` to count blocked requests for statistics                                |
-| `storage`                       | Required to persist stats, whitelist, and settings in `chrome.storage.local`                              |
-| `tabs`                          | Required to read the current tab's URL in the popup (to show per-domain stats)                            |
-| `scripting`                     | Required to inject content scripts programmatically if whitelist logic demands disabling them on a domain |
-| `alarms`                        | Required to schedule periodic filter list updates (24-hour interval)                                      |
+The following list matches `manifest.json` exactly:
+
+| Permission                      | Reason                                                           |
+| ------------------------------- | ---------------------------------------------------------------- |
+| `declarativeNetRequest`         | Enforces the registered static blocking ruleset                  |
+| `declarativeNetRequestFeedback` | Supports blocked-request diagnostics and statistics              |
+| `storage`                       | Persists settings and local statistics in `chrome.storage.local` |
+| `alarms`                        | Schedules maintenance and filter-list update checks              |
+| `activeTab`                     | Lets the popup inspect the current tab after user interaction    |
 
 ## Host Permissions
 
@@ -27,9 +28,8 @@ This document is the authoritative list of permissions the extension may request
     "declarativeNetRequest",
     "declarativeNetRequestFeedback",
     "storage",
-    "tabs",
-    "scripting",
-    "alarms"
+    "alarms",
+    "activeTab"
   ],
   "host_permissions": ["<all_urls>"]
 }
