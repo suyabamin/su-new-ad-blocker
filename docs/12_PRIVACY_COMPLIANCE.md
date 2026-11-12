@@ -1,49 +1,25 @@
-# 12 — Privacy Compliance
+﻿# 12 — Privacy Compliance
 
-## 1. Data Collection Policy
+## 1. Data Handling
 
-SU New Ad Blocker collects **no personal data**. All data remains on the user's device in `chrome.storage.local`.
+Settings, filter-list preferences, and statistics stay on-device in `chrome.storage.local`. The extension has no telemetry, analytics, account, or sync service. Downloaded filter-list text is compiled in memory and is not saved to storage.
 
-## 2. Data Stored Locally
+## 2. Filter-List Network Requests
 
-| Data                               | Purpose                                  | Leaves device? |
-| ---------------------------------- | ---------------------------------------- | -------------- |
-| Block counts (global + per-domain) | Show statistics in popup/options         | No             |
-| Whitelist (domain list)            | Disable blocking on user-specified sites | No             |
-| Filter list last-updated timestamp | Show staleness in options UI             | No             |
-| Extension enabled/disabled state   | Remember user preference                 | No             |
-| Settings (update interval)         | Configurable update schedule             | No             |
+The only requests initiated by the extension are HTTPS GETs to the fixed EasyList and EasyPrivacy URLs in `lists/SOURCES.md`. They occur on extension install, the daily update alarm, a list toggle, or a manual update. Requests omit credentials and reject redirects. The extension sends no user identifier, extension data, page URL, or browsing history. Normal requests made by websites are handled by the browser and are not extension uploads.
 
-## 3. Network Requests
+## 3. Local Statistics
 
-The only outbound network requests are:
+- Cosmetic and YouTube counts are reports of matched DOM elements hidden by local content scripts.
+- Network-match counts rely on Chrome's DNR debugging feedback API and may be unavailable in packaged builds. The UI marks them unavailable instead of estimating them.
+- Site diagnostic values are hostname aggregates, not per-tab values. The stored data does not contain complete page URLs or query strings.
 
-- **Filter list downloads** — to URLs listed in `lists/SOURCES.md` (EasyList, EasyPrivacy CDN endpoints).
-- These requests include no user identifier, no extension ID in the request body, and no cookies.
-- These requests are made from the service worker, not from any page context.
+See [`PRIVACY.md`](PRIVACY.md) for the complete storage-key inventory, export, and deletion instructions.
 
-## 4. Permissions Justification
+## 4. Permissions
 
-| Permission                      | Data accessed                               | Why needed                                                |
-| ------------------------------- | ------------------------------------------- | --------------------------------------------------------- |
-| `declarativeNetRequest`         | No user data; rule engine only              | Block ads                                                 |
-| `declarativeNetRequestFeedback` | Rule match metadata (URL, initiator domain) | Count blocked requests locally                            |
-| `storage`                       | Extension's own `chrome.storage.local`      | Persist stats, settings                                   |
-| `tabs`                          | Active tab URL (domain only)                | Show per-site count in popup                              |
-| `scripting`                     | Ability to inject content scripts           | Whitelist: disable content scripts on whitelisted domains |
-| `alarms`                        | Timing only                                 | Schedule filter list updates                              |
-| `<all_urls>`                    | Applies rules to all URLs                   | DNR must match against all requests                       |
+`manifest.json` declares only `declarativeNetRequest`, `declarativeNetRequestFeedback`, `storage`, `alarms`, and `activeTab`, with `<all_urls>` host access. The extension does not request `tabs` or `scripting`; content scripts are declared in the manifest.
 
-## 5. Privacy Policy (Store Listing Text)
+## 5. License Attribution
 
-> SU New Ad Blocker does not collect, transmit, or sell any personal data. All block statistics are stored locally on your device and are never sent anywhere. The only network requests made by this extension are downloads of open-source filter lists (EasyList, EasyPrivacy) to keep blocking rules up to date.
-
-## 6. Chrome Web Store Single-Purpose Statement
-
-> This extension blocks advertisements and trackers to give users a faster, cleaner browsing experience.
-
-## 7. GDPR / CCPA Compliance
-
-- No data is collected → no data subject rights requests apply.
-- No cookies are set.
-- No third-party SDKs are bundled.
+EasyList and EasyPrivacy are dual licensed under GPL-3.0-or-later and CC-BY-SA-3.0-or-later. The extension attributes the source to the EasyList authors and records the list URLs and license reference in `lists/SOURCES.md`.
