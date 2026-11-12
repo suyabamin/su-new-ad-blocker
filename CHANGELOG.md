@@ -9,6 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- ADR-0005: Bundle content scripts with esbuild for MV3 compatibility (Option 2 of content-script module blocker fix).
+- `esbuild@0.28.2` added as pinned devDependency (exact version, no `^`).
+- `scripts/build.js` rewrites: bundles `src/content/cosmetic.js` and `src/content/youtube/youtube.js` with esbuild (IIFE, chrome120, --minify in production); copies `src/background/`, `src/popup/`, `src/options/`, `src/assets/`, `rules/`, `icons/` unchanged; generates `dist/manifest.json` with `content_scripts` paths rewritten to `dist/content/*.js`; asserts no top-level import/export in any bundle output.
+- `tests/unit/build/no-module-syntax.test.js`: runs bundler into temp dir and asserts no top-level `import`/`export` in output.
+- `pretest:e2e` script in `package.json` so `npm run test:e2e` always builds first.
+- `src/content/youtube/youtube.js` entry point for esbuild to bundle YouTube cosmetic script.
+- `docs/11_TESTING.md` updated to describe build step and `dist/` as the loaded extension directory for E2E tests.
+- `docs/14_RELEASE_PROCESS.md` updated to describe esbuild bundling in the release build sequence.
+- E2E fixture updated to load from `dist/` when present.
+- `_metadata/` added to `.gitignore` (Chromium-generated directory).
+
+### Fixed
+
+- `STYLE_ELEMENT_ID` in `src/content/cosmetic.js` aligned to `su-cosmetic-styles` (matches E2E test selector).
+
 - Complete project scaffold for Manifest V3 Chromium extension.
 - Canonical folder layout: `src/background/`, `src/content/`, `src/popup/`, `src/options/`, `src/shared/`, `src/assets/`, `build/`, `lists/`, `tests/`, `docs/`, `docs/ADR/`, `scripts/`.
 - Installed Vitest (`^4.1.0`), `@vitest/coverage-v8`, `@playwright/test`, `eslint@^8`, `prettier`.
