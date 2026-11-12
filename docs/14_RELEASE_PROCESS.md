@@ -5,8 +5,11 @@
 - [ ] All tasks in `docs/15_TASK_PLAN.md` are marked `[x]`
 - [ ] `npm run lint` exits 0
 - [ ] `npm test` exits 0 with all tests passing
+- [ ] `npm run test:coverage` meets every configured threshold
+- [ ] `npm run package` creates `release/su_new_ad_blocker-0.1.0.zip`
+- [ ] Extract the archive and verify its manifest and allowed contents
 - [ ] `manifest.json` version bumped (semver)
-- [ ] `CHANGELOG.md` "Unreleased" section renamed to the new version + date
+- [ ] `CHANGELOG.md` contains a version heading and release date
 - [ ] No `console.log` in committed code (enforced by ESLint `no-console` rule)
 - [ ] No hardcoded secrets or API keys
 - [ ] Icons at all required sizes exist: 16, 32, 48, 128 px PNG
@@ -20,6 +23,7 @@ npm run lint          # Must pass
 npm test              # Must pass
 npm run build         # Bundles content scripts with esbuild into IIFEs and populates dist/
 npm run test:e2e      # E2E verification against dist/
+npm run package       # Production build and ZIP at release/su_new_ad_blocker-0.1.0.zip
 ```
 
 ## 3. Build Script (`scripts/build.js`)
@@ -37,7 +41,7 @@ The build script performs:
 ## 4. Chrome Web Store Submission
 
 1. Go to [Chrome Web Store Developer Dashboard](https://chrome.google.com/webstore/devconsole).
-2. Upload `dist/su-new-ad-blocker.zip`.
+2. Upload `release/su_new_ad_blocker-0.1.0.zip`.
 3. Fill in store listing fields from `docs/13_STORE_LISTING.md`.
 4. Submit for review (typically 1–3 business days).
 
