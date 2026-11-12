@@ -6,6 +6,8 @@ Thumbs.db
 coverage/
 test-results/
 playwright-report/
+.pw-tmp/
+.pw-tmp-*/
 .env
 *.zip
 *.map
