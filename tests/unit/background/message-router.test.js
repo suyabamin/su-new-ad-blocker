@@ -41,6 +41,7 @@ describe('message router (src/background/message-router.js)', () => {
       },
       declarativeNetRequest: {
         updateDynamicRules: vi.fn().mockResolvedValue(undefined),
+        getDynamicRules: vi.fn().mockResolvedValue([]),
         updateEnabledRulesets: vi.fn().mockResolvedValue(undefined),
       },
       action: {
@@ -98,7 +99,12 @@ describe('message router (src/background/message-router.js)', () => {
         }
       );
       expect(response.ok).toBe(true);
-      expect(response.data).toEqual({ hostname: 'example.com', count: 0 });
+      expect(response.data).toEqual({
+        hostname: 'example.com',
+        count: null,
+        available: false,
+        scope: 'site-aggregate',
+      });
     });
 
     it('handles GET_TODAY_SUMMARY', () => {
@@ -273,6 +279,19 @@ describe('message router (src/background/message-router.js)', () => {
     });
 
     it('handles LIST_TOGGLE', async () => {
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(async () => ({
+          ok: true,
+          url: 'https://easylist.to/easylist/easyprivacy.txt',
+          headers: { get: () => null },
+          text: async () =>
+            `[Adblock Plus 1.1]\n! Title: EasyPrivacy\n${Array.from(
+              { length: 120 },
+              (_, index) => `||tracker${index}.example^`
+            ).join('\n')}`,
+        }))
+      );
       let response;
       await new Promise((resolve) => {
         handleMessage(
@@ -285,7 +304,8 @@ describe('message router (src/background/message-router.js)', () => {
         );
       });
       expect(response.ok).toBe(true);
-      expect(response.data).toEqual({ listId: 'easylist', enabled: false });
+      expect(response.data).toMatchObject({ listId: 'easylist', enabled: false, ruleCount: 120 });
+      vi.unstubAllGlobals();
     });
 
     it('handles CUSTOM_RULES_SET', async () => {
