@@ -1,76 +1,23 @@
-# 05 — Cosmetic Filtering
+﻿# 05 — Cosmetic Filtering
 
 ## 1. Overview
 
-Cosmetic filtering hides ad containers that survive network blocking (empty `<div>` wrappers, ad placeholders, sponsored content sections). It works by injecting a single `<style>` tag with `display: none !important` rules.
+The generic content script hides selected ad-like DOM elements with a CSS style element and inline `display: none !important` fallback. It does not remove nodes or change their network requests.
 
 ## 2. Mechanism
 
-### 2.1 Injection Strategy
+- `src/content/cosmetic.js` runs at `document_start` on the manifest's `<all_urls>` content-script match.
+- It builds CSS from `src/content/selectors.js` and appends a style element to `document.documentElement`.
+- After the document body is available, a `MutationObserver` watches the body and descendants for new matches.
+- The initial observer scan hides and reports already-present matches. Later matching nodes are hidden and counted when observed.
+- Generic reports are batched through `CS_BLOCKED_REPORT` at no more than once every two seconds.
 
-- `src/content/cosmetic.js` runs at `document_start` on all pages (`<all_urls>`).
-- It immediately creates a `<style>` element, sets its `textContent` to the CSS built from `src/content/selectors.js`, and appends it to `document.documentElement` (before `<head>` exists).
-- A `MutationObserver` on `document.documentElement` (subtree, childList) watches for newly added nodes and checks whether any match the selector list; if so, it hides them by adding an inline `style="display:none!important"` attribute as a fallback for dynamically injected ad containers that CSS specificity cannot guarantee will be hidden.
+Counts represent elements hidden, not unique ads or blocked requests. Selector matches can include site UI that resembles advertising; selectors should remain conservative and have regression coverage.
 
-### 2.2 CSS Approach
+## 3. CSS Behavior
 
-```css
-/* Example generated CSS */
-.ad-container,
-#ad-banner,
-[id^='google_ads_'],
-[class*='sponsored-'],
-ins.adsbygoogle {
-  display: none !important;
-}
-```
+The extension uses `display: none !important`. It does not create script tags, alter `src` or `href`, or execute remotely supplied selector text. The content script selectors are bundled with the extension.
 
-- All selectors from `selectors.js` are joined into a single CSS rule to minimize reflow.
-- Only `display: none !important` is used. No `visibility: hidden` (leaves layout space) or `height: 0` (can break flexbox/grid parents).
+## 4. Limits
 
-### 2.3 No Inline Scripts
-
-- The content script file is loaded by Chrome's extension infrastructure — it is not injected via `innerHTML` or `document.write`.
-- The injected `<style>` tag is CSS only. No `<script>` tags are created.
-- CSP of the host page does not affect content script execution.
-
-## 3. Selector List (`src/content/selectors.js`)
-
-```js
-// src/content/selectors.js
-export const GENERIC_SELECTORS = [
-  '.ad-container',
-  '.ad-wrapper',
-  '.ad-banner',
-  '#ad-banner',
-  '#ad-container',
-  '[id^="google_ads_"]',
-  '[id^="div-gpt-ad"]',
-  'ins.adsbygoogle',
-  '.adsbygoogle',
-  '[class*="sponsored-ad"]',
-  '[data-ad-unit]',
-  '.dfp-ad',
-  '.ad-slot',
-  // … extended list added in T2.1
-];
-```
-
-## 4. Performance Considerations
-
-- The `<style>` injection happens synchronously at `document_start` — before any DOM content renders — so no layout shift occurs.
-- The `MutationObserver` callback is debounced with a 50 ms idle check to avoid running on every individual DOM mutation during heavy page loads.
-- The observer disconnects itself if the page is a known extension page (e.g., `chrome-extension://`).
-
-## 5. What Cosmetic Filtering Does NOT Do
-
-- Does not modify `src`, `href`, or any attribute of elements (only `display`).
-- Does not remove elements from the DOM (to avoid breaking page scripts that reference them).
-- Does not apply to YouTube-specific ad UI — that is handled by `youtube.js` (see docs/06).
-- Does not interact with the network layer.
-
-## 6. Selector Maintenance
-
-- All generic selectors live in `src/content/selectors.js` only.
-- If a selector breaks (false positive hiding legitimate content), remove it from that file and add a regression test in `tests/unit/cosmetic.test.js`.
-- YouTube-specific selectors live in `src/content/youtube-selectors.js` only (see docs/06).
+The current runtime list updater compiles supported network filters only. It does not fetch or apply EasyList cosmetic filters. Generic selectors remain the local set in `src/content/selectors.js`; YouTube selectors are maintained separately in `src/content/youtube/selectors.js`.
