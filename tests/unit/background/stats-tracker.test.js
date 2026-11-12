@@ -62,9 +62,10 @@ describe('stats-tracker (src/background/stats-tracker.js)', () => {
   });
 
   describe('event categorization and schema compliance', () => {
-    it('records network, cosmetic, and youtube block types in byType and lifetime', async () => {
+    it('records network, cosmetic, and YouTube detection and hide counts separately', async () => {
       recordBlockEvent('ads.network.com', 'network', 'easylist');
       recordBlockEvent('page.example.com', 'cosmetic', null, 3);
+      recordBlockEvent('youtube.com', 'youtubeDetected', null, 4);
       recordBlockEvent('youtube.com', 'youtube', null, 2);
 
       const snapshot = getStatsSnapshot();
@@ -72,12 +73,14 @@ describe('stats-tracker (src/background/stats-tracker.js)', () => {
       expect(snapshot.today.byType.network).toBe(1);
       expect(snapshot.today.byType.cosmetic).toBe(3);
       expect(snapshot.today.byType.youtube).toBe(2);
+      expect(snapshot.today.byType.youtubeDetected).toBe(4);
       expect(snapshot.today.byList.easylist).toBe(1);
 
       expect(snapshot.lifetime.total).toBe(1);
       expect(snapshot.lifetime.byType.network).toBe(1);
       expect(snapshot.lifetime.byType.cosmetic).toBe(3);
       expect(snapshot.lifetime.byType.youtube).toBe(2);
+      expect(snapshot.lifetime.byType.youtubeDetected).toBe(4);
 
       await flushStats();
       expect(storageSetMock).toHaveBeenCalledTimes(1);
@@ -88,14 +91,14 @@ describe('stats-tracker (src/background/stats-tracker.js)', () => {
       expect(savedData[STORAGE_KEYS['stats:lifetime']]).toEqual({
         total: 1,
         totalBlocked: 1,
-        byType: { network: 1, cosmetic: 3, youtube: 2 },
+        byType: { network: 1, cosmetic: 3, youtube: 2, youtubeDetected: 4 },
       });
 
       expect(savedData[todayKey]).toEqual({
         date: snapshot.todayDate,
         total: 1,
         totalBlocked: 1,
-        byType: { network: 1, cosmetic: 3, youtube: 2 },
+        byType: { network: 1, cosmetic: 3, youtube: 2, youtubeDetected: 4 },
         byList: { easylist: 1 },
         topDomains: { 'ads.network.com': 1 },
         byDomain: { 'ads.network.com': 1 },
@@ -143,6 +146,21 @@ describe('stats-tracker (src/background/stats-tracker.js)', () => {
     });
   });
 
+  it('deduplicates concurrent feedback for the same request before storage completes', async () => {
+    const event = {
+      rule: { ruleId: DYNAMIC_RULE_ID_OFFSET + 7 },
+      request: { requestId: 'concurrent-request', initiator: 'https://publisher.test' },
+    };
+
+    const results = await Promise.all([
+      recordDnrMatchedRequest(event),
+      recordDnrMatchedRequest(event),
+    ]);
+
+    expect(results.sort()).toEqual([false, true]);
+    expect(getStatsSnapshot().today.byType.network).toBe(1);
+  });
+
   it('does not count a request when durable session deduplication fails', async () => {
     globalThis.chrome.storage.session.set.mockRejectedValueOnce(new Error('Session write failed'));
     expect(
@@ -153,5 +171,17 @@ describe('stats-tracker (src/background/stats-tracker.js)', () => {
     ).toBe(false);
     expect(getStatsSnapshot().today.byType.network).toBe(0);
     expect(getStatsSnapshot().networkStatsAvailable).toBe(false);
+  });
+
+  it('does not count DNR events when persisted deduplication state cannot be restored', async () => {
+    globalThis.chrome.storage.session.get.mockRejectedValueOnce(new Error('Session read failed'));
+    expect(
+      await recordDnrMatchedRequest({
+        rule: { ruleId: DYNAMIC_RULE_ID_OFFSET + 7 },
+        request: { requestId: 'unrestored-request', initiator: 'https://publisher.test' },
+      })
+    ).toBe(false);
+    expect(getStatsSnapshot().today.byType.network).toBe(0);
+    expect(globalThis.chrome.storage.session.set).not.toHaveBeenCalled();
   });
 });
