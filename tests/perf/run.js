@@ -177,7 +177,6 @@ async function run() {
   } finally {
     await context?.close();
     await closeServer(server);
-    fs.rmSync(profile, { recursive: true, force: true });
   }
 }
 
