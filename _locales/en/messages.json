@@ -1,0 +1,154 @@
+{
+  "extName": {
+    "message": "SU New Ad Blocker",
+    "description": "Extension name"
+  },
+  "extDescription": {
+    "message": "Block ads and trackers, hide ad containers, reduce YouTube ad clutter. 100% local — no data collected.",
+    "description": "Extension description"
+  },
+  "optionsTitle": {
+    "message": "SU New Ad Blocker — Dashboard & Settings",
+    "description": "Options page title"
+  },
+  "optionsSubtitle": {
+    "message": "100% Local Ad & Tracker Protection",
+    "description": "Options page subtitle"
+  },
+  "sectionOverview": {
+    "message": "Overview",
+    "description": "Options overview section heading"
+  },
+  "statLifetimeBlocked": {
+    "message": "Lifetime Blocked",
+    "description": "Stat label for lifetime blocked count"
+  },
+  "statTodayBlocked": {
+    "message": "Blocked Today",
+    "description": "Stat label for today blocked count"
+  },
+  "statNetwork": {
+    "message": "Network",
+    "description": "Block type: network"
+  },
+  "statCosmetic": {
+    "message": "Cosmetic",
+    "description": "Block type: cosmetic"
+  },
+  "statYoutube": {
+    "message": "YouTube",
+    "description": "Block type: youtube"
+  },
+  "chartTitle": {
+    "message": "Blocks per day (last 7 days)",
+    "description": "Chart title for daily activity line chart"
+  },
+  "sectionTopDomains": {
+    "message": "Top Blocked Domains",
+    "description": "Options top domains section heading"
+  },
+  "colDomain": {
+    "message": "Domain",
+    "description": "Table column: domain"
+  },
+  "colBlocked": {
+    "message": "Blocked",
+    "description": "Table column: blocked count"
+  },
+  "sortAsc": {
+    "message": "Sort ascending",
+    "description": "Sort ascending aria label"
+  },
+  "sortDesc": {
+    "message": "Sort descending",
+    "description": "Sort descending aria label"
+  },
+  "sectionFilterLists": {
+    "message": "Filter Lists",
+    "description": "Options filter lists section heading"
+  },
+  "btnUpdateNow": {
+    "message": "Update Now",
+    "description": "Button to trigger manual list update"
+  },
+  "listUpdateSuccess": {
+    "message": "Filter lists updated.",
+    "description": "Success message after list update"
+  },
+  "listUpdateError": {
+    "message": "Update failed. Try again later.",
+    "description": "Error message after list update failure"
+  },
+  "sectionAllowlist": {
+    "message": "Domain Allowlist",
+    "description": "Options allowlist section heading"
+  },
+  "allowlistDesc": {
+    "message": "Domains listed here will not have ads or trackers blocked.",
+    "description": "Allowlist description"
+  },
+  "allowlistPlaceholder": {
+    "message": "e.g. example.com",
+    "description": "Allowlist input placeholder"
+  },
+  "allowlistAriaLabel": {
+    "message": "Domain to allow",
+    "description": "Allowlist input aria label"
+  },
+  "btnAddDomain": {
+    "message": "Add Domain",
+    "description": "Button to add a domain to the allowlist"
+  },
+  "btnRemove": {
+    "message": "Remove",
+    "description": "Button to remove a domain from the allowlist"
+  },
+  "allowlistErrorInvalid": {
+    "message": "Please enter a valid domain name (e.g. example.com)",
+    "description": "Error shown when domain is invalid"
+  },
+  "sectionCustomRules": {
+    "message": "Custom Rules",
+    "description": "Options custom rules section heading"
+  },
+  "customRulesDesc": {
+    "message": "Enter custom DNR rules as JSON. Must be a valid JSON array of declarativeNetRequest rule objects.",
+    "description": "Custom rules description"
+  },
+  "customRulesPlaceholder": {
+    "message": "[]",
+    "description": "Custom rules textarea placeholder"
+  },
+  "btnSaveRules": {
+    "message": "Save Rules",
+    "description": "Button to save custom rules"
+  },
+  "customRulesErrorInvalid": {
+    "message": "Invalid JSON. Must be an array.",
+    "description": "Error shown for invalid custom rules JSON"
+  },
+  "customRulesSaved": {
+    "message": "Custom rules saved.",
+    "description": "Confirmation after custom rules saved"
+  },
+  "sectionData": {
+    "message": "Statistics & Data",
+    "description": "Options data section heading"
+  },
+  "btnExportStats": {
+    "message": "Export Stats (JSON)",
+    "description": "Button to export stats as JSON"
+  },
+  "btnResetStats": {
+    "message": "Reset All Statistics",
+    "description": "Button to reset all statistics"
+  },
+  "resetConfirm": {
+    "message": "Are you sure you want to reset all blocking statistics? This cannot be undone.",
+    "description": "Confirmation dialog for stats reset"
+  },
+  "resetSuccess": {
+    "message": "Statistics have been reset.",
+    "description": "Notification after stats reset"
+  }
+}
