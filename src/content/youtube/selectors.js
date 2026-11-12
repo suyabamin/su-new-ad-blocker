@@ -19,6 +19,13 @@ export const YOUTUBE_SELECTORS = Object.freeze([
   'ytd-player-legacy-desktop-watch-ads-renderer',
   '#player-ads',
   '.ytd-promoted-video-renderer',
+  '.ytd-section-list-renderer > .ytd-item-section-renderer > ytd-search-pyv-renderer.ytd-item-section-renderer',
+  '#contents > ytd-rich-item-renderer:has(> ytd-ad-slot-renderer)',
+  'ytd-rich-item-renderer:has(> #content > ytd-ad-slot-renderer)',
+  '#shorts-inner-container > .ytd-shorts:has(> .ytd-reel-video-renderer > ytd-ad-slot-renderer)',
+  'ytd-watch-next-secondary-results-renderer > ytd-ad-slot-renderer',
+  'ytm-companion-slot[data-content-type] > ytm-companion-ad-renderer',
+  'ytm-rich-item-renderer > ad-slot-renderer',
 ]);
 
 // Explicit forbidden selectors from docs/06_YOUTUBE_MODULE.md Section 4
