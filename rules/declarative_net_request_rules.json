@@ -6,7 +6,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||doubleclick.net^",
+      "urlFilter": "||ads.test.local^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -30,7 +30,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||googlesyndication.com^",
+      "urlFilter": "||tracker.test.local^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -54,7 +54,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adnxs.com^",
+      "urlFilter": "||analytics.test.local^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -78,21 +78,8 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||moatads.com^",
-      "resourceTypes": [
-        "main_frame",
-        "sub_frame",
-        "stylesheet",
-        "script",
-        "image",
-        "font",
-        "object",
-        "xmlhttprequest",
-        "ping",
-        "media",
-        "websocket",
-        "other"
-      ]
+      "urlFilter": "||adservice.test.local^",
+      "resourceTypes": ["script", "image"]
     }
   },
   {
@@ -102,7 +89,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||scorecardresearch.com^",
+      "urlFilter": "||partner.test.local/ad/*",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -116,7 +103,8 @@
         "media",
         "websocket",
         "other"
-      ]
+      ],
+      "domainType": "thirdParty"
     }
   },
   {
@@ -126,7 +114,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||krxd.net^",
+      "urlFilter": "||domain-targeted.test.local^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -140,17 +128,18 @@
         "media",
         "websocket",
         "other"
-      ]
+      ],
+      "initiatorDomains": ["example.com"]
     }
   },
   {
     "id": 7,
-    "priority": 1,
+    "priority": 2,
     "action": {
-      "type": "block"
+      "type": "allow"
     },
     "condition": {
-      "urlFilter": "||adsrvr.org^",
+      "urlFilter": "||whitelisted.test.local^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -174,7 +163,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||casalemedia.com^",
+      "urlFilter": "||doubleclick.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -198,7 +187,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pubmatic.com^",
+      "urlFilter": "||googlesyndication.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -222,7 +211,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||rubiconproject.com^",
+      "urlFilter": "||adnxs.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -246,7 +235,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||2mdn.net^",
+      "urlFilter": "||moatads.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -270,7 +259,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adservice.google.com^",
+      "urlFilter": "||scorecardresearch.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -294,7 +283,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pagead2.googlesyndication.com^",
+      "urlFilter": "||krxd.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -318,7 +307,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||googleadservices.com^",
+      "urlFilter": "||adsrvr.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -342,7 +331,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adcolony.com^",
+      "urlFilter": "||casalemedia.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -366,7 +355,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adroll.com^",
+      "urlFilter": "||pubmatic.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -390,7 +379,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adform.net^",
+      "urlFilter": "||rubiconproject.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -414,7 +403,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||advertising.com^",
+      "urlFilter": "||2mdn.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -438,7 +427,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adtech.de^",
+      "urlFilter": "||adservice.google.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -462,7 +451,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adtechus.com^",
+      "urlFilter": "||pagead2.googlesyndication.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -486,7 +475,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||amazon-adsystem.com^",
+      "urlFilter": "||googleadservices.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -510,7 +499,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||appnexus.com^",
+      "urlFilter": "||adcolony.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -534,7 +523,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||bidswitch.net^",
+      "urlFilter": "||adroll.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -558,7 +547,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||criteo.com^",
+      "urlFilter": "||adform.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -582,7 +571,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||criteo.net^",
+      "urlFilter": "||advertising.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -606,7 +595,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||openx.net^",
+      "urlFilter": "||adtech.de^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -630,7 +619,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||outbrain.com^",
+      "urlFilter": "||adtechus.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -654,7 +643,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||taboola.com^",
+      "urlFilter": "||amazon-adsystem.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -678,7 +667,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||quantserve.com^",
+      "urlFilter": "||appnexus.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -702,7 +691,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||zemanta.com^",
+      "urlFilter": "||bidswitch.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -726,7 +715,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||smartadserver.com^",
+      "urlFilter": "||criteo.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -750,7 +739,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||serving-sys.com^",
+      "urlFilter": "||criteo.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -774,7 +763,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||revcontent.com^",
+      "urlFilter": "||openx.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -798,7 +787,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||exponential.com^",
+      "urlFilter": "||outbrain.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -822,7 +811,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||yieldmo.com^",
+      "urlFilter": "||taboola.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -846,7 +835,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||inmobi.com^",
+      "urlFilter": "||quantserve.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -870,7 +859,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||flashtalking.com^",
+      "urlFilter": "||zemanta.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -894,7 +883,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||triplelift.com^",
+      "urlFilter": "||smartadserver.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -918,7 +907,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||sharethrough.com^",
+      "urlFilter": "||serving-sys.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -942,7 +931,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||spotxchange.com^",
+      "urlFilter": "||revcontent.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -966,7 +955,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||teads.tv^",
+      "urlFilter": "||exponential.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -990,7 +979,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||undertone.com^",
+      "urlFilter": "||yieldmo.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1014,7 +1003,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||unruly.co^",
+      "urlFilter": "||inmobi.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1038,7 +1027,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||media.net^",
+      "urlFilter": "||flashtalking.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1062,7 +1051,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||indexexchange.com^",
+      "urlFilter": "||triplelift.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1086,7 +1075,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||contextweb.com^",
+      "urlFilter": "||sharethrough.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1110,7 +1099,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||sonobi.com^",
+      "urlFilter": "||spotxchange.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1134,7 +1123,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||sovrn.com^",
+      "urlFilter": "||teads.tv^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1158,7 +1147,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||gumgum.com^",
+      "urlFilter": "||undertone.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1182,7 +1171,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||lijit.com^",
+      "urlFilter": "||unruly.co^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1206,7 +1195,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||mathtag.com^",
+      "urlFilter": "||media.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1230,7 +1219,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||turn.com^",
+      "urlFilter": "||indexexchange.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1254,7 +1243,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||bluekai.com^",
+      "urlFilter": "||contextweb.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1278,7 +1267,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||liveramp.com^",
+      "urlFilter": "||sonobi.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1302,7 +1291,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adblade.com^",
+      "urlFilter": "||sovrn.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1326,7 +1315,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adbutler.com^",
+      "urlFilter": "||gumgum.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1350,7 +1339,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||chartbeat.com^",
+      "urlFilter": "||lijit.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1374,7 +1363,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||hotjar.com^",
+      "urlFilter": "||mathtag.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1398,7 +1387,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||segment.io^",
+      "urlFilter": "||turn.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1422,7 +1411,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||segment.com^",
+      "urlFilter": "||bluekai.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1446,7 +1435,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||mixpanel.com^",
+      "urlFilter": "||liveramp.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1470,7 +1459,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||amplitude.com^",
+      "urlFilter": "||adblade.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1494,7 +1483,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||mouseflow.com^",
+      "urlFilter": "||adbutler.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1518,7 +1507,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||crazyegg.com^",
+      "urlFilter": "||chartbeat.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1542,7 +1531,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||inspectlet.com^",
+      "urlFilter": "||hotjar.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1566,7 +1555,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||fullstory.com^",
+      "urlFilter": "||segment.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1590,7 +1579,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||heap.io^",
+      "urlFilter": "||segment.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1614,7 +1603,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||optimizely.com^",
+      "urlFilter": "||mixpanel.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1638,7 +1627,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||vwo.com^",
+      "urlFilter": "||amplitude.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1662,7 +1651,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||clarity.ms^",
+      "urlFilter": "||mouseflow.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1686,7 +1675,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||newrelic.com^",
+      "urlFilter": "||crazyegg.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1710,7 +1699,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||nr-data.net^",
+      "urlFilter": "||inspectlet.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1734,7 +1723,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||bugsnag.com^",
+      "urlFilter": "||fullstory.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1758,7 +1747,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||sentry.io^",
+      "urlFilter": "||heap.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1782,7 +1771,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||datadoghq.com^",
+      "urlFilter": "||optimizely.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1806,7 +1795,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||branch.io^",
+      "urlFilter": "||vwo.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1830,7 +1819,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||appsflyer.com^",
+      "urlFilter": "||clarity.ms^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1854,7 +1843,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adjust.com^",
+      "urlFilter": "||newrelic.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1878,7 +1867,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||kochava.com^",
+      "urlFilter": "||nr-data.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1902,7 +1891,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||singular.net^",
+      "urlFilter": "||bugsnag.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1926,7 +1915,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tapstream.com^",
+      "urlFilter": "||sentry.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1950,7 +1939,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tenjin.io^",
+      "urlFilter": "||datadoghq.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1974,7 +1963,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||applovin.com^",
+      "urlFilter": "||branch.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -1998,7 +1987,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||unityads.unity3d.com^",
+      "urlFilter": "||appsflyer.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2022,7 +2011,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||ironsrc.com^",
+      "urlFilter": "||adjust.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2046,7 +2035,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||vungle.com^",
+      "urlFilter": "||kochava.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2070,7 +2059,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||chartboost.com^",
+      "urlFilter": "||singular.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2094,7 +2083,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||fyber.com^",
+      "urlFilter": "||tapstream.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2118,7 +2107,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tapjoy.com^",
+      "urlFilter": "||tenjin.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2142,7 +2131,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||mintegral.com^",
+      "urlFilter": "||applovin.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2166,7 +2155,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pangle.io^",
+      "urlFilter": "||unityads.unity3d.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2190,7 +2179,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||startapp.com^",
+      "urlFilter": "||ironsrc.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2214,7 +2203,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||leadbolt.com^",
+      "urlFilter": "||vungle.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2238,7 +2227,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||airpush.com^",
+      "urlFilter": "||chartboost.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2262,7 +2251,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||smaato.net^",
+      "urlFilter": "||fyber.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2286,7 +2275,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||mopub.com^",
+      "urlFilter": "||tapjoy.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2310,7 +2299,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||admob.com^",
+      "urlFilter": "||mintegral.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2334,7 +2323,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||nexage.com^",
+      "urlFilter": "||pangle.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2358,7 +2347,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||inner-active.mobi^",
+      "urlFilter": "||startapp.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2382,7 +2371,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||millennialmedia.com^",
+      "urlFilter": "||leadbolt.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2406,7 +2395,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||jumptap.com^",
+      "urlFilter": "||airpush.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2430,7 +2419,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||greystripe.com^",
+      "urlFilter": "||smaato.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2454,7 +2443,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||burstnet.com^",
+      "urlFilter": "||mopub.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2478,7 +2467,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||chitika.net^",
+      "urlFilter": "||admob.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2502,7 +2491,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||infolinks.com^",
+      "urlFilter": "||nexage.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2526,7 +2515,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||kontera.com^",
+      "urlFilter": "||inner-active.mobi^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2550,7 +2539,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||viglink.com^",
+      "urlFilter": "||millennialmedia.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2574,7 +2563,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||skimresources.com^",
+      "urlFilter": "||jumptap.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2598,7 +2587,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||sovren.com^",
+      "urlFilter": "||greystripe.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2622,7 +2611,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||buysellads.com^",
+      "urlFilter": "||burstnet.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2646,7 +2635,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adzerk.net^",
+      "urlFilter": "||chitika.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2670,7 +2659,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||kevel.co^",
+      "urlFilter": "||infolinks.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2694,7 +2683,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||revive-adserver.net^",
+      "urlFilter": "||kontera.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2718,7 +2707,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||broadstreetads.com^",
+      "urlFilter": "||viglink.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2742,7 +2731,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||oiopublisher.com^",
+      "urlFilter": "||skimresources.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2766,7 +2755,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||epom.com^",
+      "urlFilter": "||sovren.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2790,7 +2779,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-1.tracker-network.net^",
+      "urlFilter": "||buysellads.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2814,7 +2803,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-1.analytics-hub.org^",
+      "urlFilter": "||adzerk.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2838,7 +2827,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-1.telemetry-feed.io^",
+      "urlFilter": "||kevel.co^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2862,7 +2851,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-1.advertising-network.com^",
+      "urlFilter": "||revive-adserver.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2886,7 +2875,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-1.ad-exchange.biz^",
+      "urlFilter": "||broadstreetads.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2910,7 +2899,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-2.tracker-network.net^",
+      "urlFilter": "||oiopublisher.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2934,7 +2923,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-2.analytics-hub.org^",
+      "urlFilter": "||epom.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2958,7 +2947,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-2.telemetry-feed.io^",
+      "urlFilter": "||adserver-1.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -2982,7 +2971,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-2.advertising-network.com^",
+      "urlFilter": "||tracking-node-1.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3006,7 +2995,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-2.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-1.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3030,7 +3019,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-3.tracker-network.net^",
+      "urlFilter": "||pixel-1.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3054,7 +3043,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-3.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-1.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3078,7 +3067,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-3.telemetry-feed.io^",
+      "urlFilter": "||adserver-2.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3102,7 +3091,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-3.advertising-network.com^",
+      "urlFilter": "||tracking-node-2.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3126,7 +3115,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-3.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-2.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3150,7 +3139,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-4.tracker-network.net^",
+      "urlFilter": "||pixel-2.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3174,7 +3163,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-4.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-2.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3198,7 +3187,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-4.telemetry-feed.io^",
+      "urlFilter": "||adserver-3.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3222,7 +3211,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-4.advertising-network.com^",
+      "urlFilter": "||tracking-node-3.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3246,7 +3235,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-4.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-3.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3270,7 +3259,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-5.tracker-network.net^",
+      "urlFilter": "||pixel-3.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3294,7 +3283,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-5.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-3.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3318,7 +3307,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-5.telemetry-feed.io^",
+      "urlFilter": "||adserver-4.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3342,7 +3331,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-5.advertising-network.com^",
+      "urlFilter": "||tracking-node-4.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3366,7 +3355,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-5.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-4.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3390,7 +3379,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-6.tracker-network.net^",
+      "urlFilter": "||pixel-4.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3414,7 +3403,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-6.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-4.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3438,7 +3427,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-6.telemetry-feed.io^",
+      "urlFilter": "||adserver-5.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3462,7 +3451,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-6.advertising-network.com^",
+      "urlFilter": "||tracking-node-5.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3486,7 +3475,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-6.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-5.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3510,7 +3499,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-7.tracker-network.net^",
+      "urlFilter": "||pixel-5.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3534,7 +3523,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-7.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-5.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3558,7 +3547,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-7.telemetry-feed.io^",
+      "urlFilter": "||adserver-6.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3582,7 +3571,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-7.advertising-network.com^",
+      "urlFilter": "||tracking-node-6.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3606,7 +3595,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-7.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-6.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3630,7 +3619,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-8.tracker-network.net^",
+      "urlFilter": "||pixel-6.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3654,7 +3643,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-8.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-6.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3678,7 +3667,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-8.telemetry-feed.io^",
+      "urlFilter": "||adserver-7.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3702,7 +3691,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-8.advertising-network.com^",
+      "urlFilter": "||tracking-node-7.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3726,7 +3715,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-8.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-7.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3750,7 +3739,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-9.tracker-network.net^",
+      "urlFilter": "||pixel-7.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3774,7 +3763,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-9.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-7.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3798,7 +3787,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-9.telemetry-feed.io^",
+      "urlFilter": "||adserver-8.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3822,7 +3811,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-9.advertising-network.com^",
+      "urlFilter": "||tracking-node-8.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3846,7 +3835,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-9.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-8.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3870,7 +3859,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-10.tracker-network.net^",
+      "urlFilter": "||pixel-8.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3894,7 +3883,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-10.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-8.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3918,7 +3907,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-10.telemetry-feed.io^",
+      "urlFilter": "||adserver-9.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3942,7 +3931,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-10.advertising-network.com^",
+      "urlFilter": "||tracking-node-9.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3966,7 +3955,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-10.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-9.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -3990,7 +3979,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-11.tracker-network.net^",
+      "urlFilter": "||pixel-9.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4014,7 +4003,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-11.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-9.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4038,7 +4027,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-11.telemetry-feed.io^",
+      "urlFilter": "||adserver-10.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4062,7 +4051,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-11.advertising-network.com^",
+      "urlFilter": "||tracking-node-10.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4086,7 +4075,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-11.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-10.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4110,7 +4099,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-12.tracker-network.net^",
+      "urlFilter": "||pixel-10.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4134,7 +4123,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-12.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-10.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4158,7 +4147,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-12.telemetry-feed.io^",
+      "urlFilter": "||adserver-11.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4182,7 +4171,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-12.advertising-network.com^",
+      "urlFilter": "||tracking-node-11.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4206,7 +4195,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-12.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-11.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4230,7 +4219,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-13.tracker-network.net^",
+      "urlFilter": "||pixel-11.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4254,7 +4243,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-13.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-11.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4278,7 +4267,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-13.telemetry-feed.io^",
+      "urlFilter": "||adserver-12.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4302,7 +4291,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-13.advertising-network.com^",
+      "urlFilter": "||tracking-node-12.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4326,7 +4315,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-13.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-12.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4350,7 +4339,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-14.tracker-network.net^",
+      "urlFilter": "||pixel-12.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4374,7 +4363,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-14.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-12.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4398,7 +4387,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-14.telemetry-feed.io^",
+      "urlFilter": "||adserver-13.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4422,7 +4411,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-14.advertising-network.com^",
+      "urlFilter": "||tracking-node-13.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4446,7 +4435,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-14.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-13.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4470,7 +4459,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-15.tracker-network.net^",
+      "urlFilter": "||pixel-13.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4494,7 +4483,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-15.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-13.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4518,7 +4507,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-15.telemetry-feed.io^",
+      "urlFilter": "||adserver-14.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4542,7 +4531,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-15.advertising-network.com^",
+      "urlFilter": "||tracking-node-14.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4566,7 +4555,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-15.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-14.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4590,7 +4579,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-16.tracker-network.net^",
+      "urlFilter": "||pixel-14.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4614,7 +4603,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-16.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-14.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4638,7 +4627,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-16.telemetry-feed.io^",
+      "urlFilter": "||adserver-15.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4662,7 +4651,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-16.advertising-network.com^",
+      "urlFilter": "||tracking-node-15.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4686,7 +4675,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-16.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-15.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4710,7 +4699,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-17.tracker-network.net^",
+      "urlFilter": "||pixel-15.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4734,7 +4723,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-17.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-15.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4758,7 +4747,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-17.telemetry-feed.io^",
+      "urlFilter": "||adserver-16.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4782,7 +4771,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-17.advertising-network.com^",
+      "urlFilter": "||tracking-node-16.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4806,7 +4795,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-17.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-16.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4830,7 +4819,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-18.tracker-network.net^",
+      "urlFilter": "||pixel-16.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4854,7 +4843,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-18.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-16.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4878,7 +4867,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-18.telemetry-feed.io^",
+      "urlFilter": "||adserver-17.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4902,7 +4891,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-18.advertising-network.com^",
+      "urlFilter": "||tracking-node-17.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4926,7 +4915,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-18.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-17.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4950,7 +4939,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-19.tracker-network.net^",
+      "urlFilter": "||pixel-17.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4974,7 +4963,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-19.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-17.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -4998,7 +4987,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-19.telemetry-feed.io^",
+      "urlFilter": "||adserver-18.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5022,7 +5011,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-19.advertising-network.com^",
+      "urlFilter": "||tracking-node-18.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5046,7 +5035,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-19.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-18.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5070,7 +5059,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-20.tracker-network.net^",
+      "urlFilter": "||pixel-18.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5094,7 +5083,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-20.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-18.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5118,7 +5107,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-20.telemetry-feed.io^",
+      "urlFilter": "||adserver-19.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5142,7 +5131,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-20.advertising-network.com^",
+      "urlFilter": "||tracking-node-19.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5166,7 +5155,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-20.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-19.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5190,7 +5179,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-21.tracker-network.net^",
+      "urlFilter": "||pixel-19.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5214,7 +5203,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-21.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-19.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5238,7 +5227,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-21.telemetry-feed.io^",
+      "urlFilter": "||adserver-20.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5262,7 +5251,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-21.advertising-network.com^",
+      "urlFilter": "||tracking-node-20.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5286,7 +5275,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-21.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-20.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5310,7 +5299,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-22.tracker-network.net^",
+      "urlFilter": "||pixel-20.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5334,7 +5323,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-22.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-20.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5358,7 +5347,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-22.telemetry-feed.io^",
+      "urlFilter": "||adserver-21.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5382,7 +5371,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-22.advertising-network.com^",
+      "urlFilter": "||tracking-node-21.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5406,7 +5395,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-22.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-21.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5430,7 +5419,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-23.tracker-network.net^",
+      "urlFilter": "||pixel-21.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5454,7 +5443,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-23.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-21.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5478,7 +5467,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-23.telemetry-feed.io^",
+      "urlFilter": "||adserver-22.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5502,7 +5491,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-23.advertising-network.com^",
+      "urlFilter": "||tracking-node-22.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5526,7 +5515,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-23.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-22.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5550,7 +5539,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-24.tracker-network.net^",
+      "urlFilter": "||pixel-22.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5574,7 +5563,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-24.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-22.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5598,7 +5587,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-24.telemetry-feed.io^",
+      "urlFilter": "||adserver-23.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5622,7 +5611,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-24.advertising-network.com^",
+      "urlFilter": "||tracking-node-23.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5646,7 +5635,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-24.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-23.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5670,7 +5659,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-25.tracker-network.net^",
+      "urlFilter": "||pixel-23.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5694,7 +5683,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-25.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-23.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5718,7 +5707,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-25.telemetry-feed.io^",
+      "urlFilter": "||adserver-24.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5742,7 +5731,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-25.advertising-network.com^",
+      "urlFilter": "||tracking-node-24.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5766,7 +5755,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-25.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-24.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5790,7 +5779,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-26.tracker-network.net^",
+      "urlFilter": "||pixel-24.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5814,7 +5803,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-26.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-24.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5838,7 +5827,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-26.telemetry-feed.io^",
+      "urlFilter": "||adserver-25.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5862,7 +5851,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-26.advertising-network.com^",
+      "urlFilter": "||tracking-node-25.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5886,7 +5875,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-26.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-25.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5910,7 +5899,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-27.tracker-network.net^",
+      "urlFilter": "||pixel-25.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5934,7 +5923,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-27.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-25.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5958,7 +5947,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-27.telemetry-feed.io^",
+      "urlFilter": "||adserver-26.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -5982,7 +5971,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-27.advertising-network.com^",
+      "urlFilter": "||tracking-node-26.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6006,7 +5995,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-27.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-26.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6030,7 +6019,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-28.tracker-network.net^",
+      "urlFilter": "||pixel-26.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6054,7 +6043,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-28.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-26.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6078,7 +6067,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-28.telemetry-feed.io^",
+      "urlFilter": "||adserver-27.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6102,7 +6091,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-28.advertising-network.com^",
+      "urlFilter": "||tracking-node-27.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6126,7 +6115,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-28.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-27.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6150,7 +6139,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-29.tracker-network.net^",
+      "urlFilter": "||pixel-27.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6174,7 +6163,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-29.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-27.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6198,7 +6187,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-29.telemetry-feed.io^",
+      "urlFilter": "||adserver-28.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6222,7 +6211,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-29.advertising-network.com^",
+      "urlFilter": "||tracking-node-28.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6246,7 +6235,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-29.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-28.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6270,7 +6259,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-30.tracker-network.net^",
+      "urlFilter": "||pixel-28.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6294,7 +6283,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-30.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-28.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6318,7 +6307,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-30.telemetry-feed.io^",
+      "urlFilter": "||adserver-29.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6342,7 +6331,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-30.advertising-network.com^",
+      "urlFilter": "||tracking-node-29.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6366,7 +6355,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-30.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-29.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6390,7 +6379,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-31.tracker-network.net^",
+      "urlFilter": "||pixel-29.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6414,7 +6403,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-31.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-29.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6438,7 +6427,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-31.telemetry-feed.io^",
+      "urlFilter": "||adserver-30.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6462,7 +6451,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-31.advertising-network.com^",
+      "urlFilter": "||tracking-node-30.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6486,7 +6475,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-31.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-30.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6510,7 +6499,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-32.tracker-network.net^",
+      "urlFilter": "||pixel-30.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6534,7 +6523,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-32.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-30.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6558,7 +6547,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-32.telemetry-feed.io^",
+      "urlFilter": "||adserver-31.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6582,7 +6571,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-32.advertising-network.com^",
+      "urlFilter": "||tracking-node-31.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6606,7 +6595,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-32.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-31.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6630,7 +6619,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-33.tracker-network.net^",
+      "urlFilter": "||pixel-31.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6654,7 +6643,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-33.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-31.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6678,7 +6667,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-33.telemetry-feed.io^",
+      "urlFilter": "||adserver-32.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6702,7 +6691,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-33.advertising-network.com^",
+      "urlFilter": "||tracking-node-32.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6726,7 +6715,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-33.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-32.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6750,7 +6739,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-34.tracker-network.net^",
+      "urlFilter": "||pixel-32.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6774,7 +6763,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-34.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-32.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6798,7 +6787,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-34.telemetry-feed.io^",
+      "urlFilter": "||adserver-33.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6822,7 +6811,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-34.advertising-network.com^",
+      "urlFilter": "||tracking-node-33.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6846,7 +6835,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-34.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-33.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6870,7 +6859,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-35.tracker-network.net^",
+      "urlFilter": "||pixel-33.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6894,7 +6883,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-35.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-33.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6918,7 +6907,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-35.telemetry-feed.io^",
+      "urlFilter": "||adserver-34.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6942,7 +6931,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-35.advertising-network.com^",
+      "urlFilter": "||tracking-node-34.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6966,7 +6955,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-35.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-34.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -6990,7 +6979,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-36.tracker-network.net^",
+      "urlFilter": "||pixel-34.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7014,7 +7003,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-36.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-34.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7038,7 +7027,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-36.telemetry-feed.io^",
+      "urlFilter": "||adserver-35.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7062,7 +7051,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-36.advertising-network.com^",
+      "urlFilter": "||tracking-node-35.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7086,7 +7075,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-36.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-35.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7110,7 +7099,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-37.tracker-network.net^",
+      "urlFilter": "||pixel-35.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7134,7 +7123,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-37.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-35.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7158,7 +7147,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-37.telemetry-feed.io^",
+      "urlFilter": "||adserver-36.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7182,7 +7171,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-37.advertising-network.com^",
+      "urlFilter": "||tracking-node-36.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7206,7 +7195,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-37.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-36.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7230,7 +7219,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-38.tracker-network.net^",
+      "urlFilter": "||pixel-36.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7254,7 +7243,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-38.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-36.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7278,7 +7267,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-38.telemetry-feed.io^",
+      "urlFilter": "||adserver-37.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7302,7 +7291,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-38.advertising-network.com^",
+      "urlFilter": "||tracking-node-37.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7326,7 +7315,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-38.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-37.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7350,7 +7339,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-39.tracker-network.net^",
+      "urlFilter": "||pixel-37.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7374,7 +7363,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-39.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-37.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7398,7 +7387,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-39.telemetry-feed.io^",
+      "urlFilter": "||adserver-38.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7422,7 +7411,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-39.advertising-network.com^",
+      "urlFilter": "||tracking-node-38.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7446,7 +7435,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-39.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-38.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7470,7 +7459,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-40.tracker-network.net^",
+      "urlFilter": "||pixel-38.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7494,7 +7483,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-40.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-38.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7518,7 +7507,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-40.telemetry-feed.io^",
+      "urlFilter": "||adserver-39.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7542,7 +7531,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-40.advertising-network.com^",
+      "urlFilter": "||tracking-node-39.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7566,7 +7555,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-40.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-39.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7590,7 +7579,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-41.tracker-network.net^",
+      "urlFilter": "||pixel-39.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7614,7 +7603,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-41.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-39.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7638,7 +7627,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-41.telemetry-feed.io^",
+      "urlFilter": "||adserver-40.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7662,7 +7651,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-41.advertising-network.com^",
+      "urlFilter": "||tracking-node-40.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7686,7 +7675,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-41.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-40.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7710,7 +7699,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-42.tracker-network.net^",
+      "urlFilter": "||pixel-40.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7734,7 +7723,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-42.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-40.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7758,7 +7747,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-42.telemetry-feed.io^",
+      "urlFilter": "||adserver-41.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7782,7 +7771,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-42.advertising-network.com^",
+      "urlFilter": "||tracking-node-41.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7806,7 +7795,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-42.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-41.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7830,7 +7819,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-43.tracker-network.net^",
+      "urlFilter": "||pixel-41.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7854,7 +7843,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-43.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-41.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7878,7 +7867,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-43.telemetry-feed.io^",
+      "urlFilter": "||adserver-42.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7902,7 +7891,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-43.advertising-network.com^",
+      "urlFilter": "||tracking-node-42.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7926,7 +7915,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-43.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-42.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7950,7 +7939,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-44.tracker-network.net^",
+      "urlFilter": "||pixel-42.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7974,7 +7963,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-44.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-42.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -7998,7 +7987,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-44.telemetry-feed.io^",
+      "urlFilter": "||adserver-43.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8022,7 +8011,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-44.advertising-network.com^",
+      "urlFilter": "||tracking-node-43.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8046,7 +8035,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-44.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-43.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8070,7 +8059,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-45.tracker-network.net^",
+      "urlFilter": "||pixel-43.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8094,7 +8083,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-45.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-43.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8118,7 +8107,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-45.telemetry-feed.io^",
+      "urlFilter": "||adserver-44.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8142,7 +8131,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-45.advertising-network.com^",
+      "urlFilter": "||tracking-node-44.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8166,7 +8155,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-45.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-44.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8190,7 +8179,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-46.tracker-network.net^",
+      "urlFilter": "||pixel-44.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8214,7 +8203,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-46.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-44.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8238,7 +8227,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-46.telemetry-feed.io^",
+      "urlFilter": "||adserver-45.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8262,7 +8251,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-46.advertising-network.com^",
+      "urlFilter": "||tracking-node-45.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8286,7 +8275,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-46.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-45.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8310,7 +8299,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-47.tracker-network.net^",
+      "urlFilter": "||pixel-45.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8334,7 +8323,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-47.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-45.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8358,7 +8347,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-47.telemetry-feed.io^",
+      "urlFilter": "||adserver-46.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8382,7 +8371,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-47.advertising-network.com^",
+      "urlFilter": "||tracking-node-46.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8406,7 +8395,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-47.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-46.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8430,7 +8419,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-48.tracker-network.net^",
+      "urlFilter": "||pixel-46.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8454,7 +8443,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-48.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-46.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8478,7 +8467,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-48.telemetry-feed.io^",
+      "urlFilter": "||adserver-47.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8502,7 +8491,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-48.advertising-network.com^",
+      "urlFilter": "||tracking-node-47.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8526,7 +8515,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-48.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-47.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8550,7 +8539,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-49.tracker-network.net^",
+      "urlFilter": "||pixel-47.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8574,7 +8563,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-49.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-47.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8598,7 +8587,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-49.telemetry-feed.io^",
+      "urlFilter": "||adserver-48.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8622,7 +8611,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-49.advertising-network.com^",
+      "urlFilter": "||tracking-node-48.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8646,7 +8635,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-49.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-48.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8670,7 +8659,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-50.tracker-network.net^",
+      "urlFilter": "||pixel-48.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8694,7 +8683,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-50.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-48.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8718,7 +8707,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-50.telemetry-feed.io^",
+      "urlFilter": "||adserver-49.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8742,7 +8731,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-50.advertising-network.com^",
+      "urlFilter": "||tracking-node-49.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8766,7 +8755,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-50.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-49.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8790,7 +8779,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-51.tracker-network.net^",
+      "urlFilter": "||pixel-49.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8814,7 +8803,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-51.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-49.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8838,7 +8827,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-51.telemetry-feed.io^",
+      "urlFilter": "||adserver-50.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8862,7 +8851,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-51.advertising-network.com^",
+      "urlFilter": "||tracking-node-50.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8886,7 +8875,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-51.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-50.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8910,7 +8899,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-52.tracker-network.net^",
+      "urlFilter": "||pixel-50.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8934,7 +8923,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-52.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-50.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8958,7 +8947,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-52.telemetry-feed.io^",
+      "urlFilter": "||adserver-51.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -8982,7 +8971,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-52.advertising-network.com^",
+      "urlFilter": "||tracking-node-51.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9006,7 +8995,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-52.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-51.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9030,7 +9019,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-53.tracker-network.net^",
+      "urlFilter": "||pixel-51.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9054,7 +9043,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-53.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-51.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9078,7 +9067,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-53.telemetry-feed.io^",
+      "urlFilter": "||adserver-52.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9102,7 +9091,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-53.advertising-network.com^",
+      "urlFilter": "||tracking-node-52.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9126,7 +9115,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-53.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-52.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9150,7 +9139,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-54.tracker-network.net^",
+      "urlFilter": "||pixel-52.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9174,7 +9163,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-54.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-52.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9198,7 +9187,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-54.telemetry-feed.io^",
+      "urlFilter": "||adserver-53.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9222,7 +9211,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-54.advertising-network.com^",
+      "urlFilter": "||tracking-node-53.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9246,7 +9235,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-54.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-53.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9270,7 +9259,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-55.tracker-network.net^",
+      "urlFilter": "||pixel-53.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9294,7 +9283,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-55.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-53.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9318,7 +9307,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-55.telemetry-feed.io^",
+      "urlFilter": "||adserver-54.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9342,7 +9331,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-55.advertising-network.com^",
+      "urlFilter": "||tracking-node-54.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9366,7 +9355,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-55.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-54.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9390,7 +9379,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-56.tracker-network.net^",
+      "urlFilter": "||pixel-54.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9414,7 +9403,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-56.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-54.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9438,7 +9427,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-56.telemetry-feed.io^",
+      "urlFilter": "||adserver-55.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9462,7 +9451,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-56.advertising-network.com^",
+      "urlFilter": "||tracking-node-55.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9486,7 +9475,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-56.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-55.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9510,7 +9499,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-57.tracker-network.net^",
+      "urlFilter": "||pixel-55.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9534,7 +9523,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-57.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-55.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9558,7 +9547,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-57.telemetry-feed.io^",
+      "urlFilter": "||adserver-56.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9582,7 +9571,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-57.advertising-network.com^",
+      "urlFilter": "||tracking-node-56.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9606,7 +9595,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-57.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-56.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9630,7 +9619,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-58.tracker-network.net^",
+      "urlFilter": "||pixel-56.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9654,7 +9643,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-58.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-56.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9678,7 +9667,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-58.telemetry-feed.io^",
+      "urlFilter": "||adserver-57.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9702,7 +9691,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-58.advertising-network.com^",
+      "urlFilter": "||tracking-node-57.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9726,7 +9715,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-58.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-57.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9750,7 +9739,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-59.tracker-network.net^",
+      "urlFilter": "||pixel-57.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9774,7 +9763,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-59.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-57.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9798,7 +9787,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-59.telemetry-feed.io^",
+      "urlFilter": "||adserver-58.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9822,7 +9811,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-59.advertising-network.com^",
+      "urlFilter": "||tracking-node-58.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9846,7 +9835,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-59.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-58.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9870,7 +9859,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-60.tracker-network.net^",
+      "urlFilter": "||pixel-58.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9894,7 +9883,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-60.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-58.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9918,7 +9907,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-60.telemetry-feed.io^",
+      "urlFilter": "||adserver-59.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9942,7 +9931,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-60.advertising-network.com^",
+      "urlFilter": "||tracking-node-59.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9966,7 +9955,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-60.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-59.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -9990,7 +9979,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-61.tracker-network.net^",
+      "urlFilter": "||pixel-59.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10014,7 +10003,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-61.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-59.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10038,7 +10027,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-61.telemetry-feed.io^",
+      "urlFilter": "||adserver-60.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10062,7 +10051,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-61.advertising-network.com^",
+      "urlFilter": "||tracking-node-60.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10086,7 +10075,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-61.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-60.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10110,7 +10099,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-62.tracker-network.net^",
+      "urlFilter": "||pixel-60.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10134,7 +10123,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-62.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-60.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10158,7 +10147,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-62.telemetry-feed.io^",
+      "urlFilter": "||adserver-61.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10182,7 +10171,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-62.advertising-network.com^",
+      "urlFilter": "||tracking-node-61.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10206,7 +10195,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-62.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-61.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10230,7 +10219,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-63.tracker-network.net^",
+      "urlFilter": "||pixel-61.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10254,7 +10243,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-63.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-61.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10278,7 +10267,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-63.telemetry-feed.io^",
+      "urlFilter": "||adserver-62.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10302,7 +10291,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-63.advertising-network.com^",
+      "urlFilter": "||tracking-node-62.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10326,7 +10315,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-63.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-62.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10350,7 +10339,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-64.tracker-network.net^",
+      "urlFilter": "||pixel-62.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10374,7 +10363,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-64.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-62.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10398,7 +10387,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-64.telemetry-feed.io^",
+      "urlFilter": "||adserver-63.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10422,7 +10411,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-64.advertising-network.com^",
+      "urlFilter": "||tracking-node-63.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10446,7 +10435,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-64.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-63.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10470,7 +10459,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-65.tracker-network.net^",
+      "urlFilter": "||pixel-63.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10494,7 +10483,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-65.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-63.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10518,7 +10507,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-65.telemetry-feed.io^",
+      "urlFilter": "||adserver-64.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10542,7 +10531,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-65.advertising-network.com^",
+      "urlFilter": "||tracking-node-64.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10566,7 +10555,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-65.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-64.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10590,7 +10579,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-66.tracker-network.net^",
+      "urlFilter": "||pixel-64.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10614,7 +10603,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-66.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-64.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10638,7 +10627,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-66.telemetry-feed.io^",
+      "urlFilter": "||adserver-65.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10662,7 +10651,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-66.advertising-network.com^",
+      "urlFilter": "||tracking-node-65.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10686,7 +10675,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-66.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-65.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10710,7 +10699,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-67.tracker-network.net^",
+      "urlFilter": "||pixel-65.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10734,7 +10723,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-67.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-65.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10758,7 +10747,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-67.telemetry-feed.io^",
+      "urlFilter": "||adserver-66.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10782,7 +10771,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-67.advertising-network.com^",
+      "urlFilter": "||tracking-node-66.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10806,7 +10795,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-67.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-66.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10830,7 +10819,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-68.tracker-network.net^",
+      "urlFilter": "||pixel-66.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10854,7 +10843,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-68.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-66.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10878,7 +10867,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-68.telemetry-feed.io^",
+      "urlFilter": "||adserver-67.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10902,7 +10891,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-68.advertising-network.com^",
+      "urlFilter": "||tracking-node-67.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10926,7 +10915,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-68.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-67.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10950,7 +10939,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-69.tracker-network.net^",
+      "urlFilter": "||pixel-67.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10974,7 +10963,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-69.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-67.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -10998,7 +10987,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-69.telemetry-feed.io^",
+      "urlFilter": "||adserver-68.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11022,7 +11011,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-69.advertising-network.com^",
+      "urlFilter": "||tracking-node-68.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11046,7 +11035,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-69.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-68.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11070,7 +11059,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-70.tracker-network.net^",
+      "urlFilter": "||pixel-68.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11094,7 +11083,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-70.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-68.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11118,7 +11107,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-70.telemetry-feed.io^",
+      "urlFilter": "||adserver-69.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11142,7 +11131,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-70.advertising-network.com^",
+      "urlFilter": "||tracking-node-69.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11166,7 +11155,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-70.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-69.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11190,7 +11179,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-71.tracker-network.net^",
+      "urlFilter": "||pixel-69.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11214,7 +11203,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-71.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-69.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11238,7 +11227,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-71.telemetry-feed.io^",
+      "urlFilter": "||adserver-70.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11262,7 +11251,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-71.advertising-network.com^",
+      "urlFilter": "||tracking-node-70.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11286,7 +11275,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-71.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-70.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11310,7 +11299,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-72.tracker-network.net^",
+      "urlFilter": "||pixel-70.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11334,7 +11323,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-72.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-70.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11358,7 +11347,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-72.telemetry-feed.io^",
+      "urlFilter": "||adserver-71.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11382,7 +11371,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-72.advertising-network.com^",
+      "urlFilter": "||tracking-node-71.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11406,7 +11395,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-72.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-71.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11430,7 +11419,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-73.tracker-network.net^",
+      "urlFilter": "||pixel-71.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11454,7 +11443,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-73.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-71.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11478,7 +11467,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-73.telemetry-feed.io^",
+      "urlFilter": "||adserver-72.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11502,7 +11491,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-73.advertising-network.com^",
+      "urlFilter": "||tracking-node-72.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11526,7 +11515,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-73.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-72.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11550,7 +11539,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-74.tracker-network.net^",
+      "urlFilter": "||pixel-72.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11574,7 +11563,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-74.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-72.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11598,7 +11587,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-74.telemetry-feed.io^",
+      "urlFilter": "||adserver-73.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11622,7 +11611,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-74.advertising-network.com^",
+      "urlFilter": "||tracking-node-73.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11646,7 +11635,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-74.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-73.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11670,7 +11659,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-75.tracker-network.net^",
+      "urlFilter": "||pixel-73.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11694,7 +11683,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-75.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-73.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11718,7 +11707,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-75.telemetry-feed.io^",
+      "urlFilter": "||adserver-74.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11742,7 +11731,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-75.advertising-network.com^",
+      "urlFilter": "||tracking-node-74.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11766,7 +11755,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-75.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-74.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11790,7 +11779,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-76.tracker-network.net^",
+      "urlFilter": "||pixel-74.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11814,7 +11803,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-76.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-74.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11838,7 +11827,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-76.telemetry-feed.io^",
+      "urlFilter": "||adserver-75.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11862,7 +11851,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-76.advertising-network.com^",
+      "urlFilter": "||tracking-node-75.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11886,7 +11875,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-76.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-75.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11910,7 +11899,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-77.tracker-network.net^",
+      "urlFilter": "||pixel-75.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11934,7 +11923,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-77.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-75.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11958,7 +11947,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-77.telemetry-feed.io^",
+      "urlFilter": "||adserver-76.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -11982,7 +11971,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-77.advertising-network.com^",
+      "urlFilter": "||tracking-node-76.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12006,7 +11995,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-77.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-76.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12030,7 +12019,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-78.tracker-network.net^",
+      "urlFilter": "||pixel-76.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12054,7 +12043,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-78.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-76.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12078,7 +12067,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-78.telemetry-feed.io^",
+      "urlFilter": "||adserver-77.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12102,7 +12091,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-78.advertising-network.com^",
+      "urlFilter": "||tracking-node-77.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12126,7 +12115,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-78.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-77.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12150,7 +12139,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-79.tracker-network.net^",
+      "urlFilter": "||pixel-77.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12174,7 +12163,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-79.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-77.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12198,7 +12187,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-79.telemetry-feed.io^",
+      "urlFilter": "||adserver-78.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12222,7 +12211,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-79.advertising-network.com^",
+      "urlFilter": "||tracking-node-78.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12246,7 +12235,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-79.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-78.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12270,7 +12259,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-80.tracker-network.net^",
+      "urlFilter": "||pixel-78.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12294,7 +12283,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-80.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-78.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12318,7 +12307,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-80.telemetry-feed.io^",
+      "urlFilter": "||adserver-79.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12342,7 +12331,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-80.advertising-network.com^",
+      "urlFilter": "||tracking-node-79.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12366,7 +12355,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-80.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-79.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12390,7 +12379,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-81.tracker-network.net^",
+      "urlFilter": "||pixel-79.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12414,7 +12403,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-81.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-79.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12438,7 +12427,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-81.telemetry-feed.io^",
+      "urlFilter": "||adserver-80.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12462,7 +12451,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-81.advertising-network.com^",
+      "urlFilter": "||tracking-node-80.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12486,7 +12475,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-81.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-80.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12510,7 +12499,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-82.tracker-network.net^",
+      "urlFilter": "||pixel-80.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12534,7 +12523,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-82.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-80.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12558,7 +12547,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-82.telemetry-feed.io^",
+      "urlFilter": "||adserver-81.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12582,7 +12571,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-82.advertising-network.com^",
+      "urlFilter": "||tracking-node-81.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12606,7 +12595,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-82.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-81.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12630,7 +12619,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-83.tracker-network.net^",
+      "urlFilter": "||pixel-81.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12654,7 +12643,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-83.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-81.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12678,7 +12667,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-83.telemetry-feed.io^",
+      "urlFilter": "||adserver-82.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12702,7 +12691,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-83.advertising-network.com^",
+      "urlFilter": "||tracking-node-82.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12726,7 +12715,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-83.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-82.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12750,7 +12739,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-84.tracker-network.net^",
+      "urlFilter": "||pixel-82.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12774,7 +12763,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-84.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-82.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12798,7 +12787,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-84.telemetry-feed.io^",
+      "urlFilter": "||adserver-83.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12822,7 +12811,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-84.advertising-network.com^",
+      "urlFilter": "||tracking-node-83.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12846,7 +12835,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-84.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-83.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12870,7 +12859,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-85.tracker-network.net^",
+      "urlFilter": "||pixel-83.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12894,7 +12883,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-85.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-83.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12918,7 +12907,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-85.telemetry-feed.io^",
+      "urlFilter": "||adserver-84.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12942,7 +12931,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-85.advertising-network.com^",
+      "urlFilter": "||tracking-node-84.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12966,7 +12955,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-85.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-84.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -12990,7 +12979,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-86.tracker-network.net^",
+      "urlFilter": "||pixel-84.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -13014,7 +13003,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-86.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-84.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -13038,7 +13027,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-86.telemetry-feed.io^",
+      "urlFilter": "||adserver-85.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -13062,7 +13051,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-86.advertising-network.com^",
+      "urlFilter": "||tracking-node-85.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -13086,7 +13075,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-86.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-85.telemetry-feed.io^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -13110,7 +13099,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||adserver-87.tracker-network.net^",
+      "urlFilter": "||pixel-85.advertising-network.com^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -13134,7 +13123,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||tracking-node-87.analytics-hub.org^",
+      "urlFilter": "||dsp-bidder-85.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -13158,7 +13147,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||metrics-collector-87.telemetry-feed.io^",
+      "urlFilter": "||adserver-86.tracker-network.net^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -13182,7 +13171,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||pixel-87.advertising-network.com^",
+      "urlFilter": "||tracking-node-86.analytics-hub.org^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
@@ -13206,7 +13195,55 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "||dsp-bidder-87.ad-exchange.biz^",
+      "urlFilter": "||metrics-collector-86.telemetry-feed.io^",
+      "resourceTypes": [
+        "main_frame",
+        "sub_frame",
+        "stylesheet",
+        "script",
+        "image",
+        "font",
+        "object",
+        "xmlhttprequest",
+        "ping",
+        "media",
+        "websocket",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 552,
+    "priority": 1,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||pixel-86.advertising-network.com^",
+      "resourceTypes": [
+        "main_frame",
+        "sub_frame",
+        "stylesheet",
+        "script",
+        "image",
+        "font",
+        "object",
+        "xmlhttprequest",
+        "ping",
+        "media",
+        "websocket",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 553,
+    "priority": 1,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||dsp-bidder-86.ad-exchange.biz^",
       "resourceTypes": [
         "main_frame",
         "sub_frame",
