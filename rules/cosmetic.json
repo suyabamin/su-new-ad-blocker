@@ -1,0 +1,9 @@
+{
+  "generic": [".ad-banner", ".ad-container", ".sponsor-post"],
+  "domainSpecific": {
+    "test.local": {
+      "selectors": ["#sponsor-box"],
+      "exceptions": ["#false-positive"]
+    }
+  }
+}
