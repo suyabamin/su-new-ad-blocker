@@ -4,7 +4,7 @@
     "description": "Extension name"
   },
   "extDescription": {
-    "message": "Block ads and trackers, hide ad containers, reduce YouTube ad clutter. 100% local — no data collected.",
+    "message": "Block supported ad requests, hide selected ad elements, and update filter lists without telemetry.",
     "description": "Extension description"
   },
   "optionsTitle": {
@@ -12,7 +12,7 @@
     "description": "Options page title"
   },
   "optionsSubtitle": {
-    "message": "100% Local Ad & Tracker Protection",
+    "message": "Local ad and tracker filtering with no telemetry",
     "description": "Options page subtitle"
   },
   "sectionOverview": {
@@ -20,27 +20,27 @@
     "description": "Options overview section heading"
   },
   "statLifetimeBlocked": {
-    "message": "Lifetime Blocked",
+    "message": "Lifetime network matches (debug builds)",
     "description": "Stat label for lifetime blocked count"
   },
   "statTodayBlocked": {
-    "message": "Blocked Today",
+    "message": "Network matches today (debug builds)",
     "description": "Stat label for today blocked count"
   },
   "statNetwork": {
-    "message": "Network",
+    "message": "Network requests blocked (debug builds)",
     "description": "Block type: network"
   },
   "statCosmetic": {
-    "message": "Cosmetic",
+    "message": "Cosmetic elements hidden",
     "description": "Block type: cosmetic"
   },
   "statYoutube": {
-    "message": "YouTube",
+    "message": "YouTube ad UI elements hidden",
     "description": "Block type: youtube"
   },
   "chartTitle": {
-    "message": "Blocks per day (last 7 days)",
+    "message": "Network matches per day (last 7 days; debug builds)",
     "description": "Chart title for daily activity line chart"
   },
   "sectionTopDomains": {
@@ -78,6 +78,14 @@
   "listUpdateError": {
     "message": "Update failed. Try again later.",
     "description": "Error message after list update failure"
+  },
+  "listUpdatePartial": {
+    "message": "Rules updated, but one or more filter lists could not be refreshed.",
+    "description": "Partial success after updating lists"
+  },
+  "networkStatsUnavailable": {
+    "message": "Network match counts are unavailable in this browser build.",
+    "description": "Explains that Chrome restricts DNR match diagnostics to development builds"
   },
   "sectionAllowlist": {
     "message": "Domain Allowlist",
