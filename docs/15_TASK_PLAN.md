@@ -64,7 +64,7 @@ criteria pass, lint is clean, tests pass, and verified in this session.
 
 ## Phase 6: Hardening
 
-- [ ] **T6.1** — Performance benchmark harness (`tests/perf/run.js`) measuring median added load time
+- [x] **T6.1** — Performance benchmark harness (`tests/perf/run.js`) measuring median added load time
 - [ ] **T6.2** — Accessibility verification with `@axe-core/playwright` on popup and options pages
 - [ ] **T6.3** — `npm audit` security audit and canonical permission boundary verification
 - [ ] **T6.4** — Error boundary resilience test verifying core blocking survives UI errors
@@ -73,7 +73,7 @@ criteria pass, lint is clean, tests pass, and verified in this session.
 
 ## Phase 7: Release
 
-- [ ] **T7.1** — Privacy policy documentation (`docs/PRIVACY.md`)
-- [ ] **T7.2** — Store listing documentation with accurate claims (`docs/13_STORE_LISTING.md`)
-- [ ] **T7.3** — Unpacked loading guide (`docs/LOAD_UNPACKED.md`) and production release zip packaging (`npm run package`)
-- [ ] **T7.4** — Release verification checklist, zip content verification, and git release tag (`v0.1.0`)
+- [x] **T7.1** — Privacy policy documentation (`docs/PRIVACY.md`)
+- [x] **T7.2** — Store listing documentation with accurate claims (`docs/13_STORE_LISTING.md`)
+- [x] **T7.3** — Unpacked loading guide (`docs/LOAD_UNPACKED.md`) and production release zip packaging (`npm run package`)
+- [x] **T7.4** — Release verification checklist, zip content verification, and git release tag (`v0.1.0`)
