@@ -4,14 +4,14 @@
 
 ## 1. Test Stack
 
-| Layer                      | Tool                  | Runner command          |
-| -------------------------- | --------------------- | ----------------------- |
-| Unit                       | Vitest                | `npm test`              |
-| Coverage                   | Vitest + V8           | `npm run test:coverage` |
-| Integration                | Vitest + Chrome Mock  | `npm test`              |
-| E2E (browser context)      | Playwright Chromium   | `npm run test:e2e`      |
-| Performance                | Benchmark runner      | `npm run test:perf`     |
-| Accessibility              | axe-core + Playwright | `npm run test:a11y`     |
+| Layer                 | Tool                  | Runner command          |
+| --------------------- | --------------------- | ----------------------- |
+| Unit                  | Vitest                | `npm test`              |
+| Coverage              | Vitest + V8           | `npm run test:coverage` |
+| Integration           | Vitest + Chrome Mock  | `npm test`              |
+| E2E (browser context) | Playwright Chromium   | `npm run test:e2e`      |
+| Performance           | Benchmark runner      | `npm run test:perf`     |
+| Accessibility         | axe-core + Playwright | `npm run test:a11y`     |
 
 ---
 
