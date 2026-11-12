@@ -125,12 +125,21 @@ export function copyUnchangedDirectories({
     { src: path.join(rootDir, 'rules'), dest: path.join(outDir, 'rules') },
     { src: path.join(rootDir, 'src', 'shared'), dest: path.join(outDir, 'src', 'shared') },
     { src: path.join(rootDir, 'icons'), dest: path.join(outDir, 'icons') },
+    { src: path.join(rootDir, '_locales'), dest: path.join(outDir, '_locales') },
   ];
 
   for (const { src, dest } of dirsToCopy) {
     if (fs.existsSync(src)) {
       fs.cpSync(src, dest, { recursive: true });
     }
+  }
+
+  // Copy local vendor Chart.js bundle for options page (no CDN, unbundled runtime)
+  const chartUmdSrc = path.join(rootDir, 'node_modules', 'chart.js', 'dist', 'chart.umd.js');
+  if (fs.existsSync(chartUmdSrc)) {
+    const vendorDestDir = path.join(outDir, 'src', 'options', 'vendor');
+    fs.mkdirSync(vendorDestDir, { recursive: true });
+    fs.copyFileSync(chartUmdSrc, path.join(vendorDestDir, 'chart.umd.js'));
   }
 }
 
