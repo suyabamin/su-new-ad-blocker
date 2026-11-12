@@ -10,6 +10,7 @@ export {
   getStatsSnapshot,
   resetInMemoryStats,
   setupDnrRuleMatchedListener,
+  syncMatchedRules,
   updateTopDomains,
   MAX_TOP_DOMAINS,
 } from './stats-tracker.js';
