@@ -55,10 +55,10 @@ criteria pass, lint is clean, tests pass, and verified in this session.
 
 ## Phase 5: YouTube Module
 
-- [ ] **T5.1** — YouTube page type detection and soft navigation handling (`yt-navigate-finish`)
-- [ ] **T5.2** — YouTube ad UI container selectors (`src/content/youtube/selectors.js`) verified with HTML fixtures
-- [ ] **T5.3** — YouTube module settings toggle integration
-- [ ] **T5.4** — YouTube strict scope test preventing video playback manipulation (`tests/unit/youtube-scope.test.js`)
+- [x] **T5.1** — YouTube page type detection and soft navigation handling (`yt-navigate-finish`)
+- [x] **T5.2** — YouTube ad UI container selectors (`src/content/youtube/selectors.js`) verified with HTML fixtures
+- [x] **T5.3** — YouTube module settings toggle integration
+- [x] **T5.4** — YouTube strict scope test preventing video playback manipulation (`tests/unit/youtube-scope.test.js`)
 
 ---
 
