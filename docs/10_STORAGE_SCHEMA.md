@@ -8,15 +8,15 @@ and the accessor wrapper `getWithDefaults()`. No magic strings anywhere else.
 
 ## 1. Static Key Table
 
-| JS Property      | Storage Key      | Type       | Description                                                  |
-| ---------------- | ---------------- | ---------- | ------------------------------------------------------------ |
-| `schemaVersion`  | `schemaVersion`  | `number`   | Integer schema version; increment on breaking layout changes |
-| `settings`       | `settings`       | `object`   | User settings — see Section 3 for shape                      |
-| `lists`          | `lists`          | `object`   | Map of supported list IDs to `{ enabled }` preferences       |
-| `allowlist`      | `allowlist`      | `string[]` | Domains paused from blocking                                 |
-| `customRules`    | `customRules`    | `object[]` | User-authored DNR rules                                      |
-| `stats:lifetime` | `stats:lifetime` | `object`   | `{ total, byType: { network, cosmetic, youtube } }`          |
-| `stats:meta`     | `stats:meta`     | `object`   | Reset and last successful filter-update metadata             |
+| JS Property      | Storage Key      | Type       | Description                                                          |
+| ---------------- | ---------------- | ---------- | -------------------------------------------------------------------- |
+| `schemaVersion`  | `schemaVersion`  | `number`   | Integer schema version; increment on breaking layout changes         |
+| `settings`       | `settings`       | `object`   | User settings — see Section 3 for shape                              |
+| `lists`          | `lists`          | `object`   | Map of supported list IDs to `{ enabled }` preferences               |
+| `allowlist`      | `allowlist`      | `string[]` | Domains paused from blocking                                         |
+| `customRules`    | `customRules`    | `object[]` | User-authored DNR rules                                              |
+| `stats:lifetime` | `stats:lifetime` | `object`   | `{ total, byType: { network, cosmetic, youtube, youtubeDetected } }` |
+| `stats:meta`     | `stats:meta`     | `object`   | Reset and last successful filter-update metadata                     |
 
 The additional key `stats:seenNetworkRequests` is stored in `chrome.storage.session` (not
 `chrome.storage.local`). It contains at most 2,000 recent DNR request IDs solely to deduplicate
@@ -71,7 +71,8 @@ diagnostic events across service-worker restarts. It clears with the browser ses
   byType: {
     network: 100,
     cosmetic: 15,
-    youtube: 5
+    youtube: 5,
+    youtubeDetected: 7
   },
   byList: {
     easylist: 80,
@@ -95,10 +96,17 @@ diagnostic events across service-worker restarts. It clears with the browser ses
   byType: {
     network: 1000,
     cosmetic: 150,
-    youtube: 50
+    youtube: 50,
+    youtubeDetected: 72
   }
 }
 ```
+
+`youtubeDetected` counts unique elements matched by YouTube cosmetic selectors; `youtube`
+counts unique elements successfully hidden. The UI derives “detected but not hidden” by
+subtracting the hide count from detections. These counters are additive to older stored
+schemas; missing `youtubeDetected` values load as zero. Neither counter proves a video ad
+was blocked.
 
 ---
 
