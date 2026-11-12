@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Attribute blocked network matches to the page tab, deduplicate matched-rule snapshots, and exclude paused domains from network counts.
+
+### Added
+
+- Deterministic matched-rule statistics unit coverage and popup E2E coverage for ten blocked fixture requests.
+
 ### Added
 
 - ADR-0005: Bundle content scripts with esbuild for MV3 compatibility (Option 2 of content-script module blocker fix).
