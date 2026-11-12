@@ -1,0 +1,16 @@
+{
+  "listFiles": [
+    {
+      "file": "test-fixture.txt",
+      "parsed": 15,
+      "converted": 7,
+      "skipped": {
+        "comment": 3,
+        "cosmetic_skipped": 5
+      }
+    }
+  ],
+  "totalDnr": 553,
+  "totalCosmetic": 5,
+  "totalSkipped": 8
+}
