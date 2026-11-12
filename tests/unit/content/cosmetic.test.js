@@ -1,11 +1,14 @@
 // @vitest-environment jsdom
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   buildCosmeticCss,
   injectCosmeticStyles,
   installCosmeticObserver,
   initCosmeticScript,
+  queueBlockedReport,
+  _resetQueueState,
   STYLE_ELEMENT_ID,
+  CS_REPORT_INTERVAL_MS,
 } from '../../../src/content/cosmetic.js';
 import { GENERIC_SELECTORS } from '../../../src/content/selectors.js';
 
@@ -79,5 +82,32 @@ describe('cosmetic content script (src/content/cosmetic.js)', () => {
   it('handles null/empty document safely', () => {
     expect(injectCosmeticStyles(null)).toBeNull();
     expect(installCosmeticObserver(null)).toBeNull();
+  });
+
+  describe('queueBlockedReport batched reporting', () => {
+    it('batches reporting calls within 2000ms window', () => {
+      vi.useFakeTimers();
+      _resetQueueState();
+      const sendMock = vi.fn();
+      globalThis.chrome = {
+        runtime: {
+          sendMessage: sendMock,
+        },
+      };
+
+      queueBlockedReport(2, 'example.com', 'cosmetic');
+      queueBlockedReport(3, 'example.com', 'cosmetic');
+
+      // Before timer fires: no message sent
+      expect(sendMock).not.toHaveBeenCalled();
+
+      // Advance by 2000ms
+      vi.advanceTimersByTime(CS_REPORT_INTERVAL_MS);
+
+      expect(sendMock).toHaveBeenCalledTimes(1);
+      expect(sendMock.mock.calls[0][0].payload.count).toBe(5);
+
+      vi.useRealTimers();
+    });
   });
 });
