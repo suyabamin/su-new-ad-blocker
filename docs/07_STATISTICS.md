@@ -1,65 +1,37 @@
-# 07 — Statistics
+﻿# 07 — Statistics
 
-## 1. Overview
+## 1. Separate Counters
 
-The global and per-domain totals count network requests only. Cosmetic and YouTube
-events remain available in `byType` diagnostics and do not increase these totals.
+Statistics do not combine different kinds of events:
 
-- **Global counter** — total requests blocked across all sites since last reset
-- **Per-domain counters** — requests blocked per initiator domain
+- **Network matches:** DNR rules observed through Chrome's feedback API. This is a diagnostic counter, not a reliable production total.
+- **Cosmetic elements hidden:** DOM elements selected and hidden by the generic cosmetic content script.
+- **YouTube ad UI elements hidden:** selected YouTube interface elements hidden by the cosmetic YouTube module. It does not mean a video advertisement was blocked.
 
-All counters live in `chrome.storage.local`. No data leaves the device.
+All persisted statistics remain in `chrome.storage.local` and are backward-compatible with the existing `stats:lifetime`, `stats:meta`, and `stats:day:YYYY-MM-DD` objects.
 
-## 2. Event Source
+## 2. Network Diagnostic Limits
 
-The background tracker snapshots `chrome.declarativeNetRequest.getMatchedRules()` when popup statistics are requested. New rule matches are deduplicated by tab, rule, and match timestamp, then attributed to the page hostname for that tab. Paused page domains are excluded.
+`src/background/stats-tracker.js` samples `chrome.declarativeNetRequest.getMatchedRules()` when the popup or dashboard requests statistics. Chrome describes this feedback API as a debugging feature for unpacked extensions. It may be unavailable in packaged builds, and Chrome retains some matched-rule details for only a limited period. The extension therefore:
 
-> **Note:** DNR match diagnostics require feedback permission and are intended for unpacked/debug or enterprise installs. In production store builds these diagnostics may be unavailable, so reliable network counts are not guaranteed there.
+- reports network counts as unavailable when the API is absent or rejects;
+- does not substitute cosmetic counts or estimates for network-blocked request counts;
+- labels diagnostic counts as observed matches and does not present them as complete;
+- attributes matches to a page hostname, so a site total is not an isolated browser-tab count;
+- excludes known allow-rule IDs from blocked counts.
 
-The `getMatchedRules()` API returns matched rule metadata, not request URLs. Requests are attributed to the page tab, and the API only retains certain matches for active documents for a limited period. Cosmetic statistics remain separate and are reported by the content script.
+The popup displays the active site's hostname for the pause control. Its match count is a hostname aggregate where diagnostics work; it is not a per-tab count.
 
-## 3. Storage Schema
+## 3. Cosmetic Counts
 
-See `docs/10_STORAGE_SCHEMA.md` for the full schema. Stats-relevant keys:
+Content scripts send batched `CS_BLOCKED_REPORT` messages after hiding matched nodes. Existing elements are counted when observers start; later elements are counted as they are hidden. Counts are elements, not unique ads, network requests, or proof that an advertisement was blocked.
 
-| Key (from `STORAGE_KEYS`) | Type                     | Description                  |
-| ------------------------- | ------------------------ | ---------------------------- |
-| `STATS_GLOBAL`            | `number`                 | Total blocked count          |
-| `STATS_BY_DOMAIN`         | `Record<string, number>` | Per-domain blocked count     |
-| `STATS_LAST_RESET`        | `number`                 | Unix timestamp of last reset |
+## 4. Storage and Compatibility
 
-## 4. Counter Module (`src/background/stats.js`)
+See `docs/10_STORAGE_SCHEMA.md` for storage shapes. New data is additive: existing totals, type breakdowns, top-domain maps, and daily buckets continue to load. Network values written by older versions remain stored but are hidden when Chrome does not expose diagnostics. Reset/export behavior continues to use the current canonical storage keys.
 
-```js
-// Pseudocode — not the implementation
-getMatchedRules() -> deduplicate newly observed matches -> attribute each to its tab hostname
-```
+## 5. UI
 
-- `extractDomain` strips scheme and port, returns eTLD+1 (e.g. `example.com`).
-- Writes are batched: counters are incremented in memory and flushed to `chrome.storage.local` at most once per second (debounced flush) to avoid write amplification.
-- On service worker restart, in-memory counters are initialized from `chrome.storage.local`.
-
-## 5. Statistics API (`src/background/stats-api.js`)
-
-Handles messages from popup and options page:
-
-| Message (`MSG.*`)  | Response                                                    |
-| ------------------ | ----------------------------------------------------------- |
-| `GET_GLOBAL_STATS` | `{ global: number, lastReset: number }`                     |
-| `GET_DOMAIN_STATS` | `{ domain: string, count: number }`                         |
-| `GET_TOP_DOMAINS`  | `{ domains: Array<{domain, count}> }` (top 10, sorted desc) |
-| `RESET_STATS`      | `{ ok: true }` — clears all counters                        |
-
-## 6. Reset Behavior
-
-`RESET_STATS` message:
-
-1. Sets `STATS_GLOBAL` to 0.
-2. Sets `STATS_BY_DOMAIN` to `{}`.
-3. Sets `STATS_LAST_RESET` to `Date.now()`.
-4. Clears in-memory counters.
-
-## 7. Display in UI
-
-- **Popup**: shows global count and current-domain count (queried via `MSG.GET_DOMAIN_STATS` with the active tab's domain).
-- **Options dashboard**: shows global count, last-reset timestamp, top 10 blocked domains.
+- **Popup:** site-aggregated DNR diagnostic matches when supported; separate cosmetic and YouTube UI element counts; network values are marked unavailable otherwise.
+- **Options dashboard:** lifetime/today diagnostic network matches when supported; separate hidden-element counts; top matched hostnames and the network chart are hidden when diagnostics are unavailable.
+- **Charts:** plot stored network diagnostics only when the current browser session confirms the diagnostics API works.
