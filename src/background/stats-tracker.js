@@ -32,13 +32,13 @@ let inMemoryState = {
   today: {
     date: getTodayString(),
     total: 0,
-    byType: { network: 0, cosmetic: 0, youtube: 0 },
+    byType: { network: 0, cosmetic: 0, youtube: 0, youtubeDetected: 0 },
     byList: {},
     topDomains: {},
   },
   lifetime: {
     total: 0,
-    byType: { network: 0, cosmetic: 0, youtube: 0 },
+    byType: { network: 0, cosmetic: 0, youtube: 0, youtubeDetected: 0 },
   },
   // Backward compatibility alias for existing tests
   byDomain: {},
@@ -63,13 +63,13 @@ export function resetInMemoryStats() {
     today: {
       date: getTodayString(),
       total: 0,
-      byType: { network: 0, cosmetic: 0, youtube: 0 },
+      byType: { network: 0, cosmetic: 0, youtube: 0, youtubeDetected: 0 },
       byList: {},
       topDomains: {},
     },
     lifetime: {
       total: 0,
-      byType: { network: 0, cosmetic: 0, youtube: 0 },
+      byType: { network: 0, cosmetic: 0, youtube: 0, youtubeDetected: 0 },
     },
     byDomain: {},
   };
@@ -133,6 +133,9 @@ export async function recordDnrMatchedRequest(info) {
   }
 
   await initStats();
+  if (!statsInitialized) {
+    return false;
+  }
   if (!(await rememberRequestId(requestId))) {
     return false;
   }
@@ -154,13 +157,14 @@ export async function syncMatchedRules() {
  */
 export async function initStats() {
   if (statsInitialized) {
-    return;
+    return true;
   }
   if (statsInitialization) {
-    return statsInitialization;
+    await statsInitialization;
+    return statsInitialized;
   }
   if (typeof chrome === 'undefined' || !chrome.storage || !chrome.storage.local) {
-    return;
+    return false;
   }
 
   statsInitialization = (async () => {
@@ -183,6 +187,7 @@ export async function initStats() {
           network: Number(storedLifetime.byType?.network) || 0,
           cosmetic: Number(storedLifetime.byType?.cosmetic) || 0,
           youtube: Number(storedLifetime.byType?.youtube) || 0,
+          youtubeDetected: Number(storedLifetime.byType?.youtubeDetected) || 0,
         },
       };
 
@@ -196,6 +201,7 @@ export async function initStats() {
           network: Number(storedDay.byType?.network) || 0,
           cosmetic: Number(storedDay.byType?.cosmetic) || 0,
           youtube: Number(storedDay.byType?.youtube) || 0,
+          youtubeDetected: Number(storedDay.byType?.youtubeDetected) || 0,
         },
         byList: storedDay.byList || {},
         topDomains: { ...dayTopDomains },
@@ -204,11 +210,12 @@ export async function initStats() {
       inMemoryState.byDomain = { ...dayTopDomains };
 
       const session = globalThis.chrome?.storage?.session;
-      if (session?.get) {
-        const seen = await session.get(STORAGE_KEYS['stats:seenNetworkRequests']);
-        const storedRequestIds = seen[STORAGE_KEYS['stats:seenNetworkRequests']];
-        processedRequestIds = new Set(Array.isArray(storedRequestIds) ? storedRequestIds : []);
+      if (!session?.get || !session?.set) {
+        throw new Error('Session storage is required for reliable DNR event deduplication');
       }
+      const seen = await session.get(STORAGE_KEYS['stats:seenNetworkRequests']);
+      const storedRequestIds = seen[STORAGE_KEYS['stats:seenNetworkRequests']];
+      processedRequestIds = new Set(Array.isArray(storedRequestIds) ? storedRequestIds : []);
 
       statsInitialized = true;
       logger.info(
@@ -221,7 +228,8 @@ export async function initStats() {
   })().finally(() => {
     statsInitialization = null;
   });
-  return statsInitialization;
+  await statsInitialization;
+  return statsInitialized;
 }
 
 /**
@@ -275,14 +283,14 @@ export function recordBlockEvent(
     inMemoryState.today = {
       date: todayStr,
       total: 0,
-      byType: { network: 0, cosmetic: 0, youtube: 0 },
+      byType: { network: 0, cosmetic: 0, youtube: 0, youtubeDetected: 0 },
       byList: {},
       topDomains: {},
     };
     inMemoryState.byDomain = {};
   }
 
-  const validTypes = ['network', 'cosmetic', 'youtube'];
+  const validTypes = ['network', 'cosmetic', 'youtube', 'youtubeDetected'];
   const blockType = validTypes.includes(type) ? type : 'network';
 
   inMemoryState.today.byType[blockType] = (inMemoryState.today.byType[blockType] || 0) + count;
