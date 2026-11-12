@@ -14,6 +14,7 @@
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest --passWithNoTests",
     "test:coverage": "vitest run --coverage --passWithNoTests",
+    "pretest:e2e": "npm run build",
     "test:e2e": "playwright test --pass-with-no-tests",
     "test:perf": "node -e \"console.log('Placeholder for test:perf (Phase 5/future)'); process.exit(0);\"",
     "test:a11y": "node -e \"console.log('Placeholder for test:a11y (Phase 5/future)'); process.exit(0);\"",
