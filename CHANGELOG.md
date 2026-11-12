@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- HTTPS downloads and local compilation of supported EasyList and EasyPrivacy filters, with a daily alarm and manual/list-toggle updates.
+- Conservative shared filter compiler tests for DNR resource, domain, party, exception, and unsupported modifiers.
+- Production ruleset separation from test fixtures and removal of synthetic filler rules.
+
+### Changed
+
+- Filter updates now atomically replace managed dynamic rules and preserve the prior rules on fetch, validation, or DNR failure.
+- Statistics and UI distinguish network diagnostics from cosmetic and YouTube UI elements; unavailable network diagnostics are not estimated.
+- Network counters are labeled as approximate site-aggregated diagnostics rather than per-tab counts.
+
+### Fixed
+
+- Filter-list toggles now update the installed rules and revert on failure.
+- Cosmetic startup scans report elements hidden before the mutation observer begins.
+
+### Security
+
+- Filter downloads use fixed HTTPS endpoints, omit credentials, reject redirects, limit response bytes, validate source identity, and never execute or persist list text.
+
 ## [0.1.0] - 2026-11-13
 
 ### Added
