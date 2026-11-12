@@ -83,13 +83,13 @@ does not establish a successful manual install.
 
 ## Baseline automated validation
 
-| Command | Result |
-| --- | --- |
-| `npm.cmd run lint` | Passed; ESLint and Prettier clean |
-| `npm.cmd test` | 26 files, 198 tests passed |
-| `npm.cmd run test:coverage` | Passed; 84.69% statements, 79.55% branches, 86.69% functions, 84.60% lines |
-| `npm.cmd run build` | Passed |
-| `npm.cmd run test:e2e` | 7 passed in Playwright Chromium, including an `ERR_BLOCKED_BY_CLIENT` DNR fixture check |
-| Performance baseline | Existing committed 10-run report: 1.70 ms median added load time; it was not regenerated during this baseline audit |
+| Command                     | Result                                                                                                              |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `npm.cmd run lint`          | Passed; ESLint and Prettier clean                                                                                   |
+| `npm.cmd test`              | 26 files, 198 tests passed                                                                                          |
+| `npm.cmd run test:coverage` | Passed; 84.69% statements, 79.55% branches, 86.69% functions, 84.60% lines                                          |
+| `npm.cmd run build`         | Passed                                                                                                              |
+| `npm.cmd run test:e2e`      | 7 passed in Playwright Chromium, including an `ERR_BLOCKED_BY_CLIENT` DNR fixture check                             |
+| Performance baseline        | Existing committed 10-run report: 1.70 ms median added load time; it was not regenerated during this baseline audit |
 
 These automated checks do not demonstrate live YouTube advertisement blocking.
