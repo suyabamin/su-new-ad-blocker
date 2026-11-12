@@ -7,6 +7,7 @@ import {
   buildDnrRulesFromDomains,
   extractDomainsFromFilterList,
   parseEasyListRule,
+  parseCosmeticRule,
   CANONICAL_DOMAINS,
 } from '../../../scripts/build-rules.js';
 
@@ -230,6 +231,32 @@ describe('build-rules script (scripts/build-rules.js)', () => {
       expect(report.totalDnr).toBeGreaterThanOrEqual(500);
       expect(report).toHaveProperty('totalCosmetic');
       expect(report).toHaveProperty('totalSkipped');
+    });
+
+    it('parses cosmetic rules and writes rules/cosmetic.json', async () => {
+      expect(parseCosmeticRule('##.ad-banner')).toEqual({
+        type: 'generic',
+        domains: [],
+        selector: '.ad-banner',
+      });
+      expect(parseCosmeticRule('example.com##.sponsor')).toEqual({
+        type: 'domain',
+        domains: ['example.com'],
+        selector: '.sponsor',
+      });
+      expect(parseCosmeticRule('example.com#@#.false-positive')).toEqual({
+        type: 'exception',
+        domains: ['example.com'],
+        selector: '.false-positive',
+      });
+
+      const cosmeticPath = path.resolve(__dirname, '../../../rules/cosmetic.json');
+      expect(fs.existsSync(cosmeticPath)).toBe(true);
+      const cosmeticData = JSON.parse(fs.readFileSync(cosmeticPath, 'utf8'));
+      expect(Array.isArray(cosmeticData.generic)).toBe(true);
+      expect(cosmeticData.generic).toContain('.ad-banner');
+      expect(cosmeticData.domainSpecific['test.local'].selectors).toContain('#sponsor-box');
+      expect(cosmeticData.domainSpecific['test.local'].exceptions).toContain('#false-positive');
     });
   });
 });
