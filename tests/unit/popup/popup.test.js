@@ -5,10 +5,16 @@ import {
   updatePauseButton,
   initPopup,
   UI_STRINGS,
+  formatNetworkCount,
 } from '../../../src/popup/popup.js';
 import { MSG } from '../../../src/shared/messages.js';
 
 describe('popup module (src/popup/popup.js)', () => {
+  it('does not display a fabricated network count when diagnostics are unavailable', () => {
+    expect(formatNetworkCount(false, 900)).toBe(UI_STRINGS.NETWORK_UNAVAILABLE);
+    expect(formatNetworkCount(true, 0)).toBe('0');
+  });
+
   beforeEach(() => {
     document.body.innerHTML = `
       <div id="status-container" hidden></div>
@@ -76,12 +82,16 @@ describe('popup module (src/popup/popup.js)', () => {
 
       globalThis.chrome.runtime.sendMessage.mockImplementation((msg, cb) => {
         if (msg.type === MSG.GET_TAB_STATS) {
-          cb({ ok: true, data: { count: 7, hostname: 'news.ycombinator.com' } });
+          cb({
+            ok: true,
+            data: { count: 7, hostname: 'news.ycombinator.com', available: true },
+          });
         } else if (msg.type === MSG.GET_TODAY_SUMMARY) {
           cb({
             ok: true,
             data: {
               todayBlocked: 42,
+              networkStatsAvailable: true,
               byType: { network: 30, cosmetic: 10, youtube: 2 },
             },
           });
