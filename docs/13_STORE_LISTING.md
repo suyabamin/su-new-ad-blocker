@@ -1,4 +1,4 @@
-# 13 — Store Listing
+﻿# 13 — Store Listing
 
 ## Extension name
 
@@ -6,29 +6,25 @@
 
 ## Short description
 
-Blocks requests matching bundled rules, hides selected ad containers, and stores blocking counts locally.
+Blocks supported ad and tracker requests, hides selected ad elements, and stores statistics locally.
 
 ## Full description
 
-SU New Ad Blocker is a Manifest V3 extension for Chromium browsers. It uses the browser's
-declarativeNetRequest engine to block network requests that match its bundled rules. Cosmetic
-selectors hide selected ad containers, and the YouTube module hides selected ad interface elements.
+SU New Ad Blocker is a Manifest V3 extension for Chromium browsers. It uses the browser's declarativeNetRequest engine with a bundled fallback ruleset and supported rules compiled locally from EasyList and EasyPrivacy. Cosmetic selectors hide selected ad containers. The YouTube module hides selected ad interface elements without changing video or audio playback.
 
-The popup shows current-site and daily counts. The Options page provides statistics, a domain
-allowlist, filter-list settings, and custom declarativeNetRequest rules.
+The popup provides a site pause control and local element counts. DNR network match diagnostics are shown only when Chrome exposes its debugging API; these counts are sampled and site-aggregated, not per-tab or guaranteed totals. The Options page manages filter lists, a domain allowlist, custom declarativeNetRequest rules, and local data export/reset.
 
 ### Known limitations
 
-- The bundled rules and selectors do not catch every advertisement or tracker.
-- YouTube video ads are not blocked by design. The YouTube module only hides selected interface
-  containers and does not manipulate video or audio playback.
-- The current filter-list updater records local update metadata; it does not download filter lists.
+- The extension converts only a bounded subset of EasyList/EasyPrivacy syntax to DNR. Unsupported modifiers are skipped, and browser rule quotas limit the number installed.
+- The bundled baseline is limited; broader rules are added after a valid list update. Failed updates leave the last working rules active.
+- Cosmetic counts represent hidden DOM elements, not distinct advertisements or network requests.
+- YouTube video ads are not blocked by design. The YouTube module only hides selected interface elements and does not manipulate playback.
+- Network diagnostic counts may be unavailable in packaged builds because Chrome restricts DNR feedback APIs. The UI reports them as unavailable rather than estimating them.
 
 ### Privacy
 
-Settings and blocking statistics are stored in `chrome.storage.local`. The extension does not send
-stored settings or statistics to a server and does not include telemetry or analytics. See
-[`docs/PRIVACY.md`](PRIVACY.md) for the data keys and current network behavior.
+Settings and statistics stay in `chrome.storage.local`. The extension downloads filter-list text only from the HTTPS URLs documented in [`lists/SOURCES.md`](../lists/SOURCES.md), sends no telemetry, and does not execute downloaded data. See [`docs/PRIVACY.md`](PRIVACY.md) for stored keys and data controls.
 
 ## Category
 
@@ -38,11 +34,10 @@ Productivity
 
 Prepare screenshots at 1280×800 or 640×400. Suggested views:
 
-1. Popup showing current-site and daily counts.
+1. Popup showing the site pause control and separate network diagnostic/element counters.
 2. Options page showing statistics and the allowlist.
 3. A page where selected ad interface containers are hidden.
 
 ## Privacy policy URL
 
-Publish `docs/PRIVACY.md` at a stable public URL and enter that URL in the store listing before
-submission.
+Publish `docs/PRIVACY.md` at a stable public URL and enter that URL in the store listing before submission.
