@@ -4,7 +4,7 @@
   "name": "SU New Ad Blocker",
   "short_name": "SU Ad Blocker",
   "version": "0.1.0",
-  "description": "Block ads and trackers, hide ad containers, reduce YouTube ad clutter. 100% local — no data collected.",
+  "description": "Block supported ad and tracker requests, hide selected ad elements, and update filter lists without telemetry.",
   "permissions": [
     "declarativeNetRequest",
     "declarativeNetRequestFeedback",
