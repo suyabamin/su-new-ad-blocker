@@ -1,7 +1,5 @@
-// Popup script: handles popup UI interactions and displays live blocking statistics.
-// hostname detection removed: tabs permission is not in canonical allowed list;
-// activeTab does not expose tab URLs via chrome.tabs.query. Stats are today-only.
-// See docs/15_TASK_PLAN.md TG.1
+// src/popup/popup.js
+// Handles popup UI interactions, queries live statistics, and toggles site blocking pause.
 
 import { MSG } from '../shared/messages.js';
 
@@ -9,6 +7,8 @@ export const UI_STRINGS = Object.freeze({
   PAUSE_BUTTON_ACTIVE: 'Blocking Paused on this site',
   PAUSE_BUTTON_INACTIVE: 'Pause on this site',
   NO_ACTIVE_SITE: 'No active webpage',
+  RESTRICTED_PAGE: 'Restricted Page',
+  RESTRICTED_MESSAGE: 'Ad blocking cannot run on internal or restricted browser pages.',
 });
 
 /**
@@ -30,15 +30,65 @@ export function updatePauseButton(button, isPaused) {
 }
 
 /**
- * Initializes popup UI listeners and queries background for today's global stats.
- * Per-tab hostname stats require the `tabs` permission which is not in the canonical
- * allowed list; that feature is deferred. Only today's total is shown.
+ * Checks if a URL is a restricted browser internal page.
+ * @param {string} url
+ * @returns {boolean}
+ */
+export function isRestrictedUrl(url) {
+  if (!url || typeof url !== 'string') {
+    return true;
+  }
+  return (
+    url.startsWith('chrome://') ||
+    url.startsWith('chrome-extension://') ||
+    url.startsWith('edge://') ||
+    url.startsWith('about:') ||
+    url.startsWith('devtools://')
+  );
+}
+
+/**
+ * Queries the active tab's hostname using activeTab permission.
+ * @returns {Promise<string|null>} Hostname or null if restricted/unavailable
+ */
+export async function getActiveTabHostname() {
+  if (typeof chrome === 'undefined' || !chrome.tabs || !chrome.tabs.query) {
+    return null;
+  }
+  return new Promise((resolve) => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      const activeTab = tabs && tabs[0];
+      if (!activeTab || !activeTab.url) {
+        resolve(null);
+        return;
+      }
+      if (isRestrictedUrl(activeTab.url)) {
+        resolve(null);
+        return;
+      }
+      try {
+        const urlObj = new URL(activeTab.url);
+        resolve(urlObj.hostname.toLowerCase());
+      } catch {
+        resolve(null);
+      }
+    });
+  });
+}
+
+/**
+ * Initializes popup UI listeners and queries background for live stats.
  */
 export async function initPopup() {
   const siteDisplay = document.getElementById('current-site-display');
   const pauseButton = document.getElementById('pause-site-button');
+  const tabBlockedDisplay = document.getElementById('tab-blocked-count');
   const todayBlockedDisplay = document.getElementById('today-blocked-count');
   const openOptionsButton = document.getElementById('open-options-button');
+  const statusContainer = document.getElementById('status-container');
+  const networkDisplay = document.getElementById('count-network');
+  const cosmeticDisplay = document.getElementById('count-cosmetic');
+  const youtubeDisplay = document.getElementById('count-youtube');
 
   if (openOptionsButton && typeof chrome !== 'undefined' && chrome.runtime?.openOptionsPage) {
     openOptionsButton.addEventListener('click', () => {
@@ -46,32 +96,62 @@ export async function initPopup() {
     });
   }
 
-  // Show placeholder — per-site hostname requires the tabs permission (not granted).
-  if (siteDisplay) {
-    siteDisplay.textContent = UI_STRINGS.NO_ACTIVE_SITE;
+  const hostname = await getActiveTabHostname();
+
+  if (hostname) {
+    if (siteDisplay) {
+      siteDisplay.textContent = hostname;
+    }
+
+    if (typeof chrome !== 'undefined' && chrome.runtime?.sendMessage) {
+      chrome.runtime.sendMessage({ type: MSG.GET_TAB_STATS, payload: { hostname } }, (response) => {
+        if (response?.ok && tabBlockedDisplay) {
+          tabBlockedDisplay.textContent = String(response.data?.count || 0);
+        }
+      });
+    }
+
+    if (pauseButton && typeof chrome !== 'undefined' && chrome.runtime?.sendMessage) {
+      pauseButton.addEventListener('click', () => {
+        chrome.runtime.sendMessage(
+          { type: MSG.TOGGLE_PAUSE_SITE, payload: { domain: hostname } },
+          (response) => {
+            if (response?.ok) {
+              updatePauseButton(pauseButton, Boolean(response.data?.isPaused));
+            }
+          }
+        );
+      });
+    }
+  } else {
+    if (siteDisplay) {
+      siteDisplay.textContent = UI_STRINGS.RESTRICTED_PAGE;
+    }
+    if (statusContainer) {
+      statusContainer.textContent = UI_STRINGS.RESTRICTED_MESSAGE;
+      statusContainer.removeAttribute('hidden');
+    }
+    if (pauseButton) {
+      pauseButton.setAttribute('disabled', 'true');
+    }
   }
 
-  // Request today summary stats from the background service worker.
   if (typeof chrome !== 'undefined' && chrome.runtime?.sendMessage) {
     chrome.runtime.sendMessage({ type: MSG.GET_TODAY_SUMMARY }, (response) => {
-      if (response?.ok && todayBlockedDisplay) {
-        todayBlockedDisplay.textContent = String(response.data.todayBlocked || 0);
-      }
-    });
-  }
-
-  // Set up pause site button toggle — hostname is empty until tabs permission is added.
-  if (pauseButton && typeof chrome !== 'undefined' && chrome.runtime?.sendMessage) {
-    pauseButton.addEventListener('click', () => {
-      const currentlyPaused = pauseButton.getAttribute('aria-checked') === 'true';
-      const newPausedState = !currentlyPaused;
-
-      chrome.runtime.sendMessage(
-        { type: MSG.TOGGLE_PAUSE_SITE, hostname: '', paused: newPausedState },
-        () => {
-          updatePauseButton(pauseButton, newPausedState);
+      if (response?.ok && response.data) {
+        if (todayBlockedDisplay) {
+          todayBlockedDisplay.textContent = String(response.data.todayBlocked || 0);
         }
-      );
+        if (networkDisplay) {
+          networkDisplay.textContent = String(response.data.byType?.network || 0);
+        }
+        if (cosmeticDisplay) {
+          cosmeticDisplay.textContent = String(response.data.byType?.cosmetic || 0);
+        }
+        if (youtubeDisplay) {
+          youtubeDisplay.textContent = String(response.data.byType?.youtube || 0);
+        }
+      }
     });
   }
 }
