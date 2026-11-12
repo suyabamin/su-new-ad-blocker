@@ -46,6 +46,13 @@ describe('YouTube cosmetic module (src/content/youtube.js)', () => {
     expect(YOUTUBE_SELECTORS).toContain('ytd-player-legacy-desktop-watch-ads-renderer');
     expect(YOUTUBE_SELECTORS).toContain('#player-ads');
     expect(YOUTUBE_SELECTORS).toContain('.ytd-promoted-video-renderer');
+    expect(YOUTUBE_SELECTORS).toContain(
+      '.ytd-section-list-renderer > .ytd-item-section-renderer > ytd-search-pyv-renderer.ytd-item-section-renderer'
+    );
+    expect(YOUTUBE_SELECTORS).toContain(
+      '#shorts-inner-container > .ytd-shorts:has(> .ytd-reel-video-renderer > ytd-ad-slot-renderer)'
+    );
+    expect(YOUTUBE_SELECTORS).toContain('ytm-rich-item-renderer > ad-slot-renderer');
   });
 
   it('none of the forbidden selectors appear in YOUTUBE_SELECTORS (AC-TF.2-2)', () => {
@@ -86,6 +93,59 @@ describe('YouTube cosmetic module (src/content/youtube.js)', () => {
     expect(adContainer.style.display).toBe('none');
   });
 
+  it('hides scoped feed, search, sidebar, Shorts, banner, and sponsored fixtures', () => {
+    document.body.innerHTML = `
+      <div id="masthead-ad"></div>
+      <div class="ytd-section-list-renderer"><div class="ytd-item-section-renderer"><ytd-search-pyv-renderer class="ytd-item-section-renderer"></ytd-search-pyv-renderer></div></div>
+      <div id="contents"><ytd-rich-item-renderer><ytd-ad-slot-renderer></ytd-ad-slot-renderer></ytd-rich-item-renderer></div>
+      <ytd-watch-next-secondary-results-renderer><ytd-ad-slot-renderer></ytd-ad-slot-renderer></ytd-watch-next-secondary-results-renderer>
+      <div id="shorts-inner-container"><div class="ytd-shorts"><div class="ytd-reel-video-renderer"><ytd-ad-slot-renderer></ytd-ad-slot-renderer></div></div></div>
+      <ytd-promoted-sparkles-web-renderer></ytd-promoted-sparkles-web-renderer>
+      <ytd-banner-promo-renderer></ytd-banner-promo-renderer>
+      <ytd-video-renderer id="ordinary-result"><video></video></ytd-video-renderer>
+    `;
+
+    hideAdElements(document.body, YOUTUBE_SELECTORS);
+
+    for (const selector of [
+      '#masthead-ad',
+      '.ytd-section-list-renderer > .ytd-item-section-renderer > ytd-search-pyv-renderer.ytd-item-section-renderer',
+      'ytd-rich-item-renderer',
+      'ytd-watch-next-secondary-results-renderer > ytd-ad-slot-renderer',
+      '.ytd-shorts',
+      'ytd-promoted-sparkles-web-renderer',
+      'ytd-banner-promo-renderer',
+    ]) {
+      expect(document.querySelector(selector)?.style.display).toBe('none');
+    }
+    expect(document.getElementById('ordinary-result').style.display).toBe('');
+    expect(document.querySelector('video').style.display).toBe('');
+  });
+
+  it('counts each detected and hidden element once when the page changes its style', () => {
+    vi.useFakeTimers();
+    const sendMessage = vi.fn();
+    globalThis.chrome = { runtime: { sendMessage } };
+    const element = document.createElement('div');
+    element.className = 'ytp-ad-module';
+    document.body.appendChild(element);
+
+    expect(hideAdElements(element, YOUTUBE_SELECTORS)).toBe(1);
+    element.style.removeProperty('display');
+    expect(hideAdElements(element, YOUTUBE_SELECTORS)).toBe(0);
+    expect(element.style.display).toBe('none');
+    vi.advanceTimersByTime(YT_REPORT_INTERVAL_MS);
+
+    expect(sendMessage).toHaveBeenCalledTimes(2);
+    expect(sendMessage.mock.calls.map(([message]) => message.payload.type)).toEqual([
+      'youtubeDetected',
+      'youtube',
+    ]);
+    expect(sendMessage.mock.calls.map(([message]) => message.payload.count)).toEqual([1, 1]);
+    vi.useRealTimers();
+    delete globalThis.chrome;
+  });
+
   it('installYouTubeObserver observes document.body and hides new ad elements (AC-TF.2-3)', async () => {
     const observer = installYouTubeObserver(document, YOUTUBE_SELECTORS);
     expect(observer).toBeDefined();
@@ -117,6 +177,23 @@ describe('YouTube cosmetic module (src/content/youtube.js)', () => {
     expect(dynamic.style.display).toBe('none');
     expect(shadowAd.style.display).toBe('none');
     expect(shadow.getElementById(YT_STYLE_ELEMENT_ID)).not.toBeNull();
+    observer.disconnect();
+  });
+
+  it('reuses one observer and attaches to roots discovered on a later SPA rescan', async () => {
+    const observer = installYouTubeObserver(document, YOUTUBE_SELECTORS);
+    expect(installYouTubeObserver(document, YOUTUBE_SELECTORS)).toBe(observer);
+    const host = document.createElement('div');
+    document.body.appendChild(host);
+    const shadow = host.attachShadow({ mode: 'open' });
+    observer.scan();
+
+    const laterAd = document.createElement('div');
+    laterAd.className = 'ytp-ad-overlay-container';
+    shadow.appendChild(laterAd);
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
+    expect(laterAd.style.display).toBe('none');
     observer.disconnect();
   });
 
