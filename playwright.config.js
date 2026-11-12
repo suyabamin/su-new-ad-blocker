@@ -5,6 +5,11 @@ import { defineConfig } from '@playwright/test';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+// Ensure browser path is consistently set for playwright in this process
+if (!process.env.PLAYWRIGHT_BROWSERS_PATH) {
+  process.env.PLAYWRIGHT_BROWSERS_PATH = 'D:\\.playwright-browsers';
+}
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const extensionPath = path.resolve(__dirname);
 
