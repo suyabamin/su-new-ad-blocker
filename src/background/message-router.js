@@ -11,6 +11,7 @@ import {
   flushStats,
   getTodayString,
   recordBlockEvent,
+  syncMatchedRules,
 } from './stats-tracker.js';
 import {
   pauseDomain,
@@ -83,24 +84,53 @@ export function handleMessage(message, sender, sendResponse) {
         payload.hostname ||
         payload.domain ||
         (sender?.tab?.url ? new URL(sender.tab.url).hostname : '');
-      const snapshot = getStatsSnapshot();
-      const count = snapshot.byDomain[hostname?.toLowerCase()] || 0;
-      sendResponse({ ok: true, data: { hostname, count } });
-      return false;
+      if (
+        !globalThis.chrome?.declarativeNetRequest?.getMatchedRules ||
+        !globalThis.chrome?.tabs?.get
+      ) {
+        const snapshot = getStatsSnapshot();
+        const count = snapshot.byDomain[hostname?.toLowerCase()] || 0;
+        sendResponse({ ok: true, data: { hostname, count } });
+        return false;
+      }
+      syncMatchedRules().then(() => {
+        const snapshot = getStatsSnapshot();
+        const count = snapshot.byDomain[hostname?.toLowerCase()] || 0;
+        sendResponse({ ok: true, data: { hostname, count } });
+      });
+      return true;
     }
 
     case MSG.GET_TODAY_SUMMARY: {
-      const snapshot = getStatsSnapshot();
-      sendResponse({
-        ok: true,
-        data: {
-          todayBlocked: snapshot.todayBlocked,
-          totalBlocked: snapshot.totalBlocked,
-          date: snapshot.todayDate,
-          byType: { ...snapshot.today.byType },
-        },
+      if (
+        !globalThis.chrome?.declarativeNetRequest?.getMatchedRules ||
+        !globalThis.chrome?.tabs?.get
+      ) {
+        const snapshot = getStatsSnapshot();
+        sendResponse({
+          ok: true,
+          data: {
+            todayBlocked: snapshot.todayBlocked,
+            totalBlocked: snapshot.totalBlocked,
+            date: snapshot.todayDate,
+            byType: { ...snapshot.today.byType },
+          },
+        });
+        return false;
+      }
+      syncMatchedRules().then(() => {
+        const snapshot = getStatsSnapshot();
+        sendResponse({
+          ok: true,
+          data: {
+            todayBlocked: snapshot.todayBlocked,
+            totalBlocked: snapshot.totalBlocked,
+            date: snapshot.todayDate,
+            byType: { ...snapshot.today.byType },
+          },
+        });
       });
-      return false;
+      return true;
     }
 
     case MSG.GET_TOP_DOMAINS: {
