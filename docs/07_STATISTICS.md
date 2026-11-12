@@ -6,7 +6,9 @@ Statistics do not combine different kinds of events:
 
 - **Network matches:** DNR rules observed through Chrome's feedback API. This is a diagnostic counter, not a reliable production total.
 - **Cosmetic elements hidden:** DOM elements selected and hidden by the generic cosmetic content script.
-- **YouTube ad UI elements hidden:** selected YouTube interface elements hidden by the cosmetic YouTube module. It does not mean a video advertisement was blocked.
+- **YouTube selector matches:** unique elements matching the bundled YouTube cosmetic selectors. A match can be an ad candidate, not proof of an advertisement.
+- **YouTube ad UI elements hidden:** unique matched elements that this module successfully hid. It does not mean a video advertisement or a network request was blocked.
+- **YouTube detected but not hidden:** selector matches minus successful hides, shown separately as a derived UI value. It is clamped at zero for older/inconsistent stored data.
 
 Category totals and daily buckets remain in `chrome.storage.local` and are backward-compatible with the existing `stats:lifetime`, `stats:meta`, and `stats:day:YYYY-MM-DD` objects. A bounded set of DNR request IDs is held in `chrome.storage.session` to prevent recounting when the service worker restarts during a browser session.
 
@@ -24,7 +26,9 @@ The popup displays the active site's hostname for the pause control. Its match c
 
 ## 3. Cosmetic Counts
 
-Content scripts send batched `CS_BLOCKED_REPORT` messages after hiding matched nodes. The background validates positive integer counts and waits for the local storage flush before acknowledging the report. Existing elements are counted when observers start; later elements are counted as they are hidden. Counts are elements, not unique ads, network requests, or proof that an advertisement was blocked.
+Content scripts send batched `CS_BLOCKED_REPORT` messages for unique YouTube selector matches and unique successful hides. The background validates positive integer counts and accepts only the cosmetic categories from content scripts. It waits for the local storage flush before acknowledging a report. Existing elements are counted during the initial scan; later elements are counted as they are detected/hidden. Counts are DOM elements, not unique advertisements, network requests, or proof that an advertisement was blocked. WeakSet-based deduplication lasts for the document lifetime.
+
+Stats summary reads, exports, and content-script reports wait for persisted statistics initialization. If storage cannot be read, the background returns an error and the popup/dashboard retain an unavailable placeholder instead of displaying default in-memory zeros or overwriting stored totals.
 
 ## 4. Storage and Compatibility
 
@@ -32,6 +36,6 @@ See `docs/10_STORAGE_SCHEMA.md` for storage shapes. New data is additive: existi
 
 ## 5. UI
 
-- **Popup:** site-aggregated DNR diagnostic matches when supported; separate cosmetic and YouTube UI element counts; network values are marked unavailable otherwise.
-- **Options dashboard:** lifetime/today diagnostic network matches when supported; separate hidden-element counts; top matched hostnames and the network chart are hidden when diagnostics are unavailable. A failed range request is shown as unavailable instead of a fabricated zero-filled chart.
+- **Popup:** site-aggregated DNR diagnostic matches when supported; separate cosmetic, YouTube hidden, YouTube detected, and derived detected-but-not-hidden counts; network values are marked unavailable otherwise.
+- **Options dashboard:** lifetime/today diagnostic network matches when supported; separate cosmetic, YouTube hidden, and YouTube detected counts, plus a derived detected-but-not-hidden count. Top matched hostnames and the network chart are hidden when diagnostics are unavailable. A failed range request is shown as unavailable instead of a fabricated zero-filled chart.
 - **Charts:** plot stored network diagnostics only when the current browser session confirms the diagnostics API works.
