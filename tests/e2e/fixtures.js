@@ -16,6 +16,7 @@ export const test = base.extend({
       args: [
         `--disable-extensions-except=${EXTENSION_PATH}`,
         `--load-extension=${EXTENSION_PATH}`,
+        '--allow-file-access-from-files',
       ],
     });
     await use(context);
