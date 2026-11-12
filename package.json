@@ -35,5 +35,8 @@
     "jsdom": "31.0.0",
     "prettier": "3.10.0",
     "vitest": "4.1.12"
+  },
+  "dependencies": {
+    "chart.js": "4.4.9"
   }
 }
