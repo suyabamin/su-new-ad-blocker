@@ -7,6 +7,24 @@ const fixturePath = path.resolve(
   '../site/test-ad-page.html'
 );
 
+async function installTestOnlyFixtureRule(context, extensionId) {
+  const extensionPage = await context.newPage();
+  await extensionPage.goto(`chrome-extension://${extensionId}/src/popup/popup.html`);
+  await extensionPage.evaluate(() =>
+    globalThis.chrome.declarativeNetRequest.updateDynamicRules({
+      addRules: [
+        {
+          id: 90_001,
+          priority: 1,
+          action: { type: 'block' },
+          condition: { urlFilter: '||ads.test.local^' },
+        },
+      ],
+    })
+  );
+  await extensionPage.close();
+}
+
 test.describe('Extension Loading and UI (E2E)', () => {
   test('extension loads with valid service worker and opens popup without errors', async ({
     context,
@@ -80,6 +98,7 @@ test.describe('Extension Loading and UI (E2E)', () => {
     context,
     extensionId,
   }) => {
+    await installTestOnlyFixtureRule(context, extensionId);
     const page = await context.newPage();
     await page.route('http://site.test.local/**', (route) => route.fulfill({ path: fixturePath }));
     await page.goto('http://site.test.local/');
