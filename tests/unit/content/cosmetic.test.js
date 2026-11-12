@@ -69,6 +69,22 @@ describe('cosmetic content script (src/content/cosmetic.js)', () => {
     observer.disconnect();
   });
 
+  it('counts elements already present when the observer starts', () => {
+    _resetQueueState();
+    vi.useFakeTimers();
+    const sendMessage = vi.fn();
+    globalThis.chrome = { runtime: { sendMessage } };
+    document.body.innerHTML = '<div class="initial-ad"></div>';
+    const observer = installCosmeticObserver(document, ['.initial-ad']);
+
+    expect(document.querySelector('.initial-ad').style.display).toBe('none');
+    vi.advanceTimersByTime(CS_REPORT_INTERVAL_MS);
+    expect(sendMessage.mock.calls[0][0].payload.count).toBe(1);
+    observer.disconnect();
+    _resetQueueState();
+    vi.useRealTimers();
+  });
+
   it('initCosmeticScript executes safely and attaches listener if document is loading', () => {
     expect(() => initCosmeticScript()).not.toThrow();
 
