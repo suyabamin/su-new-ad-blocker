@@ -6,7 +6,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TEST_PAGE_PATH = path.resolve(__dirname, '../site/test-ad-page.html');
 
 test.describe('Cosmetic Ad Element Hiding (E2E)', () => {
-  test('content script injects stylesheet and hides ad elements on test page', async ({ context }) => {
+  test('content script injects stylesheet and hides ad elements on test page', async ({
+    context,
+  }) => {
     const page = await context.newPage();
     const testPageUrl = pathToFileURL(TEST_PAGE_PATH).href;
 

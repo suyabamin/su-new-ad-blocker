@@ -1,7 +1,10 @@
 import { test, expect } from './fixtures.js';
 
 test.describe('Extension Loading and UI (E2E)', () => {
-  test('extension loads with valid service worker and opens popup without errors', async ({ context, extensionId }) => {
+  test('extension loads with valid service worker and opens popup without errors', async ({
+    context,
+    extensionId,
+  }) => {
     expect(extensionId).toBeTruthy();
 
     const popupPage = await context.newPage();
