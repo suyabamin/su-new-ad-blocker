@@ -11,4 +11,5 @@ playwright-report/
 *.map
 lists/*.txt
 !lists/SOURCES.md
+!lists/test-fixture.txt
 _metadata/
