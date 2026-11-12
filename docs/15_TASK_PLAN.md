@@ -77,3 +77,12 @@ criteria pass, lint is clean, tests pass, and verified in this session.
 - [x] **T7.2** — Store listing documentation with accurate claims (`docs/13_STORE_LISTING.md`)
 - [x] **T7.3** — Unpacked loading guide (`docs/LOAD_UNPACKED.md`) and production release zip packaging (`npm run package`)
 - [x] **T7.4** — Release verification checklist, zip content verification, and git release tag (`v0.1.0`)
+
+---
+
+## Phase 8: Filter and Statistics Remediation
+
+- [x] **T8.1** — Separate production rules from test fixtures and remove synthetic filler domains.
+- [x] **T8.2** — Compile a conservative, tested EasyList/EasyPrivacy subset with DNR exceptions and quota bounds.
+- [x] **T8.3** — Fetch fixed HTTPS list sources with validation, scheduled/manual updates, and atomic replacement.
+- [x] **T8.4** — Report network diagnostics accurately and distinguish them from cosmetic/YouTube elements hidden.
